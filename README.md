@@ -1,6 +1,7 @@
 # mcp-server-marketplace
 存放所有MCP服务的详情页
 
+# 项目目录结构
 project-root
 ├── README.md                       # 项目说明文档
 ├── common_servers                  # 通用服务（可复用的基础服务）
