@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>ProjectMan MCP服务器是一款模型上下文协议（Model Context Protocol）服务器，为MCP客户端（如Claude Desktop、Cline、Cursor）提供与华为云ProjectMan服务进行交互的能力。通过自然语言处理，可实现对ProjectMan资源的全链路管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ecs --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ecs --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ecs --transport sse --port 8888
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8000/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <!-- Scrum项目的工作项 -->
+  <div class="api-category">
+    <h3>Scrum项目的工作项</h3>
+    <ul>
+      <li><span class="api-name">ListAssociatedIssues</span><br><span class="api-desc">查询已关联的工作项</span></li>
+      <li><span class="api-name">ListIssueAssociatedCommits</span><br><span class="api-desc">查询关联的代码提交记录</span></li>
+      <li><span class="api-name">UploadIssueImg</span><br><span class="api-desc">上传图片</span></li>
+      <li><span class="api-name">ListIssueCustomFields</span><br><span class="api-desc">查询工作项自定义字段列表</span></li>
+      <li><span class="api-name">ListAssociatedWikis</span><br><span class="api-desc">查询关联的Wiki</span></li>
+      <li><span class="api-name">ShowIssueV4</span><br><span class="api-desc">查询工作项详情</span></li>
+      <li><span class="api-name">ListStatusStatistic</span><br><span class="api-desc">查询工作项状态统计数据</span></li>
+      <li><span class="api-name">ListIssueCommentsV4</span><br><span class="api-desc">获取工作项评论</span></li>
+      <li><span class="api-name">ListSpecIssueStayTimes</span><br><span class="api-desc">获取工作项停留时间</span></li>
+      <li><span class="api-name">ShowProjectWorkHours</span><br><span class="api-desc">按用户查询工时(单项目)</span></li>
+      <li><span class="api-name">DownloadAttachment</span><br><span class="api-desc">下载工作项附件</span></li>
+      <li><span class="api-name">CreateCustomfields</span><br><span class="api-desc">创建自定义字段</span></li>
+      <li><span class="api-name">ListProjectIssuesRecordsV4</span><br><span class="api-desc">查询工作项历史记录</span></li>
+      <li><span class="api-name">SearchIssues</span><br><span class="api-desc">高级查询待办工作项</span></li>
+      <li><span class="api-name">ListIssuesV4</span><br><span class="api-desc">筛选查询工作项</span></li>
+      <li><span class="api-name">UploadAttachments</span><br><span class="api-desc">上传工作项附件</span></li>
+      <li><span class="api-name">CreateIssueV4</span><br><span class="api-desc">创建工作项</span></li>
+      <li><span class="api-name">ShowIssuesWrokFlowConfig</span><br><span class="api-desc">查询工作项流转配置</span></li>
+      <li><span class="api-name">DownloadImageFile</span><br><span class="api-desc">下载图片</span></li>
+      <li><span class="api-name">ListIssueRecordsV4</span><br><span class="api-desc">获取工作项历史记录</span></li>
+      <li><span class="api-name">ShowIssueCompletionRate</span><br><span class="api-desc">获取工作项完成率</span></li>
+      <li><span class="api-name">UpdateIssueV4</span><br><span class="api-desc">更新工作项</span></li>
+      <li><span class="api-name">CreateSystemIssueV4</span><br><span class="api-desc">设置工作项创建者</span></li>
+      <li><span class="api-name">ListProjectWorkHoursType</span><br><span class="api-desc">查询工时类型</span></li>
+      <li><span class="api-name">BatchListAssociatedIssues</span><br><span class="api-desc">查询项目关联工作项</span></li>
+      <li><span class="api-name">ListIssuesSfV4</span><br><span class="api-desc">分页查询工作项</span></li>
+      <li><span class="api-name">BatchDeleteIssuesV4</span><br><span class="api-desc">批量删除工作项</span></li>
+      <li><span class="api-name">AddIssueWorkHours</span><br><span class="api-desc">添加工时</span></li>
+      <li><span class="api-name">DeleteAttachment</span><br><span class="api-desc">取消附件关联</span></li>
+      <li><span class="api-name">ListChildIssuesV4</span><br><span class="api-desc">获取子工作项</span></li>
+      <li><span class="api-name">ListAssociatedTestCases</span><br><span class="api-desc">查询关联用例</span></li>
+      <li><span class="api-name">ListProjectWorkHours</span><br><span class="api-desc">按用户查询工时(多项目)</span></li>
+      <li><span class="api-name">DeleteIssueV4</span><br><span class="api-desc">删除工作项</span></li>
+    </ul>
+  </div>
+  <!-- Scrum项目的模块 -->
+  <div class="api-category">
+    <h3>Scrum项目的模块</h3>
+    <ul>
+      <li><span class="api-name">DeleteProjectModule</span><br><span class="api-desc">删除项目模块</span></li>
+      <li><span class="api-name">UpdateProjectModule</span><br><span class="api-desc">更新项目模块</span></li>
+      <li><span class="api-name">CreateProjectModule</span><br><span class="api-desc">创建项目模块</span></li>
+      <li><span class="api-name">ListProjectModules</span><br><span class="api-desc">查询项目模块列表</span></li>
+    </ul>
+  </div>
+  <!-- Scrum项目的状态 -->
+  <div class="api-category">
+    <h3>Scrum项目的状态</h3>
+    <ul>
+      <li><span class="api-name">ListScrumProjectStatuses</span><br><span class="api-desc">查询项目状态列表</span></li>
+    </ul>
+  </div>
+  <!-- Scrum项目的迭代 -->
+  <div class="api-category">
+    <h3>Scrum项目的迭代</h3>
+    <ul>
+      <li><span class="api-name">ListIterationHistories</span><br><span class="api-desc">查看迭代历史记录</span></li>
+      <li><span class="api-name">UpdateIterationV4</span><br><span class="api-desc">更新项目迭代</span></li>
+      <li><span class="api-name">DeleteIterationV4</span><br><span class="api-desc">删除项目迭代</span></li>
+      <li><span class="api-name">BatchDeleteIterationsV4</span><br><span class="api-desc">批量删除迭代</span></li>
+      <li><span class="api-name">CreateIterationV4</span><br><span class="api-desc">创建项目迭代</span></li>
+      <li><span class="api-name">ListProjectIterationsV4</span><br><span class="api-desc">获取项目迭代</span></li>
+      <li><span class="api-name">ShowIterationV4</span><br><span class="api-desc">查看迭代详情</span></li>
+    </ul>
+  </div>
+  <!-- Scrum项目的领域 -->
+  <div class="api-category">
+    <h3>Scrum项目的领域</h3>
+    <ul>
+      <li><span class="api-name">ListProjectDomains</span><br><span class="api-desc">查询项目领域列表</span></li>
+      <li><span class="api-name">CreateProjectDomain</span><br><span class="api-desc">创建项目领域</span></li>
+      <li><span class="api-name">CancelProjectDomain</span><br><span class="api-desc">取消领域关联</span></li>
+      <li><span class="api-name">UpdateProjectDomain</span><br><span class="api-desc">更新项目领域</span></li>
+    </ul>
+  </div>
+  <!-- 用户信息 -->
+  <div class="api-category">
+    <h3>用户信息</h3>
+    <ul>
+      <li><span class="api-name">UpdateNickNameV4</span><br><span class="api-desc">更新用户昵称</span></li>
+      <li><span class="api-name">ShowCurUserInfo</span><br><span class="api-desc">获取当前用户信息</span></li>
+      <li><span class="api-name">ShowCurUserRole</span><br><span class="api-desc">获取用户在项目中的角色</span></li>
+      <li><span class="api-name">BatchUpdateChildNickNames</span><br><span class="api-desc">更新其他用户昵称</span></li>
+    </ul>
+  </div>
+  <!-- 看板项目的工作项 -->
+  <div class="api-category">
+    <h3>看板项目的工作项</h3>
+    <ul>
+      <li><span class="api-name">ListWorkitemStatusRecordsV4</span><br><span class="api-desc">查询工作项状态历史记录</span></li>
+      <li><span class="api-name">ShowWorkItemWrokflowConfig</span><br><span class="api-desc">查询工作项流转配置</span></li>
+      <li><span class="api-name">ListWorkitems</span><br><span class="api-desc">查询看板工作项</span></li>
+    </ul>
+  </div>
+  <!-- 项目信息 -->
+  <div class="api-category">
+    <h3>项目信息</h3>
+    <ul>
+      <li><span class="api-name">CreateProjectV4</span><br><span class="api-desc">创建项目</span></li>
+      <li><span class="api-name">DeleteProjectV4</span><br><span class="api-desc">删除项目</span></li>
+      <li><span class="api-name">UpdateProjectV4</span><br><span class="api-desc">更新项目</span></li>
+      <li><span class="api-name">CheckProjectNameV4</span><br><span class="api-desc">检查项目名称</span></li>
+      <li><span class="api-name">ListDomainNotAddedProjectsV4</span><br><span class="api-desc">获取未加入项目</span></li>
+      <li><span class="api-name">ListProjectsV4</span><br><span class="api-desc">查询项目列表</span></li>
+      <li><span class="api-name">ShowProjectInfoV4</span><br><span class="api-desc">获取项目详情</span></li>
+      <li><span class="api-name">ListTemplates</span><br><span class="api-desc">查询项目模板</span></li>
+    </ul>
+  </div>
+  <!-- 项目成员 -->
+  <div class="api-category">
+    <h3>项目成员</h3>
+    <ul>
+      <li><span class="api-name">AddApplyJoinProjectForAgc</span><br><span class="api-desc">申请加入项目</span></li>
+      <li><span class="api-name">BatchDeleteMembersV4</span><br><span class="api-desc">批量删除成员</span></li>
+      <li><span class="api-name">AddMemberV4</span><br><span class="api-desc">添加项目成员</span></li>
+      <li><span class="api-name">ListProjectMembersV4</span><br><span class="api-desc">获取成员列表</span></li>
+      <li><span class="api-name">BatchAddMembersV4</span><br><span class="api-desc">批量添加成员</span></li>
+      <li><span class="api-name">RemoveProject</span><br><span class="api-desc">项目成员主动退出项目,项目创建者不能退出</span></li>
+      <li><span class="api-name">UpdateMembesRoleV4</span><br><span class="api-desc">更新成员在项目中的角色</span></li>
+          </ul>
+        </div>
+  <!-- 项目指标 -->
+  <div class="api-category">
+    <h3>项目指标</h3>
+    <ul>
+      <li><span class="api-name">ShowCompletionRate</span><br><span class="api-desc">查询需求按时完成率</span></li>
+      <li><span class="api-name">ShowBugsPerDeveloper</span><br><span class="api-desc">查询人均bug</span></li>
+      <li><span class="api-name">ShowBugDensityV2</span><br><span class="api-desc">查询缺陷密度</span></li>
+          </ul>
+        </div>
+
+   <!-- 项目统计 -->
+  <div class="api-category">
+    <h3>项目统计</h3>
+    <ul>
+      <li><span class="api-name">ListProjectDemandStaticV4</span><br><span class="api-desc">获取需求统计信息</span></li>
+      <li><span class="api-name">ShowProjectSummaryV4</span><br><span class="api-desc">获取项目概览</span></li>
+      <li><span class="api-name">ListProjectBugStaticsV4</span><br><span class="api-desc">获取bug统计信息,按模块统计</span></li>
+          </ul>
+        </div>
+
+        <p>以及更多用于项目管理、工作项跟踪和团队协作的API工具。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云GES上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>GES MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务GES交互的能力，支持基于自然语言对GES资源进行全链路管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/ges-mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_asm
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ges --transport stdio --port 8867
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ges --transport http  --port 8867
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ges --transport sse --port 8867
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>快速开始</h2>
+          <p>支持以下客户端与ges服务交互：</p>
+          <ul>
+            <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+            <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+            <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+            <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a> + <a href="https://cline.bot/" target="_blank">Cline</a></li>
+          </ul>
+
+          <h3>客户端通信配置示例</h3>
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "stdio-ges": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run", 
+        "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_ges/src/mcp_server_ges/run.py"
+      ],
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+
+          <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "http-ges": {
+      "type": "http",
+      "url": "http://127.0.0.1:8867/mcp",
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+
+          <h4>3. sse 模式 - SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "sse-ges": {
+      "type": "sse",
+      "url": "http://localhost:8867/sse",
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server 做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>GraphPlugins管理API</h3>
+          <ul>
+            <li><span class="api-name">ListScenes2</span><br><span class="api-desc">查询scenes场景下的应用分析能力详情,可以获得对应场景下的application、参数和功能介绍详情。</span></li>
+            <li><span class="api-name">DeregisterScenes2</span><br><span class="api-desc">取消订阅scenes场景应用分析能力,取消订阅后对应scene下的application业务面API将不能使用。</span></li>
+            <li><span class="api-name">RegisterScenes2</span><br><span class="api-desc">订阅scenes应用场景分析能力,便于业务面API使用对应功能。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>任务中心API</h3>
+          <ul>
+            <li><span class="api-name">ShowJob2</span><br><span class="api-desc">查询Job的执行状态。对创建图、关闭图、启动图、删除图、导入图等异步API命令下发后,会返回jobId,通过jobId查询任务的执行状态。</span></li>
+            <li><span class="api-name">ListJobs</span><br><span class="api-desc">查询管理面任务中心。当前创建图、关闭图、启动图、删除图、增加备份、导入图、导出图、升级图等操作为异步任务,该API用于查询这些任务的详情。</span></li>
+            <li><span class="api-name">ListJobs2</span><br><span class="api-desc">查询管理面任务中心。当前创建图、关闭图、启动图、删除图、增加备份、导入图、导出图、升级图等操作为异步任务,该API用于查询这些任务的详情。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>元数据管理API</h3>
+          <ul>
+            <li><span class="api-name">DeleteMetadata2</span><br><span class="api-desc">删除元数据。</span></li>
+            <li><span class="api-name">ShowMetadata2</span><br><span class="api-desc">查询某个元数据。</span></li>
+            <li><span class="api-name">UploadFromObs2</span><br><span class="api-desc">从OBS导入元数据。</span></li>
+            <li><span class="api-name">DeleteMetadata</span><br><span class="api-desc">删除元数据。</span></li>
+            <li><span class="api-name">ListMetadatas2</span><br><span class="api-desc">查询元数据列表。</span></li>
+            <li><span class="api-name">CreateMetadata2</span><br><span class="api-desc">新增元数据。</span></li>
+            <li><span class="api-name">ListMetadatas</span><br><span class="api-desc">查询元数据列表。</span></li>
+            <li><span class="api-name">UploadFromObs</span><br><span class="api-desc">从OBS导入元数据。</span></li>
+            <li><span class="api-name">ListGraphMetadatas</span><br><span class="api-desc">查询某个图下的元数据。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>图管理API</h3>
+          <ul>
+            <li><span class="api-name">ExpandGraph2</span><br><span class="api-desc">扩副本能力允许动态扩容多个从节点,扩容的从节点可以处理读请求,从而提高读请求性能。</span></li>
+            <li><span class="api-name">DeleteGraph2</span><br><span class="api-desc">删除一个图。</span></li>
+            <li><span class="api-name">ImportGraph2</span><br><span class="api-desc">增量导入图数据。</span></li>
+            <li><span class="api-name">StopGraph</span><br><span class="api-desc">关闭一个图。如果图创建好了,暂时不用可以先关闭,需要使用时再启用。</span></li>
+            <li><span class="api-name">CreateGraph2</span><br><span class="api-desc">创建一个图。</span></li>
+            <li><span class="api-name">StartGraph2</span><br><span class="api-desc">启动一个图。暂时不用的图可以先关闭,需要使用时再启动。</span></li>
+            <li><span class="api-name">ExpandGraph</span><br><span class="api-desc">扩副本能力允许动态扩容多个从节点,扩容的从节点可以处理读请求,从而提高读请求性能。</span></li>
+            <li><span class="api-name">DetachEip2</span><br><span class="api-desc">当无需继续使用EIP时,您可通过解绑EIP来释放网络资源。</span></li>
+            <li><span class="api-name">ResizeGraph2</span><br><span class="api-desc">变更图规格。</span></li>
+            <li><span class="api-name">ClearGraph2</span><br><span class="api-desc">清空图中所有数据。</span></li>
+            <li><span class="api-name">ListGraphs2</span><br><span class="api-desc">查询当前租户所有的图。</span></li>
+            <li><span class="api-name">AttachEip2</span><br><span class="api-desc">可以通过绑定弹性公网IP(简称EIP)访问GES服务。</span></li>
+            <li><span class="api-name">DeleteGraph</span><br><span class="api-desc">删除一个图。</span></li>
+            <li><span class="api-name">ShowGraph</span><br><span class="api-desc">根据图ID查询某个图详情。</span></li>
+            <li><span class="api-name">DetachEip</span><br><span class="api-desc">当无需继续使用EIP时,您可通过解绑EIP来释放网络资源。</span></li>
+            <li><span class="api-name">ListGraphs</span><br><span class="api-desc">查询当前租户所有的图。</span></li>
+            <li><span class="api-name">StartGraph</span><br><span class="api-desc">启动一个图。暂时不用的图可以先关闭,需要使用时再启动。</span></li>
+            <li><span class="api-name">UpgradeGraph</span><br><span class="api-desc">升级图。图引擎服务会定期升级版本,用户可根据需要升级图。</span></li>
+            <li><span class="api-name">UpgradeGraph2</span><br><span class="api-desc">升级图。图引擎服务会定期升级版本,用户可根据需要升级图。</span></li>
+            <li><span class="api-name">ShowGraph2</span><br><span class="api-desc">根据图ID查询某个图详情。</span></li>
+            <li><span class="api-name">StopGraph2</span><br><span class="api-desc">关闭一个图。如果图创建好了,暂时不用可以先关闭,需要使用时再启用。</span></li>
+            <li><span class="api-name">ImportGraph</span><br><span class="api-desc">增量导入图数据。</span></li>
+            <li><span class="api-name">ExportGraph2</span><br><span class="api-desc">导出图。</span></li>
+            <li><span class="api-name">ClearGraph</span><br><span class="api-desc">清空图中所有数据。</span></li>
+            <li><span class="api-name">RestartGraph2</span><br><span class="api-desc">强制启动一个图。针对导入、导出 、运行中 、清空中的图。强制重启图,会将该图执行中的异步任务变为失败,然后停止图、启动图到运行状态。</span></li>
+            <li><span class="api-name">ExportGraph</span><br><span class="api-desc">导出图。</span></li>
+            <li><span class="api-name">CreateGraph</span><br><span class="api-desc">创建一个图。</span></li>
+            <li><span class="api-name">ResizeGraph</span><br><span class="api-desc">扩容图规格。</span></li>
+            <li><span class="api-name">RestartGraph</span><br><span class="api-desc">强制启动一个图。针对导入、导出 、运行中 、清空中的图。强制重启图,会将该图执行中的异步任务变为失败,然后停止图、启动图到运行状态。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>备份与恢复</h3>
+          <ul>
+            <li><span class="api-name">ShowBackupDownloadLink</span><br><span class="api-desc">获取备份下载链接。</span></li>
+            <li><span class="api-name">ListBackups</span><br><span class="api-desc">获取备份列表。</span></li>
+            <li><span class="api-name">ListGraphBackups</span><br><span class="api-desc">查询某个图下的备份列表。</span></li>
+            <li><span class="api-name">DeleteBackup2</span><br><span class="api-desc">删除备份。</span></li>
+            <li><span class="api-name">CreateBackup2</span><br><span class="api-desc">新增备份。当前图数据出现错误或故障时,可以启动备份图进行恢复。</span></li>
+            <li><span class="api-name">ListBackups2</span><br><span class="api-desc">查询备份列表。</span></li>
+            <li><span class="api-name">CreateBackup</span><br><span class="api-desc">新增备份。当前图数据出现错误或故障时,可以启动备份图进行恢复。</span></li>
+            <li><span class="api-name">ListGraphBackups2</span><br><span class="api-desc">查询某个图下的备份列表。</span></li>
+            <li><span class="api-name">ImportBackup2</span><br><span class="api-desc">导入备份。</span></li>
+            <li><span class="api-name">DeleteBackup</span><br><span class="api-desc">删除备份。</span></li>
+            <li><span class="api-name">ExportBackup2</span><br><span class="api-desc">导出备份。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>实例管理</h3>
+          <ul>
+            <li><span class="api-name">AttachEip</span><br><span class="api-desc">绑定和解绑弹性公网IP。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>系统管理API</h3>
+          <ul>
+            <li><span class="api-name">ListQuotas2</span><br><span class="api-desc">查询租户配额。</span></li>
+            <li><span class="api-name">CreateMetadata</span><br><span class="api-desc">该接口可以用于管理员导入Metadata文件。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>连接管理</h3>
+          <ul>
+            <li><span class="api-name">ChangeSecurityGroup</span><br><span class="api-desc">修改SFS Turbo文件系统绑定的安全组。修改安全组为异步任务,可以通过“查询单个文件系统”返回的子状态字段“sub_status”来判断是否修改安全组状态,子状态为“232”即为修改安全组成功。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>配额管理</h3>
+          <ul>
+            <li><span class="api-name">ListQuotas</span><br><span class="api-desc">获取配额信息。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>镜像任务</h3>
+          <ul>
+            <li><span class="api-name">ShowJob</span><br><span class="api-desc">该接口为扩展接口,主要用于查询异步接口执行情况,比如查询导出镜像任务的执行状态。</span></li>
+          </ul>
+        </div>
+
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

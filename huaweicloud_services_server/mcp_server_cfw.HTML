@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ecs --transport stdio --port 8017
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ecs --transport http  --port 8017
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ecs --transport sse --port 8017
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8000/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+<h3>ACL规则管理</h3>
+<ul>
+<li><span class="api-name">UpdateAclRuleOrder</span><br><span class="api-desc">ACL防护规则优先级设置</span></li>
+<li><span class="api-name">ListAclRuleHitCount</span><br><span class="api-desc">获取规则击中次数</span></li>
+<li><span class="api-name">ListRuleAclTags</span><br><span class="api-desc">查询规则标签</span></li>
+<li><span class="api-name">BatchDeleteAclRules</span><br><span class="api-desc">批量删除Acl规则</span></li>
+<li><span class="api-name">UpdateAclRule</span><br><span class="api-desc">更新ACL规则</span></li>
+<li><span class="api-name">ListAclRules</span><br><span class="api-desc">查询防护规则</span></li>
+<li><span class="api-name">DeleteAclRuleHitCount</span><br><span class="api-desc">清除规则击中次数</span></li>
+<li><span class="api-name">ShowImportStatus</span><br><span class="api-desc">查看导入状态接口</span></li>
+<li><span class="api-name">BatchUpdateAclRuleActions</span><br><span class="api-desc">批量更新规则动作</span></li>
+<li><span class="api-name">DeleteAclRule</span><br><span class="api-desc">删除ACL规则组</span></li>
+<li><span class="api-name">AddAclRule</span><br><span class="api-desc">创建ACL规则</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>EIP管理</h3>
+<ul>
+<li><span class="api-name">ChangeEipStatus</span><br><span class="api-desc">开启关闭EIP,客户购买EIP后首次开启EIP防护前需使用ListEips同步EIP资产,sync字段设置为1。</span></li>
+<li><span class="api-name">ListEipCount</span><br><span class="api-desc">查询Eip个数</span></li>
+<li><span class="api-name">ListEips</span><br><span class="api-desc">弹性IP列表查询</span></li>
+<li><span class="api-name">ShowAutoProtectStatus</span><br><span class="api-desc">获取eip自动防护状态信息</span></li>
+<li><span class="api-name">SwitchAutoProtectStatus</span><br><span class="api-desc">修改eip自动防护开关</span></li>
+<li><span class="api-name">ListAlarmWhitelist</span><br><span class="api-desc">查看eip告警白名单</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>IPS管理</h3>
+<ul>
+<li><span class="api-name">ListIpsSwitchStatus</span><br><span class="api-desc">查询IPS特性开关状态</span></li>
+<li><span class="api-name">ListIpsProtectMode</span><br><span class="api-desc">查询防护模式</span></li>
+<li><span class="api-name">ListIpsRules</span><br><span class="api-desc">查询频率ips规则信息</span></li>
+<li><span class="api-name">ChangeIpsProtectMode</span><br><span class="api-desc">切换防护模式</span></li>
+<li><span class="api-name">ShowIpsUpdateTime</span><br><span class="api-desc">获取ips规则细节</span></li>
+<li><span class="api-name">ChangeIpsRuleMode</span><br><span class="api-desc">改变ips规则模式</span></li>
+<li><span class="api-name">ChangeIpsSwitchStatus</span><br><span class="api-desc">切换开关状态</span></li>
+<li><span class="api-name">ListCustomerIps</span><br><span class="api-desc">获取自定义ips规则</span></li>
+<li><span class="api-name">UpdateAdvancedIpsRule</span><br><span class="api-desc">创建频率ips规则</span></li>
+<li><span class="api-name">ListIpsRules1</span><br><span class="api-desc">获取ips规则列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>Region</h3>
+<ul>
+<li><span class="api-name">ListRegions</span><br><span class="api-desc">查询用户可见的区域</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>Tags</h3>
+<ul>
+<li><span class="api-name">ListProjectTags</span><br><span class="api-desc">查询租户在指定项目中指定资源类型下的所有标签</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>websites</h3>
+<ul>
+<li><span class="api-name">DeleteDomains</span><br><span class="api-desc">删除租户的网站资产</span></li>
+<li><span class="api-name">ListDomains</span><br><span class="api-desc">获取租户的所有网站资产</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>使用标签管理服务</h3>
+<ul>
+<li><span class="api-name">ListResourceTags</span><br><span class="api-desc">查询指定实例的标签信息。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>反病毒管理</h3>
+<ul>
+<li><span class="api-name">ShowAntiVirusRule</span><br><span class="api-desc">获取防火墙反病毒规则信息</span></li>
+<li><span class="api-name">UpdateAntiVirusSwitch</span><br><span class="api-desc">修改反病毒开关</span></li>
+<li><span class="api-name">UpdateAntiVirusRule</span><br><span class="api-desc">修改反病毒规则</span></li>
+<li><span class="api-name">ShowAntiVirusSwitch</span><br><span class="api-desc">查看反病毒开关</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>告警配置管理</h3>
+<ul>
+<li><span class="api-name">UpdateAlarmConfig</span><br><span class="api-desc">修改告警配置接口</span></li>
+<li><span class="api-name">ShowAlarmConfig</span><br><span class="api-desc">获取告警配置信息</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>地址组管理</h3>
+<ul>
+<li><span class="api-name">AddAddressSet</span><br><span class="api-desc">添加地址组</span></li>
+<li><span class="api-name">UpdateAddressSet</span><br><span class="api-desc">更新地址组信息</span></li>
+<li><span class="api-name">DeleteAddressSet</span><br><span class="api-desc">删除地址组</span></li>
+<li><span class="api-name">ListAddressItems</span><br><span class="api-desc">查询地址组成员</span></li>
+<li><span class="api-name">DeleteAddressItem</span><br><span class="api-desc">删除地址组成员</span></li>
+<li><span class="api-name">AddAddressItem</span><br><span class="api-desc">添加地址组成员</span></li>
+<li><span class="api-name">UpdateObjectConfigDesc</span><br><span class="api-desc">编辑对象组内成员的描述信息</span></li>
+<li><span class="api-name">ListAddressSets</span><br><span class="api-desc">查询地址组列表</span></li>
+<li><span class="api-name">ListAddressSetDetail</span><br><span class="api-desc">查询地址组详细</span></li>
+<li><span class="api-name">BatchDeleteAddressItems</span><br><span class="api-desc">批量删除地址组成员</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>域名解析及域名组管理</h3>
+<ul>
+<li><span class="api-name">ShowDomainSetDetail</span><br><span class="api-desc">查看域名组详情</span></li>
+<li><span class="api-name">UpdateDnsServers</span><br><span class="api-desc">更新dns服务器列表</span></li>
+<li><span class="api-name">BatchDeleteDomainSet</span><br><span class="api-desc">批量删除域名组</span></li>
+<li><span class="api-name">ListDomainSets</span><br><span class="api-desc">查询域名组列表</span></li>
+<li><span class="api-name">AddDomains</span><br><span class="api-desc">添加域名列表</span></li>
+<li><span class="api-name">AddDomainSet</span><br><span class="api-desc">添加域名组</span></li>
+<li><span class="api-name">UpdateDomainSet</span><br><span class="api-desc">更新域名组</span></li>
+<li><span class="api-name">ListDnsServers</span><br><span class="api-desc">查询dns服务器列表</span></li>
+<li><span class="api-name">ListDomainParseDetail</span><br><span class="api-desc">测试域名有效性</span></li>
+<li><span class="api-name">ListDomainParseIp</span><br><span class="api-desc">获取域名地址解析结果</span></li>
+<li><span class="api-name">DeleteDomainSet</span><br><span class="api-desc">删除域名组</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>密钥标签管理</h3>
+<ul>
+<li><span class="api-name">DeleteTag</span><br><span class="api-desc">- 功能介绍:删除密钥标签。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>抓包管理</h3>
+<ul>
+<li><span class="api-name">CancelCaptureTask</span><br><span class="api-desc">取消抓包任务</span></li>
+<li><span class="api-name">ListCaptureTask</span><br><span class="api-desc">查询抓包任务</span></li>
+<li><span class="api-name">CreateCaptureTask</span><br><span class="api-desc">创建抓包任务,每个任务只能执行一次。</span></li>
+<li><span class="api-name">ListCaptureResult</span><br><span class="api-desc">获取抓包任务结果</span></li>
+<li><span class="api-name">DeleteCaptureTask</span><br><span class="api-desc">批量删除抓包任务</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>日志管理</h3>
+<ul>
+<li><span class="api-name">ListLogConfig</span><br><span class="api-desc">获取日志配置</span></li>
+<li><span class="api-name">UpdateLogConfig</span><br><span class="api-desc">更新日志配置</span></li>
+<li><span class="api-name">AddLogConfig</span><br><span class="api-desc">创建日志配置</span></li>
+<li><span class="api-name">ListAttackLogs</span><br><span class="api-desc">查询攻击日志</span></li>
+<li><span class="api-name">ListAccessControlLogs</span><br><span class="api-desc">查询访问控制日志</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>服务组管理</h3>
+<ul>
+<li><span class="api-name">DeleteServiceSet</span><br><span class="api-desc">删除服务组</span></li>
+<li><span class="api-name">AddServiceSet</span><br><span class="api-desc">创建服务组</span></li>
+<li><span class="api-name">ListServiceItems</span><br><span class="api-desc">查询服务组成员列表</span></li>
+<li><span class="api-name">UpdateServiceSet</span><br><span class="api-desc">更新服务组</span></li>
+<li><span class="api-name">ListServiceSets</span><br><span class="api-desc">获取服务组列表</span></li>
+<li><span class="api-name">AddServiceItems</span><br><span class="api-desc">批量添加服务组成员</span></li>
+<li><span class="api-name">BatchDeleteServiceItems</span><br><span class="api-desc">批量删除服务组成员信息</span></li>
+<li><span class="api-name">DeleteServiceItem</span><br><span class="api-desc">删除服务组成员</span></li>
+<li><span class="api-name">ListServiceSetDetail</span><br><span class="api-desc">查询服务组细节</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>标签管理</h3>
+<ul>
+<li><span class="api-name">CreateTag</span><br><span class="api-desc">为资源添加标签。</span></li>
+<li><span class="api-name">SaveTags</span><br><span class="api-desc">保存资源标签接口</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>流日志</h3>
+<ul>
+<li><span class="api-name">ListFlowLogs</span><br><span class="api-desc">查询提交请求的租户的所有流日志列表,并根据过滤条件进行过滤</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>网络ACL</h3>
+<ul>
+<li><span class="api-name">CreateFirewall</span><br><span class="api-desc">创建网络ACL</span></li>
+<li><span class="api-name">DeleteFirewall</span><br><span class="api-desc">删除网络ACL</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>防火墙管理</h3>
+<ul>
+<li><span class="api-name">ListJob</span><br><span class="api-desc">获取CFW任务执行状态</span></li>
+<li><span class="api-name">CreateEastWestFirewall</span><br><span class="api-desc">创建东西向防火墙</span></li>
+<li><span class="api-name">ListFirewallList</span><br><span class="api-desc">查询防火墙列表</span></li>
+<li><span class="api-name">ListProtectedVpcs</span><br><span class="api-desc">查询防护vpc信息</span></li>
+<li><span class="api-name">ChangeEastWestFirewallStatus</span><br><span class="api-desc">东西向防护开启/关闭</span></li>
+<li><span class="api-name">ListEastWestFirewall</span><br><span class="api-desc">获取东西向防火墙信息</span></li>
+<li><span class="api-name">ListFirewallDetail</span><br><span class="api-desc">查询防火墙实例</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>黑白名单管理</h3>
+<ul>
+<li><span class="api-name">DeleteBlackWhiteList</span><br><span class="api-desc">删除黑白名单规则</span></li>
+<li><span class="api-name">UpdateBlackWhiteList</span><br><span class="api-desc">更新黑白名单列表</span></li>
+<li><span class="api-name">ListBlackWhiteLists</span><br><span class="api-desc">查询黑白名单列表</span></li>
+<li><span class="api-name">AddBlackWhiteList</span><br><span class="api-desc">创建黑白名单规则</span></li>
+</ul>
+</div>
+
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

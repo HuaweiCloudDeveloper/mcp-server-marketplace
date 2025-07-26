@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>DRS MCP Server是一个Model Context Protocol（Model Context Protocol）服务器，为MCP客户端（如Claude Desktop、Cline、Cursor）提供与华为云服务DRS交互的能力，可以基于自然语言对DRS资源进行全链条管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+         <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+         <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+         <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_drs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_drs --transport stdio --port 8848
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_drs --transport http  --port 8848
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_drs --transport sse --port 8848
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-vpc-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "http-vpc-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8848/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-vpc-example": {
+              "type": "sse",
+              "url": "http://localhost:8848/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>ITaskController</h3>
+          <ul>
+            <li><span class="api-name">ListTasks</span><br><span class="api-desc">获取任务列表</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>SQL限流</h3>
+          <ul>
+            <li><span class="api-name">ListLimitTask</span><br><span class="api-desc">根据指定条件查询限流任务列表</span></li>
+            <li><span class="api-name">DeleteLimitTask</span><br><span class="api-desc">根据task_id进行限流任务的删除</span></li>
+            <li><span class="api-name">CreateLimitTask</span><br><span class="api-desc">根据具体范围和类型,进行限流任务的创建</span></li>
+            <li><span class="api-name">ShowLimitTask</span><br><span class="api-desc">查询限流任务详情</span></li>
+            <li><span class="api-name">SyncLimitData</span><br><span class="api-desc">同步内核侧sql限流数据至管控侧</span></li>
+            <li><span class="api-name">ListNodeLimitSqlModel</span><br><span class="api-desc">查询节点的sql模板列表</span></li>
+            <li><span class="api-name">UpdateLimitTask</span><br><span class="api-desc">根据新的条件进行限流任务的更新</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>Tags</h3>
+          <ul>
+            <li><span class="api-name">ListProjectTags</span><br><span class="api-desc">查询租户在指定项目中指定资源类型下的所有标签</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>任务管理</h3>
+          <ul>
+            <li><span class="api-name">ListScheduleTask</span><br><span class="api-desc">查看定时任务列表</span></li>
+            <li><span class="api-name">CancelScheduleTask</span><br><span class="api-desc">取消定时任务</span></li>
+            <li><span class="api-name">DeleteScheduleTask</span><br><span class="api-desc">删除定时任务信息</span></li>
+            <li><span class="api-name">ShowJobDetail</span><br><span class="api-desc">查询job的执行状态。 可用于查询SFS Turbo异步API的执行状态。例如:可使用调用创建并绑定ldap配置接口时返回的jobId,通过该接口查询job的执行状态。</span></li>
+            <li><span class="api-name">DeleteJob</span><br><span class="api-desc"></span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>参数配置</h3>
+          <ul>
+            <li><span class="api-name">CreateConfigurationTemplate</span><br><span class="api-desc">创建参数模板。</span></li>
+            <li><span class="api-name">UpdateInstanceConfiguration</span><br><span class="api-desc">修改指定实例的参数。</span></li>
+            <li><span class="api-name">ShowInstanceConfiguration</span><br><span class="api-desc">获取指定实例的参数模板。</span></li>
+            <li><span class="api-name">ListParamGroupTemplates</span><br><span class="api-desc">获取参数模板列表,包括所有数据库的默认参数模板和用户创建的参数模板。</span></li>
+            <li><span class="api-name">CopyConfiguration</span><br><span class="api-desc">复制参数模板</span></li>
+            <li><span class="api-name">ListConfigurationsDiff</span><br><span class="api-desc">获取两个参数配置模板的差异列表。</span></li>
+            <li><span class="api-name">ListHistoryOperations</span><br><span class="api-desc">查询参数模板的修改历史记录。</span></li>
+            <li><span class="api-name">ShowConfigurationDetail</span><br><span class="api-desc">根据参数模板ID获取指定参数模板详情。</span></li>
+            <li><span class="api-name">ListParameterGroupTemplates</span><br><span class="api-desc">获取参数模板列表,包括所有数据库的默认参数模板和用户创建的参数模板。</span></li>
+            <li><span class="api-name">ListAppliedHistories</span><br><span class="api-desc">查询参数模板的应用记录,以实例级别为维度。</span></li>
+            <li><span class="api-name">SwitchConfiguration</span><br><span class="api-desc">指定实例变更参数模板。</span></li>
+            <li><span class="api-name">ListApplicableInstances</span><br><span class="api-desc">查询可应用当前参数组模板的实例列表。</span></li>
+            <li><span class="api-name">ShowInstanceParamGroup</span><br><span class="api-desc">获取指定实例的参数模板。</span></li>
+            <li><span class="api-name">ValidateParaGroupName</span><br><span class="api-desc">校验参数组名称是否存在。</span></li>
+            <li><span class="api-name">ShowInstanceParamGroupDetail</span><br><span class="api-desc">获取指定实例的参数模板。</span></li>
+            <li><span class="api-name">ShowParameterGroupDetail</span><br><span class="api-desc">根据参数模板ID获取指定参数模板详情。</span></li>
+            <li><span class="api-name">ListConfigurations</span><br><span class="api-desc">获取参数模板列表,包括所有数据库的默认参数模板和用户创建的参数模板。</span></li>
+            <li><span class="api-name">ResetConfiguration</span><br><span class="api-desc">重置参数模板。</span></li>
+            <li><span class="api-name">DeleteConfiguration</span><br><span class="api-desc">删除参数模板。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>回收站</h3>
+          <ul>
+            <li><span class="api-name">ShowRecyclePolicy</span><br><span class="api-desc">查询回收站的回收策略。</span></li>
+            <li><span class="api-name">ListRecycleInstancesDetails</span><br><span class="api-desc">查询回收站所有引擎实例列表。</span></li>
+            <li><span class="api-name">ListRecycleInstances</span><br><span class="api-desc">查询回收站实例信息</span></li>
+            <li><span class="api-name">SetRecyclePolicy</span><br><span class="api-desc">设置回收站策略。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>备份与恢复</h3>
+          <ul>
+            <li><span class="api-name">CreateManualBackup</span><br><span class="api-desc">创建手动备份。</span></li>
+            <li><span class="api-name">ShowBackupPolicy</span><br><span class="api-desc">查询自动备份策略。</span></li>
+            <li><span class="api-name">CreateRestoreInstance</span><br><span class="api-desc">恢复到新实例。</span></li>
+            <li><span class="api-name">DeleteManualBackup</span><br><span class="api-desc">删除手动备份。</span></li>
+            <li><span class="api-name">SetBackupPolicy</span><br><span class="api-desc">设置自动备份策略。</span></li>
+            <li><span class="api-name">ListBackups</span><br><span class="api-desc">获取备份列表。</span></li>
+            <li><span class="api-name">ListRestoreTimes</span><br><span class="api-desc">查询可恢复时间段。</span></li>
+            <li><span class="api-name">StopBackup</span><br><span class="api-desc">停止创建备份</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>备份管理</h3>
+          <ul>
+            <li><span class="api-name">ShowInstanceSnapshot</span><br><span class="api-desc">根据时间点或者备份文件查询原实例信息。</span></li>
+            <li><span class="api-name">ListRestorableInstancesDetails</span><br><span class="api-desc">查询可用于备份恢复的实例列表,实例信息要符合备份条件。</span></li>
+            <li><span class="api-name">RestoreInstance</span><br><span class="api-desc">备份恢复到当前实例</span></li>
+            <li><span class="api-name">SetNewBackupPolicy</span><br><span class="api-desc">设置自动备份策略</span></li>
+            <li><span class="api-name">DownloadBackup</span><br><span class="api-desc">获取备份下载链接。</span></li>
+            <li><span class="api-name">ListRestorableInstances</span><br><span class="api-desc">查询可用于备份恢复的实例列表,实例信息要符合备份条件。</span></li>
+            <li><span class="api-name">ListBackupsDetails</span><br><span class="api-desc">获取备份列表。</span></li>
+            <li><span class="api-name">ConfirmRestoredData</span><br><span class="api-desc">确认备份恢复到目标实例的数据正常。</span></li>
+            <li><span class="api-name">ListDbBackups</span><br><span class="api-desc">获取备份列表。</span></li>
+            <li><span class="api-name">ShowSourceInstanceDetail</span><br><span class="api-desc">根据时间点或者备份文件查询原实例信息。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>实例管理</h3>
+          <ul>
+            <li><span class="api-name">CreateGaussDbInstance</span><br><span class="api-desc">创建数据库实例,仅支持IAM5的新平面认证方式(AK/SK认证方式)。</span></li>
+            <li><span class="api-name">AttachEip</span><br><span class="api-desc">绑定和解绑弹性公网IP。</span></li>
+            <li><span class="api-name">StopInstance</span><br><span class="api-desc">实例进行关机,通过暂时停止按需实例以节省费用,实例默认停止七天。</span></li>
+            <li><span class="api-name">SearchAutoEnlargePolicy</span><br><span class="api-desc">查询磁盘自动扩容策略</span></li>
+            <li><span class="api-name">ShowDeploymentForm</span><br><span class="api-desc">根据解决方案模板名称或实例ID查询副本数、分片数、节点数</span></li>
+            <li><span class="api-name">ListDatabaseInstances</span><br><span class="api-desc">查询数据库实例列表/查询实例详情</span></li>
+            <li><span class="api-name">ValidateWeakPassword</span><br><span class="api-desc">校验数据库root用户密码的安全性。</span></li>
+            <li><span class="api-name">ListCnInfosBeforeReduce</span><br><span class="api-desc">查询协调节点列表</span></li>
+            <li><span class="api-name">UpdateMysqlCompatibility</span><br><span class="api-desc">更新指定实例的M兼容端口服务配置。</span></li>
+            <li><span class="api-name">ListInstancesDetails</span><br><span class="api-desc">查询数据库实例列表/查询实例详情</span></li>
+            <li><span class="api-name">ResizeInstanceFlavor</span><br><span class="api-desc">GaussDB数据库实例规格变更</span></li>
+            <li><span class="api-name">RunInstanceAction</span><br><span class="api-desc">CN横向扩容/DN分片扩容/磁盘扩容</span></li>
+            <li><span class="api-name">ShowProjectQuotas</span><br><span class="api-desc"></span></li>
+            <li><span class="api-name">ShowSslCertDownloadLink</span><br><span class="api-desc">查询实例SSL证书下载地址。</span></li>
+            <li><span class="api-name">CreateDbInstance</span><br><span class="api-desc">创建数据库实例</span></li>
+            <li><span class="api-name">ShowBalanceStatus</span><br><span class="api-desc">查询实例是否发生过主备切换而导致主机负载不均衡。</span></li>
+            <li><span class="api-name">SwitchShard</span><br><span class="api-desc">支持用户对单个或多个DN分片做主备切换,同一分组内只能指定一个新的备节点进行升主操作。</span></li>
+            <li><span class="api-name">RestartInstance</span><br><span class="api-desc">重启指定实例。</span></li>
+            <li><span class="api-name">ListBindedEips</span><br><span class="api-desc">查询实例已绑定EIP列表。</span></li>
+            <li><span class="api-name">StartMysqlCompatibility</span><br><span class="api-desc">开启指定实例的M兼容端口。</span></li>
+            <li><span class="api-name">ListFeatures</span><br><span class="api-desc">查询当前实例高级特性列表。</span></li>
+            <li><span class="api-name">CreateDatabaseInstance</span><br><span class="api-desc">创建数据库实例</span></li>
+            <li><span class="api-name">UpdateInstanceName</span><br><span class="api-desc">修改实例名称。</span></li>
+            <li><span class="api-name">ListComponentInfos</span><br><span class="api-desc">查询实例的组件列表</span></li>
+            <li><span class="api-name">UpdateFeatures</span><br><span class="api-desc">打开高级特性开关。</span></li>
+            <li><span class="api-name">ListInstanceDetails</span><br><span class="api-desc">查询数据库实例列表/查询实例详情</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>容灾管理</h3>
+          <ul>
+            <li><span class="api-name">ShowCrossCloudDisasterInstanceMonitor</span><br><span class="api-desc">查询实例容灾监控实时状态。</span></li>
+            <li><span class="api-name">ExecuteCrossCloudDisasterRecoveryFailover</span><br><span class="api-desc">容灾升主failover(灾备实例端下发)。</span></li>
+            <li><span class="api-name">ShowCrossCloudDisasterRelations</span><br><span class="api-desc">查询容灾关系列表。</span></li>
+            <li><span class="api-name">ExecuteCrossCloudReleaseDisaster</span><br><span class="api-desc">解除容灾(从容灾主集群下发)。</span></li>
+            <li><span class="api-name">ExecuteCrossCloudDisasterDataCacheEnd</span><br><span class="api-desc">结束stream流式容灾的日志保持功能,目前只有stream流容灾支持。</span></li>
+            <li><span class="api-name">ExecuteCrossCloudDisasterDataCacheStart</span><br><span class="api-desc">主实例开始容灾日志保持,目前只有stream流容灾支持。</span></li>
+            <li><span class="api-name">ListDisasterRecoveryRecord</span><br><span class="api-desc">查询容灾操作记录。</span></li>
+            <li><span class="api-name">ExecuteCrossCloudDisasterSwitchover</span><br><span class="api-desc">容灾switchover(可在主备任一一端下发)。</span></li>
+            <li><span class="api-name">ExecuteCrossCloudDisasterRestore</span><br><span class="api-desc">流容灾备升主选择支持容灾回切,实现容灾关系的重建任务。</span></li>
+            <li><span class="api-name">ExecuteCrossCloudDisasterStartSimulation</span><br><span class="api-desc">开始容灾演练,目前只有stream流容灾支持。</span></li>
+            <li><span class="api-name">ResetDrConfig</span><br><span class="api-desc">重置容灾网络等配置。1.将自动“创建委托”以授权DBS云服务访问VPC资源信息、查询IAAS接口。2.重置实例容灾网络等配置。</span></li>
+            <li><span class="api-name">ExecuteCrossCloudDisasterEndSimulation</span><br><span class="api-desc">灾备实例结束容灾演练,目前只有stream流容灾支持。</span></li>
+            <li><span class="api-name">CreateCrossCloudConstructDisaster</span><br><span class="api-desc">搭建容灾关系(从主实例端下发)。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>引擎版本和规格</h3>
+          <ul>
+            <li><span class="api-name">ListFlavors</span><br><span class="api-desc">查询数据库规格。</span></li>
+            <li><span class="api-name">ListDatastores</span><br><span class="api-desc">查询数据库引擎的版本。</span></li>
+            <li><span class="api-name">ListAvailableFlavors</span><br><span class="api-desc">查询实例可变更规格列表。</span></li>
+            <li><span class="api-name">ListFlavorsDetails</span><br><span class="api-desc">查询数据库的规格信息。</span></li>
+            <li><span class="api-name">ListInstanceEngineDetail</span><br><span class="api-desc">查看实例引擎版本分布</span></li>
+            <li><span class="api-name">ListDatastoresDetails</span><br><span class="api-desc">查询引擎列表。</span></li>
+            <li><span class="api-name">ListStorageTypes</span><br><span class="api-desc">查询数据库磁盘类型。</span></li>
+            <li><span class="api-name">ListDbFlavors</span><br><span class="api-desc">查询数据库的规格信息。</span></li>
+            <li><span class="api-name">ListGaussDbDatastores</span><br><span class="api-desc">查询引擎列表。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>插件管理</h3>
+          <ul>
+            <li><span class="api-name">ListKernelPlugins</span><br><span class="api-desc">查询实例已安装的插件列表</span></li>
+            <li><span class="api-name">ListPluginExtensions</span><br><span class="api-desc">查询实例插件拓展信息</span></li>
+            <li><span class="api-name">ResumePluginExtensions</span><br><span class="api-desc">配置插件拓展能力</span></li>
+            <li><span class="api-name">InstallKernelPlugin</span><br><span class="api-desc">安装插件</span></li>
+            <li><span class="api-name">ListSupportKernelPlugins</span><br><span class="api-desc">查询支持的插件列表</span></li>
+            <li><span class="api-name">SetKernelPluginLicense</span><br><span class="api-desc">配置插件license</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>数据库管理</h3>
+          <ul>
+            <li><span class="api-name">StartInstance</span><br><span class="api-desc">启动数据库,同时支持节点级别的启动操作</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>日志管理</h3>
+          <ul>
+            <li><span class="api-name">ShowErrorLogSwitchStatus</span><br><span class="api-desc">查询数据库错误日志采集的开关状态。</span></li>
+            <li><span class="api-name">ListInstanceErrorLogs</span><br><span class="api-desc">查询数据库错误日志下载链接。</span></li>
+            <li><span class="api-name">CreateSlowLogDownload</span><br><span class="api-desc">创建慢日志下载信息</span></li>
+            <li><span class="api-name">ShowSlowLogDownload</span><br><span class="api-desc">查询慢日志下载信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>标签管理</h3>
+          <ul>
+            <li><span class="api-name">DeleteInstanceTag</span><br><span class="api-desc">删除实例标签</span></li>
+            <li><span class="api-name">ListPredefinedTags</span><br><span class="api-desc">查询预预定义标签。</span></li>
+            <li><span class="api-name">ListInstanceTags</span><br><span class="api-desc">查询实例标签。</span></li>
+            <li><span class="api-name">AddInstanceTags</span><br><span class="api-desc">对指定实例添加用户标签信息。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>版本升级</h3>
+          <ul>
+            <li><span class="api-name">UpgradeInstanceVersion</span><br><span class="api-desc">GaussDB(for openGauss)实例版本升级。包括灰度升级,就地升级,热补丁升级等三种升级方式。</span></li>
+            <li><span class="api-name">ShowBatchUpgradeCandidateVersions</span><br><span class="api-desc">查询批量实例可升级的版本和升级类型。</span></li>
+            <li><span class="api-name">ShowUpgradeCandidateVersions</span><br><span class="api-desc">查询实例可升级版本。</span></li>
+            <li><span class="api-name">BatchShowUpgradeCandidateVersions</span><br><span class="api-desc">查询批量实例可升级的版本和升级类型。</span></li>
+            <li><span class="api-name">ShowUpgradeCandidateVersionsDetails</span><br><span class="api-desc">查询实例可升级版本。</span></li>
+            <li><span class="api-name">UpgradeInstancesVersion</span><br><span class="api-desc">GaussDB批量实例版本升级。包括灰度升级,就地升级、热补丁升级三种升级方式。</span></li>
+            <li><span class="api-name">CreateScheduleTask</span><br><span class="api-desc">批量实例内核版本定时升级</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>独享实例管理</h3>
+          <ul>
+            <li><span class="api-name">ShowEnterpriseProject</span><br><span class="api-desc">查询企业项目详情。</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</

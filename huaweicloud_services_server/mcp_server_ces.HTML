@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      display: inline-block;
+      background-color: #f8f9fa;
+
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ces
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ces --transport stdio --port 8016
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ces --transport http  --port 8016
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ces --transport sse --port 8016
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ces": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_ces/src/mcp_server_ces/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ces": {
+              "type": "http",
+              "url": "http://127.0.0.1:8016/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ces": {
+              "type": "sse",
+              "url": "http://localhost:8016/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>Agent任务相关接口</h3><ul><li><span class="api-name">BatchCreateAgentInvocations</span><br><span class="api-desc">批量创建Agent任务</span></li><li><span class="api-name">ListAgentInvocations</span><br><span class="api-desc">查询Agent任务列表</span></li></ul> </div>
+<div class="api-category"><h3>一键告警</h3><ul><li><span class="api-name">ListOneClickAlarms</span><br><span class="api-desc">查询一键告警列表</span></li><li><span class="api-name">CreateOneClickAlarm</span><br><span class="api-desc">创建一键告警</span></li><li><span class="api-name">UpdateOneClickAlarmNotifications</span><br><span class="api-desc">批量修改开启状态的一键告警关联告警规则的告警通知</span></li><li><span class="api-name">BatchDeleteOneClickAlarms</span><br><span class="api-desc">批量删除一键告警</span></li><li><span class="api-name">ListOneClickAlarmRules</span><br><span class="api-desc">查询一键告警关联告警规则列表</span></li><li><span class="api-name">BatchUpdateOneClickAlarmPoliciesEnabledState</span><br><span class="api-desc">批量修改一键告警关联告警规则策略的启用状态</span></li><li><span class="api-name">BatchUpdateOneClickAlarmsEnabledState</span><br><span class="api-desc">批量修改一键告警关联告警规则的启用状态</span></li></ul> </div>
+<div class="api-category"><h3>事件监控</h3><ul><li><span class="api-name">CreateEvents</span><br><span class="api-desc">上报自定义事件。</span></li><li><span class="api-name">ListEventDetail</span><br><span class="api-desc">根据事件监控名称,查询该事件发生的详细信息。</span></li><li><span class="api-name">ListEvents</span><br><span class="api-desc">查询事件监控列表,包括系统事件和自定义事件。</span></li></ul> </div>
+<div class="api-category"><h3>告警模板</h3><ul><li><span class="api-name">ListAlarmTemplates</span><br><span class="api-desc">查询告警模板列表</span></li><li><span class="api-name">BatchDeleteAlarmTemplates</span><br><span class="api-desc">批量删除自定义告警模板</span></li><li><span class="api-name">CreateAlarmTemplate</span><br><span class="api-desc">创建自定义告警模板</span></li><li><span class="api-name">ShowAlarmTemplate</span><br><span class="api-desc">查询告警模板详情</span></li><li><span class="api-name">UpdateAlarmTemplate</span><br><span class="api-desc">修改自定义告警模板</span></li></ul> </div>
+<div class="api-category"><h3>告警模板关联告警规则</h3><ul><li><span class="api-name">ListAlarmTemplateAssociationAlarms</span><br><span class="api-desc">查询告警模板关联的告警规则列表</span></li></ul> </div>
+<div class="api-category"><h3>告警策略</h3><ul><li><span class="api-name">UpdateAlarmRulePolicies</span><br><span class="api-desc">修改告警规则策略(全量修改)</span></li><li><span class="api-name">ListAlarmRulePolicies</span><br><span class="api-desc">根据告警规则ID查询策略列表</span></li></ul> </div>
+<div class="api-category"><h3>告警规则</h3><ul><li><span class="api-name">BatchEnableAlarmRules</span><br><span class="api-desc">批量启停告警规则</span></li><li><span class="api-name">ListAlarmRules</span><br><span class="api-desc">查询告警规则列表</span></li><li><span class="api-name">BatchDeleteAlarmRules</span><br><span class="api-desc">批量删除告警规则V2接口</span></li><li><span class="api-name">CreateAlarmRules</span><br><span class="api-desc">创建告警规则</span></li></ul> </div>
+<div class="api-category"><h3>告警规则管理</h3><ul><li><span class="api-name">ListAlarms</span><br><span class="api-desc">查询告警规则列表,可以指定分页条件限制结果数量,可以指定排序规则。</span></li><li><span class="api-name">CreateAlarm</span><br><span class="api-desc">创建一条告警规则。</span></li><li><span class="api-name">DeleteAlarm</span><br><span class="api-desc">删除一条告警规则。</span></li><li><span class="api-name">ShowAlarm</span><br><span class="api-desc">根据告警ID查询告警规则信息。</span></li><li><span class="api-name">DeleteAlarmTemplate</span><br><span class="api-desc">根据ID删除自定义告警模板。</span></li><li><span class="api-name">UpdateAlarmAction</span><br><span class="api-desc">启动或停止一条告警规则。</span></li><li><span class="api-name">UpdateAlarm</span><br><span class="api-desc">修改告警规则。</span></li></ul> </div>
+<div class="api-category"><h3>告警记录</h3><ul><li><span class="api-name">ListAlarmHistories</span><br><span class="api-desc">查询告警记录列表</span></li></ul> </div>
+<div class="api-category"><h3>告警资源</h3><ul><li><span class="api-name">ListAlarmRuleResources</span><br><span class="api-desc">根据告警规则ID查询告警规则资源列表</span></li><li><span class="api-name">DeleteAlarmRuleResources</span><br><span class="api-desc">批量删除告警规则资源(资源分组类型的告警规则不支持),资源分组类型的修改请使用资源分组管理相关接口</span></li><li><span class="api-name">AddAlarmRuleResources</span><br><span class="api-desc">批量增加告警规则资源(资源分组类型的告警规则不支持),资源分组类型的修改请使用资源分组管理相关接口</span></li></ul> </div>
+<div class="api-category"><h3>告警通知</h3><ul><li><span class="api-name">UpdateAlarmNotifications</span><br><span class="api-desc">修改告警规则告警通知信息,告警策略&资源请使用对应接口</span></li></ul> </div>
+<div class="api-category"><h3>告警通知屏蔽</h3><ul><li><span class="api-name">BatchUpdateNotificationMaskTime</span><br><span class="api-desc">批量修改告警通知屏蔽规则的屏蔽时间</span></li><li><span class="api-name">ListNotificationMasks</span><br><span class="api-desc">批量查询指定类型的通知屏蔽规则,目前最多支持100个通知屏蔽规则的批量查询。</span></li><li><span class="api-name">BatchDeleteNotificationMasks</span><br><span class="api-desc">批量删除告警通知屏蔽规则</span></li><li><span class="api-name">BatchUpdateNotificationMasks</span><br><span class="api-desc">批量设置告警通知屏蔽规则</span></li><li><span class="api-name">UpdateNotificationMask</span><br><span class="api-desc">修改告警通知屏蔽规则</span></li><li><span class="api-name">ListNotificationMaskResources</span><br><span class="api-desc">查询告警通知屏蔽资源列表</span></li></ul> </div>
+<div class="api-category"><h3>指标管理</h3><ul><li><span class="api-name">ListAgentDimensionInfo</span><br><span class="api-desc">根据ECS/BMS资源ID查询磁盘、挂载点、进程、显卡、RAID控制器维度指标信息;维度NPU已经为原始值,不需要调用该接口进行额外查询获取指标信息</span></li><li><span class="api-name">ListMetrics</span><br><span class="api-desc">查询系统当前可监控指标列表,可以指定指标命名空间、指标名称、维度、排序方式,起始记录和最大记录条数过滤查询结果。</span></li></ul> </div>
+<div class="api-category"><h3>插件状态查询</h3><ul><li><span class="api-name">ListAgentStatus</span><br><span class="api-desc">插件状态查询,包括uniagent状态以及插件状态</span></li></ul> </div>
+<div class="api-category"><h3>监控数据管理</h3><ul><li><span class="api-name">BatchListMetricData</span><br><span class="api-desc">批量查询指定时间范围内指定指标的指定粒度的监控数据,目前最多支持500指标的批量查询。 对于不同的period取值和查询的指标数量,默认的最大查询区间(to-from)不同。 规则为"指标数量*(to-from)/监控周期<=3000",若超出阈值,会自动调整from以满足规则。</span></li><li><span class="api-name">CreateMetricData</span><br><span class="api-desc">添加一条或多条指标监控数据。</span></li><li><span class="api-name">ShowEventData</span><br><span class="api-desc">查询指定时间范围指定事件类型的主机配置数据,可以通过参数指定需要查询的数据维度。注意:该接口提供给HANA场景下SAP Monitor查询主机配置数据,其他场景下查不到主机配置数据。</span></li><li><span class="api-name">ShowMetricData</span><br><span class="api-desc">查询指定时间范围指定指标的指定粒度的监控数据,可以通过参数指定需要查询的数据维度。</span></li></ul> </div>
+<div class="api-category"><h3>监控看板</h3><ul><li><span class="api-name">DeleteDashboards</span><br><span class="api-desc">批量删除监控看板</span></li><li><span class="api-name">UpdateDashboard</span><br><span class="api-desc">修改监控看板</span></li><li><span class="api-name">ListDashboardInfos</span><br><span class="api-desc">查询监控看板列表</span></li><li><span class="api-name">CreateOneDashboard</span><br><span class="api-desc">创建/复制监控看板</span></li></ul> </div>
+<div class="api-category"><h3>监控视图</h3><ul><li><span class="api-name">ListDashboardWidgets</span><br><span class="api-desc">查询指定监控看板下的监控视图列表</span></li><li><span class="api-name">ShowWidget</span><br><span class="api-desc">查询指定监控视图信息</span></li><li><span class="api-name">BatchUpdateWidgets</span><br><span class="api-desc">批量更新监控视图</span></li><li><span class="api-name">CreateDashboardWidgets</span><br><span class="api-desc">创建/复制/批量创建监控视图到指定的监控看板</span></li><li><span class="api-name">DeleteOneWidget</span><br><span class="api-desc">删除指定监控视图</span></li></ul> </div>
+<div class="api-category"><h3>资源分组</h3><ul><li><span class="api-name">BatchDeleteResourceGroups</span><br><span class="api-desc">批量删除资源分组</span></li><li><span class="api-name">ListResourceGroups</span><br><span class="api-desc">查询资源分组列表</span></li><li><span class="api-name">UpdateResourceGroup</span><br><span class="api-desc">修改资源分组</span></li><li><span class="api-name">UpdateResourceGroupAssociationAlarmTemplate</span><br><span class="api-desc">提交资源分组批量关联自定义告警模板异步任务,由异步任务覆盖性创建告警规则。每个用户创建处于待执行状态的异步任务数量上限为100个,单个资源分组仅可有1个未完成的任务。</span></li><li><span class="api-name">CreateResourceGroup</span><br><span class="api-desc">创建资源分组</span></li><li><span class="api-name">ShowResourceGroup</span><br><span class="api-desc">查询指定资源分组详情</span></li></ul> </div>
+<div class="api-category"><h3>资源分组关联资源</h3><ul><li><span class="api-name">ListResourceGroupsServicesResources</span><br><span class="api-desc">查询资源分组下指定服务类别特定维度的资源列表</span></li><li><span class="api-name">BatchDeleteResources</span><br><span class="api-desc">给自定义资源分组,即类型为手动添加的资源分组,批量删除关联资源</span></li><li><span class="api-name">BatchCreateResources</span><br><span class="api-desc">给自定义资源分组,即类型为手动添加的资源分组,批量增加关联资源</span></li></ul> </div>
+<div class="api-category"><h3>资源分组管理</h3><ul><li><span class="api-name">DeleteResourceGroup</span><br><span class="api-desc">删除一条资源分组。</span></li><li><span class="api-name">ListResourceGroup</span><br><span class="api-desc">查询所创建的所有资源分组。</span></li></ul> </div>
+<div class="api-category"><h3>资源标签管理</h3><ul><li><span class="api-name">ListCesTargetProjectTags</span><br><span class="api-desc">查询CES指定项目指定资源类型标签列表。</span></li></ul> </div>
+<div class="api-category"><h3>配额管理</h3><ul><li><span class="api-name">ShowQuotas</span><br><span class="api-desc">查询用户可以创建的资源配额总数及当前使用量,当前仅有告警规则一种资源类型。</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

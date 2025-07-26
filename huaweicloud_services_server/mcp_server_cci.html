@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云CCI上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>CCI MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务CCI交互的能力，支持基于自然语言对CCI资源进行全链路管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_cci
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-cci --transport stdio --port 8013
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-cci --transport http  --port 8013
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-cci --transport sse --port 8013
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+          <p>支持以下客户端与MCP服务交互：</p>
+          <ul>
+            <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+            <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+            <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+            <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+          </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-cci": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run", 
+                "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_cci/src/mcp_server_cci/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+          <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-cci": {
+              "type": "http",
+              "url": "http://127.0.0.1:8013/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-cci": {
+              "type": "sse",
+              "url": "http://localhost:8013/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <!-- API groups -->
+        <div class="api-category">
+          <h3>API groups</h3>
+          <ul>
+            <li><span class="api-name">getCrdYangtseCniAPIGroup</span><br><span class="api-desc">查询APIGroup /apis/crd.yangtse.cni</span></li>
+            <li><span class="api-name">getBatchVolcanoShV1alpha1APIResources</span><br><span class="api-desc">查询所有batch.volcano.sh/v1alpha1的API</span></li>
+            <li><span class="api-name">getBatchAPIGroup</span><br><span class="api-desc">查询APIGroup /apis/batch</span></li>
+            <li><span class="api-name">getRbacAuthorizationAPIGroup</span><br><span class="api-desc">get information of a group</span></li>
+            <li><span class="api-name">getBatchV1beta1APIResources</span><br><span class="api-desc">get available resources</span></li>
+            <li><span class="api-name">getBatchVolcanoShAPIGroup</span><br><span class="api-desc">查询APIGroup /apis/batch.volcano.sh</span></li>
+            <li><span class="api-name">getCoreAPIVersions</span><br><span class="api-desc">get available API versions</span></li>
+            <li><span class="api-name">getExtensionsAPIGroup</span><br><span class="api-desc">查询APIGroup /apis/extensions</span></li>
+            <li><span class="api-name">getAPIVersions</span><br><span class="api-desc">get available API versions</span></li>
+            <li><span class="api-name">getMetricsAPIGroup</span><br><span class="api-desc">查询APIGroup /apis/metrics.k8s.io</span></li>
+            <li><span class="api-name">getRbacAuthorizationV1APIResources</span><br><span class="api-desc">get available resources</span></li>
+            <li><span class="api-name">getMetricsV1beta1APIResources</span><br><span class="api-desc">get available resources</span></li>
+            <li><span class="api-name">getCoreV1APIResources</span><br><span class="api-desc">get available resources</span></li>
+            <li><span class="api-name">getNetworkingCciIoAPIGroup</span><br><span class="api-desc">查询APIGroup /apis/networking.cci.io</span></li>
+            <li><span class="api-name">getCrdYangtseCniV1APIResources</span><br><span class="api-desc">查询所有crd.yangtse.cni/v1的API</span></li>
+            <li><span class="api-name">getExtensionsV1beta1APIResources</span><br><span class="api-desc">get available resources</span></li>
+            <li><span class="api-name">getNetworkingCciIoV1beta1APIResources</span><br><span class="api-desc">get available resources</span></li>
+            <li><span class="api-name">getBatchV1APIResources</span><br><span class="api-desc">get available resources</span></li>
+            <li><span class="api-name">getAppsV1APIResources</span><br><span class="api-desc">get available resources</span></li>
+            <li><span class="api-name">getAppsAPIGroup</span><br><span class="api-desc">查询APIGroup /apis/apps</span></li>
+          </ul>
+        </div>
+
+        <!-- ClusterRole -->
+        <div class="api-category">
+          <h3>ClusterRole</h3>
+          <ul>
+            <li><span class="api-name">listRbacAuthorizationV1ClusterRole</span><br><span class="api-desc">列出或监听ClusterRole对象</span></li>
+            <li><span class="api-name">readRbacAuthorizationV1ClusterRole</span><br><span class="api-desc">读取指定的ClusterRole</span></li>
+          </ul>
+        </div>
+
+        <!-- ConfigMap -->
+        <div class="api-category">
+          <h3>ConfigMap</h3>
+          <ul>
+            <li><span class="api-name">listCoreV1NamespacedConfigMap</span><br><span class="api-desc">查询Namespace下所有ConfigMap的详细信息</span></li>
+            <li><span class="api-name">readCoreV1NamespacedConfigMap</span><br><span class="api-desc">查询ConfigMap详细信息</span></li>
+            <li><span class="api-name">deleteCoreV1NamespacedConfigMap</span><br><span class="api-desc">删除ConfigMap</span></li>
+            <li><span class="api-name">patchCoreV1NamespacedConfigMap</span><br><span class="api-desc">更新ConfigMap</span></li>
+            <li><span class="api-name">replaceCoreV1NamespacedConfigMap</span><br><span class="api-desc">替换ConfigMap</span></li>
+            <li><span class="api-name">deleteCoreV1CollectionNamespacedConfigMap</span><br><span class="api-desc">删除Namespace下所有ConfigMap</span></li>
+            <li><span class="api-name">createCoreV1NamespacedConfigMap</span><br><span class="api-desc">创建ConfigMap</span></li>
+          </ul>
+        </div>
+
+        <!-- CronJob -->
+        <div class="api-category">
+          <h3>CronJob</h3>
+          <ul>
+            <li><span class="api-name">listBatchV1beta1CronJobForAllNamespaces</span><br><span class="api-desc">查询所有namespace下所有CronJob的详细信息</span></li>
+          </ul>
+        </div>
+
+        <!-- Deployment -->
+        <div class="api-category">
+          <h3>Deployment</h3>
+          <ul>
+            <li><span class="api-name">readAppsV1NamespacedDeployment</span><br><span class="api-desc">查询Deployment的详细信息</span></li>
+            <li><span class="api-name">createAppsV1NamespacedDeployment</span><br><span class="api-desc">创建一个Deployment</span></li>
+            <li><span class="api-name">listAppsV1DeploymentForAllNamespaces</span><br><span class="api-desc">查询用户所有Deployment</span></li>
+            <li><span class="api-name">readAppsV1NamespacedDeploymentStatus</span><br><span class="api-desc">查询Deployment的状态</span></li>
+            <li><span class="api-name">patchAppsV1NamespacedDeployment</span><br><span class="api-desc">更新Deployment</span></li>
+            <li><span class="api-name">readAppsV1NamespacedDeploymentScale</span><br><span class="api-desc">查询Deployment的伸缩操作</span></li>
+            <li><span class="api-name">listAppsV1NamespacedDeployment</span><br><span class="api-desc">查询Namespace下所有Deployment的详细信息</span></li>
+            <li><span class="api-name">deleteAppsV1NamespacedDeployment</span><br><span class="api-desc">删除Deployment</span></li>
+            <li><span class="api-name">patchAppsV1NamespacedDeploymentScale</span><br><span class="api-desc">部分更新Scale</span></li>
+            <li><span class="api-name">replaceAppsV1NamespacedDeployment</span><br><span class="api-desc">替换Deployment</span></li>
+            <li><span class="api-name">deleteAppsV1CollectionNamespacedDeployment</span><br><span class="api-desc">删除Namespace下所有Deployment</span></li>
+            <li><span class="api-name">replaceAppsV1NamespacedDeploymentScale</span><br><span class="api-desc">替换Scale</span></li>
+          </ul>
+        </div>
+
+        <!-- EIPPool -->
+        <div class="api-category">
+          <h3>EIPPool</h3>
+          <ul>
+            <li><span class="api-name">deleteCrdYangtseCniV1NamespacedEIPPool</span><br><span class="api-desc">删除指定的EIPPool</span></li>
+            <li><span class="api-name">readCrdYangtseCniV1NamespacedEIPPoolStatus</span><br><span class="api-desc">查询指定的EIPPool的详细信息</span></li>
+            <li><span class="api-name">readCrdYangtseCniV1NamespacedEIPPool</span><br><span class="api-desc">查询指定的EIPPool的详细信息</span></li>
+            <li><span class="api-name">patchCrdYangtseCniV1NamespacedEIPPool</span><br><span class="api-desc">更新EIPPool</span></li>
+            <li><span class="api-name">listCrdYangtseCniV1NamespacedEIPPool</span><br><span class="api-desc">查询指定namespace下所有EIPPool的详细信息</span></li>
+            <li><span class="api-name">createCrdYangtseCniV1NamespacedEIPPool</span><br><span class="api-desc">创建EIPPool</span></li>
+            <li><span class="api-name">replaceCrdYangtseCniV1NamespacedEIPPool</span><br><span class="api-desc">替换EIPPool</span></li>
+          </ul>
+        </div>
+
+        <!-- Endpoint -->
+        <div class="api-category">
+          <h3>Endpoint</h3>
+          <ul>
+            <li><span class="api-name">createCoreV1NamespacedEndpoints</span><br><span class="api-desc">创建Endpoint</span></li>
+            <li><span class="api-name">listCoreV1NamespacedEndpoints</span><br><span class="api-desc">查询Namespace下所有Endpoints</span></li>
+            <li><span class="api-name">replaceCoreV1NamespacedEndpoints</span><br><span class="api-desc">替换Endpoint</span></li>
+            <li><span class="api-name">readCoreV1NamespacedEndpoints</span><br><span class="api-desc">查询Endpoint</span></li>
+            <li><span class="api-name">patchCoreV1NamespacedEndpoints</span><br><span class="api-desc">更新Endpoint</span></li>
+            <li><span class="api-name">deleteCoreV1NamespacedEndpoints</span><br><span class="api-desc">删除Endpoint</span></li>
+          </ul>
+        </div>
+
+        <!-- Event -->
+        <div class="api-category">
+          <h3>Event</h3>
+          <ul>
+            <li><span class="api-name">deleteCoreV1NamespacedEvent</span><br><span class="api-desc">删除Event</span></li>
+            <li><span class="api-name">readCoreV1NamespacedEvent</span><br><span class="api-desc">查询Event详细信息</span></li>
+            <li><span class="api-name">listCoreV1NamespacedEvent</span><br><span class="api-desc">查询Namespace下所有Event的详细信息</span></li>
+          </ul>
+        </div>
+
+        <!-- Ingress -->
+        <div class="api-category">
+          <h3>Ingress</h3>
+          <ul>
+            <li><span class="api-name">readExtensionsV1beta1NamespacedIngressStatus</span><br><span class="api-desc">查询Ingress状态</span></li>
+            <li><span class="api-name">readExtensionsV1beta1NamespacedIngress</span><br><span class="api-desc">查询Ingress的详细信息</span></li>
+            <li><span class="api-name">deleteExtensionsV1beta1NamespacedIngress</span><br><span class="api-desc">删除Ingress</span></li>
+            <li><span class="api-name">deleteExtensionsV1beta1CollectionNamespacedIngress</span><br><span class="api-desc">删除Namespace下所有Ingress</span></li>
+            <li><span class="api-name">listExtensionsV1beta1NamespacedIngress</span><br><span class="api-desc">查询Namespace下所有Ingress的详细信息</span></li>
+            <li><span class="api-name">patchExtensionsV1beta1NamespacedIngress</span><br><span class="api-desc">更新Ingress</span></li>
+            <li><span class="api-name">createExtensionsV1beta1NamespacedIngress</span><br><span class="api-desc">创建Ingress</span></li>
+            <li><span class="api-name">replaceExtensionsV1beta1NamespacedIngress</span><br><span class="api-desc">替换Ingress</span></li>
+          </ul>
+        </div>
+
+        <!-- Job -->
+        <div class="api-category">
+          <h3>Job</h3>
+          <ul>
+            <li><span class="api-name">readBatchV1NamespacedJobStatus</span><br><span class="api-desc">查询Job状态</span></li>
+            <li><span class="api-name">deleteBatchV1CollectionNamespacedJob</span><br><span class="api-desc">删除Namespace下所有Job</span></li>
+            <li><span class="api-name">createBatchV1NamespacedJob</span><br><span class="api-desc">创建Job</span></li>
+            <li><span class="api-name">listBatchV1NamespacedJob</span><br><span class="api-desc">查询Namespace下所有Job的详细信息</span></li>
+            <li><span class="api-name">replaceBatchV1NamespacedJob</span><br><span class="api-desc">替换Job</span></li>
+            <li><span class="api-name">deleteBatchV1NamespacedJob</span><br><span class="api-desc">删除Job</span></li>
+            <li><span class="api-name">listBatchV1JobForAllNamespaces</span><br><span class="api-desc">获取Job列表</span></li>
+            <li><span class="api-name">readBatchV1NamespacedJob</span><br><span class="api-desc">查询Job的详细信息</span></li>
+            <li><span class="api-name">patchBatchV1NamespacedJob</span><br><span class="api-desc">更新Job</span></li>
+          </ul>
+        </div>
+
+        <!-- Metrics -->
+        <div class="api-category">
+          <h3>Metrics</h3>
+          <ul>
+            <li><span class="api-name">listMetricsV1beta1NamespacedPodMetrics</span><br><span class="api-desc">获取指定namespace下所有Pods的metrics信息</span></li>
+            <li><span class="api-name">readMetricsV1beta1NamespacedPodMetrics</span><br><span class="api-desc">获取指定namespace下指定Pod的metrics信息</span></li>
+          </ul>
+        </div>
+
+        <!-- Namespace -->
+        <div class="api-category">
+          <h3>Namespace</h3>
+          <ul>
+            <li><span class="api-name">listCoreV1Namespace</span><br><span class="api-desc">获取集群中该用户当前项目下所有Namespace的详细信息</span></li>
+            <li><span class="api-name">createCoreV1Namespace</span><br><span class="api-desc">创建一个Namespace</span></li>
+            <li><span class="api-name">deleteCoreV1Namespace</span><br><span class="api-desc">删除一个Namespace</span></li>
+            <li><span class="api-name">readCoreV1Namespace</span><br><span class="api-desc">查询Namespace的详细信息</span></li>
+          </ul>
+        </div>
+
+        <!-- Network -->
+        <div class="api-category">
+          <h3>Network</h3>
+          <ul>
+            <li><span class="api-name">deleteNetworkingCciIoV1beta1NamespacedNetwork</span><br><span class="api-desc">删除Network</span></li>
+            <li><span class="api-name">createNetworkingCciIoV1beta1NamespacedNetwork</span><br><span class="api-desc">创建Network</span></li>
+            <li><span class="api-name">listNetworkingCciIoV1beta1NamespacedNetwork</span><br><span class="api-desc">查询指定namespace下的所有Network</span></li>
+            <li><span class="api-name">deleteNetworkingCciIoV1beta1CollectionNamespacedNetwork</span><br><span class="api-desc">删除指定namespace下的所有Network</span></li>
+            <li><span class="api-name">readNetworkingCciIoV1beta1NamespacedNetworkStatus</span><br><span class="api-desc">查询Network的状态</span></li>
+            <li><span class="api-name">readNetworkingCciIoV1beta1NamespacedNetwork</span><br><span class="api-desc">查询Network</span></li>
+          </ul>
+        </div>
+
+        <!-- OpenAPIv2 -->
+        <div class="api-category">
+          <h3>OpenAPIv2</h3>
+          <ul>
+            <li><span class="api-name">GetOpenAPIv2</span><br><span class="api-desc">查询open api swagger信息</span></li>
+          </ul>
+        </div>
+
+        <!-- PersistentVolumeClaim -->
+        <div class="api-category">
+          <h3>PersistentVolumeClaim</h3>
+          <ul>
+            <li><span class="api-name">replaceCoreV1NamespacedPersistentVolumeClaim</span><br><span class="api-desc">替换PVC</span></li>
+            <li><span class="api-name">readCoreV1NamespacedPersistentVolumeClaim</span><br><span class="api-desc">查询PVC</span></li>
+            <li><span class="api-name">createCoreV1NamespacedPersistentVolumeClaim</span><br><span class="api-desc">创建PVC</span></li>
+            <li><span class="api-name">listCoreV1NamespacedPersistentVolumeClaim</span><br><span class="api-desc">查询Namespace下的所有PVC</span></li>
+            <li><span class="api-name">deleteCoreV1NamespacedPersistentVolumeClaim</span><br><span class="api-desc">删除PVC</span></li>
+          </ul>
+        </div>
+
+        <!-- Pod -->
+        <div class="api-category">
+          <h3>Pod</h3>
+          <ul>
+            <li><span class="api-name">listCoreV1NamespacedPod</span><br><span class="api-desc">查询指定namespace下的Pods的详细信息</span></li>
+            <li><span class="api-name">readCoreV1NamespacedPodStatus</span><br><span class="api-desc">查询Pod对象的状态</span></li>
+            <li><span class="api-name">connectCoreV1PostNamespacedPodExec</span><br><span class="api-desc">进入容器执行命令</span></li>
+            <li><span class="api-name">patchCoreV1NamespacedPod</span><br><span class="api-desc">更新Pod</span></li>
+            <li><span class="api-name">readCoreV1NamespacedPodLog</span><br><span class="api-desc">查询Pod的日志</span></li>
+            <li><span class="api-name">connectCoreV1GetNamespacedPodExec</span><br><span class="api-desc">进入容器执行命令</span></li>
+            <li><span class="api-name">deleteCoreV1CollectionNamespacedPod</span><br><span class="api-desc">删除Namespace下所有Pod</span></li>
+            <li><span class="api-name">createCoreV1NamespacedPod</span><br><span class="api-desc">创建一个Pod</span></li>
+            <li><span class="api-name">replaceCoreV1NamespacedPod</span><br><span class="api-desc">替换指定Pod</span></li>
+            <li><span class="api-name">deleteCoreV1NamespacedPod</span><br><span class="api-desc">删除Pod</span></li>
+            <li><span class="api-name">readCoreV1NamespacedPod</span><br><span class="api-desc">查询Pod的详细信息</span></li>
+            <li><span class="api-name">listCoreV1PodForAllNamespaces</span><br><span class="api-desc">获取Pod列表</span></li>
+          </ul>
+        </div>
+
+        <!-- ReplicaSet -->
+        <div class="api-category">
+          <h3>ReplicaSet</h3>
+          <ul>
+            <li><span class="api-name">listAppsV1NamespacedReplicaSet</span><br><span class="api-desc">查询命名空间下所有的ReplicaSets</span></li>
+            <li><span class="api-name">readAppsV1NamespacedReplicaSet</span><br><span class="api-desc">查询ReplicaSet的详细信息</span></li>
+          </ul>
+        </div>
+
+        <!-- ResourceQuota -->
+        <div class="api-category">
+          <h3>ResourceQuota</h3>
+          <ul>
+            <li><span class="api-name">readCoreV1NamespacedResourceQuota</span><br><span class="api-desc">查询指定的resourcequota</span></li>
+            <li><span class="api-name">listCoreV1NamespacedResourceQuota</span><br><span class="api-desc">查询指定namespace下的resourcequotas</span></li>
+          </ul>
+        </div>
+
+        <!-- RoleBinding -->
+        <div class="api-category">
+          <h3>RoleBinding</h3>
+          <ul>
+            <li><span class="api-name">listRbacAuthorizationV1NamespacedRoleBinding</span><br><span class="api-desc">列出或监听RoleBinding</span></li>
+            <li><span class="api-name">listRbacAuthorizationV1RoleBindingForAllNamespaces</span><br><span class="api-desc">列出或监听RoleBinding</span></li>
+            <li><span class="api-name">readRbacAuthorizationV1NamespacedRoleBinding</span><br><span class="api-desc">读取指定的RoleBinding</span></li>
+            <li><span class="api-name">replaceRbacAuthorizationV1NamespacedRoleBinding</span><br><span class="api-desc">替换指定的RoleBinding</span></li>
+            <li><span class="api-name">patchRbacAuthorizationV1NamespacedRoleBinding</span><br><span class="api-desc">部分更新指定的RoleBinding</span></li>
+            <li><span class="api-name">createRbacAuthorizationV1NamespacedRoleBinding</span><br><span class="api-desc">创建一个RoleBinding</span></li>
+            <li><span class="api-name">deleteRbacAuthorizationV1NamespacedRoleBinding</span><br><span class="api-desc">删除一个RoleBinding</span></li>
+          </ul>
+        </div>
+
+        <!-- Secret -->
+        <div class="api-category">
+          <h3>Secret</h3>
+          <ul>
+            <li><span class="api-name">deleteCoreV1NamespacedSecret</span><br><span class="api-desc">删除Secret</span></li>
+            <li><span class="api-name">deleteCoreV1CollectionNamespacedSecret</span><br><span class="api-desc">删除Namespace下所有Secret</span></li>
+            <li><span class="api-name">listCoreV1NamespacedSecret</span><br><span class="api-desc">查询指定namespace下的所有Secret对象</span></li>
+            <li><span class="api-name">patchCoreV1NamespacedSecret</span><br><span class="api-desc">更新Secret中部分信息</span></li>
+            <li><span class="api-name">readCoreV1NamespacedSecret</span><br><span class="api-desc">查询Secret的详细信息</span></li>
+            <li><span class="api-name">replaceCoreV1NamespacedSecret</span><br><span class="api-desc">替换Secret</span></li>
+            <li><span class="api-name">createCoreV1NamespacedSecret</span><br><span class="api-desc">创建Secret</span></li>
+          </ul>
+        </div>
+
+        <!-- Service -->
+        <div class="api-category">
+          <h3>Service</h3>
+          <ul>
+            <li><span class="api-name">patchCoreV1NamespacedService</span><br><span class="api-desc">更新Service</span></li>
+            <li><span class="api-name">replaceCoreV1NamespacedService</span><br><span class="api-desc">替换Service</span></li>
+            <li><span class="api-name">createCoreV1NamespacedService</span><br><span class="api-desc">创建一个Service</span></li>
+            <li><span class="api-name">readCoreV1NamespacedServiceStatus</span><br><span class="api-desc">查询指定的Service的状态</span></li>
+            <li><span class="api-name">readCoreV1NamespacedService</span><br><span class="api-desc">查询Service的详细信息</span></li>
+            <li><span class="api-name">deleteCoreV1NamespacedService</span><br><span class="api-desc">删除Service</span></li>
+            <li><span class="api-name">listCoreV1NamespacedService</span><br><span class="api-desc">查询Namespace下所有Service的详细信息</span></li>
+          </ul>
+        </div>
+
+        <!-- StatefulSet -->
+        <div class="api-category">
+          <h3>StatefulSet</h3>
+          <ul>
+            <li><span class="api-name">deleteAppsV1NamespacedStatefulSet</span><br><span class="api-desc">删除StatefulSet</span></li>
+            <li><span class="api-name">replaceAppsV1NamespacedStatefulSet</span><br><span class="api-desc">替换StatefulSet</span></li>
+            <li><span class="api-name">readAppsV1NamespacedStatefulSet</span><br><span class="api-desc">查询StatefulSet的详细信息</span></li>
+            <li><span class="api-name">patchAppsV1NamespacedStatefulSet</span><br><span class="api-desc">更新StatefulSet</span></li>
+            <li><span class="api-name">readAppsV1NamespacedStatefulSetStatus</span><br><span class="api-desc">查询StatefulSet状态</span></li>
+            <li><span class="api-name">createAppsV1NamespacedStatefulSet</span><br><span class="api-desc">创建StatefulSet</span></li>
+            <li><span class="api-name">listAppsV1NamespacedStatefulSet</span><br><span class="api-desc">查询Namespace下所有StatefulSet的详细信息</span></li>
+            <li><span class="api-name">deleteAppsV1CollectionNamespacedStatefulSet</span><br><span class="api-desc">删除Namespace下所有StatefulSet</span></li>
+            <li><span class="api-name">listAppsV1StatefulSetForAllNamespaces</span><br><span class="api-desc">列出所有StatefulSet资源对象</span></li>
+          </ul>
+        </div>
+
+        <!-- StorageClass -->
+        <div class="api-category">
+          <h3>StorageClass</h3>
+          <ul>
+            <li><span class="api-name">readStorageV1StorageClass</span><br><span class="api-desc">读取指定的StorageClass</span></li>
+            <li><span class="api-name">listStorageV1StorageClass</span><br><span class="api-desc">列出或监听StorageClass</span></li>
+          </ul>
+        </div>
+
+        <!-- VolcanoJob -->
+        <div class="api-category">
+          <h3>VolcanoJob</h3>
+          <ul>
+            <li><span class="api-name">replaceBatchVolcanoShV1alpha1NamespacedJob</span><br><span class="api-desc">替换Volcano Job</span></li>
+            <li><span class="api-name">listBatchVolcanoShV1alpha1NamespacedJob</span><br><span class="api-desc">查询命名空间下所有的Volcano Job</span></li>
+            <li><span class="api-name">createBatchVolcanoShV1alpha1NamespacedJob</span><br><span class="api-desc">创建Volcano Job</span></li>
+            <li><span class="api-name">patchBatchVolcanoShV1alpha1NamespacedJob</span><br><span class="api-desc">更新Volcano Job</span></li>
+            <li><span class="api-name">deleteBatchVolcanoShV1alpha1NamespacedJob</span><br><span class="api-desc">删除Volcano Job</span></li>
+            <li><span class="api-name">readBatchVolcanoShV1alpha1NamespacedJob</span><br><span class="api-desc">查询Volcano Job的详细信息</span></li>
+            <li><span class="api-name">deleteBatchVolcanoShV1alpha1CollectionNamespacedJob</span><br><span class="api-desc">删除命名空间下的所有Volcano Job</span></li>
+          </ul>
+        </div>
+
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

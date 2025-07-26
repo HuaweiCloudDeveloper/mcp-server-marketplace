@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>CBR MCP Server 是一款模型上下文协议（Model Context Protocol）服务器，为 MCP 客户端（如 Claude Desktop、Cline、Cursor）提供与华为云服务 CBR 交互的能力。CBR资源的全链条管理可以基于自然语言进行。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+         <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+         <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+         <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_cbr
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_cbr --transport stdio --port 8010
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_cbr --transport http  --port 8010
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_cbr --transport sse --port 8010
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-vpc-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "http-vpc-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8010/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-vpc-example": {
+              "type": "sse",
+              "url": "http://localhost:8010/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>Checkpoint管理</h3>
+          <ul>
+            <li><span class="api-name">ShowCheckpoint</span><br><span class="api-desc">本接口用于查询Checkpoint详情。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>主机管理</h3>
+          <ul>
+            <li><span class="api-name">ListPolicies</span><br><span class="api-desc">查询主机策略列表</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>任务</h3>
+          <ul>
+            <li><span class="api-name">ListOpLogs</span><br><span class="api-desc">查询任务列表</span></li>
+            <li><span class="api-name">ShowOpLog</span><br><span class="api-desc">根据指定任务ID查询任务</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>可保护性</h3>
+          <ul>
+            <li><span class="api-name">ShowReplicationCapabilities</span><br><span class="api-desc">查询本区域的复制能力</span></li>
+            <li><span class="api-name">ListProtectable</span><br><span class="api-desc">查询可保护性资源列表</span></li>
+            <li><span class="api-name">CheckAgent</span><br><span class="api-desc">检查应用一致性Agent状态</span></li>
+            <li><span class="api-name">ShowProtectable</span><br><span class="api-desc">根据ID查询可保护性资源</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>后端云服务器</h3>
+          <ul>
+            <li><span class="api-name">DeleteMember</span><br><span class="api-desc">删除后端云服务器</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>备份</h3>
+          <ul>
+            <li><span class="api-name">ShowBackup</span><br><span class="api-desc">根据指定id查询单个副本。</span></li>
+            <li><span class="api-name">ImportBackup</span><br><span class="api-desc">同步线下混合云VMware备份副本</span></li>
+            <li><span class="api-name">CopyBackup</span><br><span class="api-desc">跨区域复制备份。</span></li>
+            <li><span class="api-name">UpdateBackup</span><br><span class="api-desc">根据备份id更改备份</span></li>
+            <li><span class="api-name">RestoreBackup</span><br><span class="api-desc">恢复备份数据</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>备份与恢复</h3>
+          <ul>
+            <li><span class="api-name">ListBackups</span><br><span class="api-desc">获取备份列表。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>备份共享</h3>
+          <ul>
+            <li><span class="api-name">AddMember</span><br><span class="api-desc">添加备份可共享的成员,只有云服务器备份可以添加备份共享成员,且仅支持在同一区域的不同用户间共享。</span></li>
+            <li><span class="api-name">ShowMembersDetail</span><br><span class="api-desc">获取备份共享成员的列表信息</span></li>
+            <li><span class="api-name">UpdateMemberStatus</span><br><span class="api-desc">更新备份共享成员的状态,需要接收方执行此API。</span></li>
+            <li><span class="api-name">ShowMemberDetail</span><br><span class="api-desc">获取备份成员的详情</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>备份管理API</h3>
+          <ul>
+            <li><span class="api-name">DeleteBackup</span><br><span class="api-desc">删除备份。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>存储库</h3>
+          <ul>
+            <li><span class="api-name">ShowVault</span><br><span class="api-desc">根据ID查询指定存储库</span></li>
+            <li><span class="api-name">UpdateVault</span><br><span class="api-desc">根据存储库ID修改存储库</span></li>
+            <li><span class="api-name">ListVault</span><br><span class="api-desc">查询存储库列表</span></li>
+            <li><span class="api-name">DisassociateVaultPolicy</span><br><span class="api-desc">存储库解除策略</span></li>
+            <li><span class="api-name">MigrateVaultResource</span><br><span class="api-desc">支持资源迁移到另一个存储库,不删除备份。</span></li>
+            <li><span class="api-name">BatchUpdateVault</span><br><span class="api-desc">批量修改项目下所有存储库</span></li>
+            <li><span class="api-name">DeleteVault</span><br><span class="api-desc">删除存储库。若删除储存库,将一并删除存储库中的所有备份。</span></li>
+            <li><span class="api-name">ListExternalVault</span><br><span class="api-desc">查询其他区域的存储库列表</span></li>
+            <li><span class="api-name">AssociateVaultPolicy</span><br><span class="api-desc">存储库设置策略</span></li>
+            <li><span class="api-name">CreatePostPaidVault</span><br><span class="api-desc">创建包周期存储库</span></li>
+            <li><span class="api-name">SetVaultResource</span><br><span class="api-desc">设置存储库资源是否自动备份</span></li>
+            <li><span class="api-name">ShowSummary</span><br><span class="api-desc">查询项目下所有存储库的总容量和总使用量</span></li>
+            <li><span class="api-name">RemoveVaultResource</span><br><span class="api-desc">移除存储库中的资源,若移除资源,将一并删除该资源在保管库中的备份</span></li>
+            <li><span class="api-name">CreateVault</span><br><span class="api-desc">创建存储库</span></li>
+            <li><span class="api-name">AddVaultResource</span><br><span class="api-desc">存储库添加资源</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>文件应用备份</h3>
+          <ul>
+            <li><span class="api-name">UpdateAgent</span><br><span class="api-desc">修改客户端状态</span></li>
+            <li><span class="api-name">UnregisterAgent</span><br><span class="api-desc">移除客户端,移除客户端时将会删除该客户端所有备份,请谨慎操作。</span></li>
+            <li><span class="api-name">RegisterAgent</span><br><span class="api-desc">注册客户端,安装时候由Agent调用,无需手动注册。</span></li>
+            <li><span class="api-name">ListAgent</span><br><span class="api-desc">查询客户端列表</span></li>
+            <li><span class="api-name">RemoveAgentPath</span><br><span class="api-desc">移除已添加的文件备份路径。</span></li>
+            <li><span class="api-name">ShowAgent</span><br><span class="api-desc">查询指定客户端</span></li>
+            <li><span class="api-name">AddAgentPath</span><br><span class="api-desc">对客户端新增备份路径,新增的路径不会校验是否存在。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>标签</h3>
+          <ul>
+            <li><span class="api-name">DeleteVaultTag</span><br><span class="api-desc">幂等接口:删除时,如果删除的标签不存在,返回404。Key不能为空或者空字符串。</span></li>
+            <li><span class="api-name">ShowVaultTag</span><br><span class="api-desc">查询指定实例的标签信息</span></li>
+            <li><span class="api-name">CreateVaultTags</span><br><span class="api-desc">一个资源上最多有10个标签。</span></li>
+            <li><span class="api-name">ShowVaultResourceInstances</span><br><span class="api-desc">使用标签过滤实例</span></li>
+            <li><span class="api-name">ShowVaultProjectTag</span><br><span class="api-desc">查询租户在指定Region和实例类型的所有标签集合</span></li>
+            <li><span class="api-name">BatchCreateAndDeleteVaultTags</span><br><span class="api-desc">为指定实例批量添加或删除标签</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>组织策略</h3>
+          <ul>
+            <li><span class="api-name">DeleteOrganizationPolicy</span><br><span class="api-desc">删除组织策略</span></li>
+            <li><span class="api-name">ListOrganizationPolicyDetail</span><br><span class="api-desc">查询组织策略每个账号下策略部署状态列表</span></li>
+            <li><span class="api-name">ShowOrganizationPolicy</span><br><span class="api-desc">查询指定组织策略</span></li>
+            <li><span class="api-name">UpdateOrganizationPolicy</span><br><span class="api-desc">更新组织策略</span></li>
+            <li><span class="api-name">ListOrganizationPolicies</span><br><span class="api-desc">查询组织策略列表</span></li>
+            <li><span class="api-name">CreateOrganizationPolicy</span><br><span class="api-desc">创建组织策略</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>联邦身份认证管理</h3>
+          <ul>
+            <li><span class="api-name">ShowMetadata</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询身份提供商导入到IAM中的Metadata文件。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>计量</h3>
+          <ul>
+            <li><span class="api-name">ShowStorageUsage</span><br><span class="api-desc">查询容量统计</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>运营</h3>
+          <ul>
+            <li><span class="api-name">ChangeVaultChargeMode</span><br><span class="api-desc">修改资源的付费模式,暂时只支持按需资源转包周期资源。</span></li>
+            <li><span class="api-name">UpdateOrder</span><br><span class="api-desc">订单更新,支付cbc订单后,调用该接口更新包周期产品订单信息。该接口已废弃。</span></li>
+            <li><span class="api-name">ChangeOrder</span><br><span class="api-desc">订单更新,调用该接口更新包周期产品订单信息,返回待支付订单信息。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>还原点</h3>
+          <ul>
+            <li><span class="api-name">CreateCheckpoint</span><br><span class="api-desc">对存储库执行备份,生成备份还原点</span></li>
+            <li><span class="api-name">ImportCheckpoint</span><br><span class="api-desc">针对vault同步备份副本</span></li>
+            <li><span class="api-name">CopyCheckpoint</span><br><span class="api-desc">执行复制</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>防护策略管理</h3>
+          <ul>
+            <li><span class="api-name">DeletePolicy</span><br><span class="api-desc">删除防护策略,若策略正在使用,则需要先接解除域名与策略的绑定关系才能删除策略。</span></li>
+            <li><span class="api-name">ShowPolicy</span><br><span class="api-desc">根据Id查询防护策略</span></li>
+            <li><span class="api-name">UpdatePolicy</span><br><span class="api-desc">更新防护策略,请求体可只传需要更新的部分</span></li>
+            <li><span class="api-name">CreatePolicy</span><br><span class="api-desc">创建防护策略,系统会在生成策略时配置一些默认的配置项,如果需要修改策略的默认配置项需要通过调用更新防护策略接口实现</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>项目</h3>
+          <ul>
+            <li><span class="api-name">ListDomainProjects</span><br><span class="api-desc">根据指定租户名称查询项目列表。</span></li>
+            <li><span class="api-name">ShowMigrateStatus</span><br><span class="api-desc">查询迁移结果</span></li>
+            <li><span class="api-name">ShowDomain</span><br><span class="api-desc">由控制台调用的内部接口,用于仅在查询共享备份时获取源project_id的域名信息。</span></li>
+            <li><span class="api-name">MigrateDomain</span><br><span class="api-desc">将CSBS/VBS资源迁移到CBR。</span></li>
+            <li><span class="api-name">ListProjects</span><br><span class="api-desc">查询租户的企业项目信息</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

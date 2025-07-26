@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>CodeArtsPipeline MCP Server 是一个模型上下文协议(Model Context Protocol)服务器，为MCP客户端(如Claude Desktop、Cline、Cursor)提供与华为云服务CodeArtsPipeline交互的能力。可以基于自然语言对CodeArtsPipeline资源进行全链路管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ecs --transport stdio --port 8090
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ecs --transport http  --port 8090
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ecs --transport sse --port 8090
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8000/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+<div class="sidebar">
+  <h2 style="margin-top:0;">API工具列表</h2>
+
+  <div class="api-category">
+    <h3>扩展插件管理</h3>
+    <ul>
+      <li><span class="api-name">CreatePublisher</span><br><span class="api-desc">创建发布商</span></li>
+      <li><span class="api-name">UploadBasicPlugin</span><br><span class="api-desc">上传基础插件</span></li>
+      <li><span class="api-name">ShowPluginVersion</span><br><span class="api-desc">查询插件版本详情</span></li>
+      <li><span class="api-name">DeletePublisher</span><br><span class="api-desc">删除发布商</span></li>
+      <li><span class="api-name">CreatePluginVersion</span><br><span class="api-desc">创建插件版本</span></li>
+      <li><span class="api-name">ListBasePluginsNewPost</span><br><span class="api-desc">分页查询可选插件列表</span></li>
+      <li><span class="api-name">DeleteBasicPlugin</span><br><span class="api-desc">删除基础插件</span></li>
+      <li><span class="api-name">ShowBasicPlugin</span><br><span class="api-desc">查询基础插件详情</span></li>
+      <li><span class="api-name">ListAvailablePublisher</span><br><span class="api-desc">查询可用发布商</span></li>
+      <li><span class="api-name">ShowPublisher</span><br><span class="api-desc">查询发布商详情</span></li>
+      <li><span class="api-name">UpdatePluginBaseInfo</span><br><span class="api-desc">更新插件基本信息</span></li>
+      <li><span class="api-name">ListPLuginVersion</span><br><span class="api-desc">查询插件所有版本信息</span></li>
+      <li><span class="api-name">UploadPluginIcon</span><br><span class="api-desc">更新插件图标</span></li>
+      <li><span class="api-name">ListPlugins</span><br><span class="api-desc">查询插件列表</span></li>
+      <li><span class="api-name">UploadPublisherIcon</span><br><span class="api-desc">更新发布商图标</span></li>
+      <li><span class="api-name">CreatePluginDraft</span><br><span class="api-desc">创建插件草稿版本</span></li>
+      <li><span class="api-name">UpdatePluginDraft</span><br><span class="api-desc">更新插件草稿</span></li>
+      <li><span class="api-name">ListStagePlugins</span><br><span class="api-desc">查询可选插件列表</span></li>
+      <li><span class="api-name">ShowPluginOutputs</span><br><span class="api-desc">查询插件输出配置</span></li>
+      <li><span class="api-name">ListPublisher</span><br><span class="api-desc">查询发布商列表</span></li>
+      <li><span class="api-name">DeletePluginDraft</span><br><span class="api-desc">删除插件草稿</span></li>
+      <li><span class="api-name">PublishPluginDraft</span><br><span class="api-desc">发布插件草稿</span></li>
+      <li><span class="api-name">ShowPluginInputs</span><br><span class="api-desc">查询插件输入配置</span></li>
+      <li><span class="api-name">PublishPlugin</span><br><span class="api-desc">发布插件</span></li>
+      <li><span class="api-name">PublishPluginBind</span><br><span class="api-desc">插件绑定发布商</span></li>
+      <li><span class="api-name">UpdateBasicPlugin</span><br><span class="api-desc">更新基础插件</span></li>
+      <li><span class="api-name">ListPluginVersionNumber</span><br><span class="api-desc">查询插件版本号</span></li>
+      <li><span class="api-name">ShowPluginMetrics</span><br><span class="api-desc">查询插件指标配置</span></li>
+      <li><span class="api-name">CreateBasicPlugin</span><br><span class="api-desc">创建基础插件</span></li>
+      <li><span class="api-name">ListBasePlugins</span><br><span class="api-desc">查询基础插件列表</span></li>
+    </ul>
+  </div>
+
+  <div class="api-category">
+    <h3>模板管理</h3>
+    <ul>
+      <li><span class="api-name">ListTemplates</span><br><span class="api-desc">查询模板列表（支持分页和模糊搜索）</span></li>
+      <li><span class="api-name">ShowTemplateDetail</span><br><span class="api-desc">查询模板详情</span></li>
+    </ul>
+  </div>
+
+  <div class="api-category">
+    <h3>流水线分组管理</h3>
+    <ul>
+      <li><span class="api-name">UpdatePipelineGroup</span><br><span class="api-desc">更新流水线分组</span></li>
+      <li><span class="api-name">ShowPipelineGroupTree</span><br><span class="api-desc">查询流水线分组树</span></li>
+      <li><span class="api-name">CreatePipelineGroup</span><br><span class="api-desc">新建流水线分组</span></li>
+      <li><span class="api-name">BatchMovePipelineToGroup</span><br><span class="api-desc">批量移动流水线到分组</span></li>
+      <li><span class="api-name">DeletePipelineGroup</span><br><span class="api-desc">删除流水线分组</span></li>
+    </ul>
+  </div>
+
+  <div class="api-category">
+    <h3>流水线模板管理</h3>
+    <ul>
+      <li><span class="api-name">DeletePipelineTemplate</span><br><span class="api-desc">删除流水线模板</span></li>
+      <li><span class="api-name">ShowPipelineTemplateDetail</span><br><span class="api-desc">查询模板详情</span></li>
+      <li><span class="api-name">UpdatePipelineTemplate</span><br><span class="api-desc">更新流水线模板</span></li>
+      <li><span class="api-name">ListPipelineTemplates</span><br><span class="api-desc">查询流水线模板列表</span></li>
+      <li><span class="api-name">CreatePipelineTemplate</span><br><span class="api-desc">创建流水线模板</span></li>
+    </ul>
+  </div>
+
+  <div class="api-category">
+    <h3>流水线管理</h3>
+    <ul>
+      <li><span class="api-name">ShowPipelineDetail</span><br><span class="api-desc">查询流水线详情</span></li>
+      <li><span class="api-name">UpdatePipelineInfo</span><br><span class="api-desc">修改流水线信息</span></li>
+      <li><span class="api-name">ListPipelineBuildResult</span><br><span class="api-desc">获取项目下流水线执行状况</span></li>
+      <li><span class="api-name">ListPipelineSimpleInfo</span><br><span class="api-desc">获取流水线列表</span></li>
+      <li><span class="api-name">StartNewPipeline</span><br><span class="api-desc">启动流水线</span></li>
+      <li><span class="api-name">RemovePipeline</span><br><span class="api-desc">删除流水线</span></li>
+      <li><span class="api-name">ShowPipelineStatus</span><br><span class="api-desc">获取流水线状态和阶段信息</span></li>
+      <li><span class="api-name">CreatePipelineByTemplate</span><br><span class="api-desc">基于模板创建流水线</span></li>
+      <li><span class="api-name">BatchShowPipelinesStatus</span><br><span class="api-desc">批量获取流水线状态</span></li>
+      <li><span class="api-name">StopPipelineNew</span><br><span class="api-desc">停止流水线</span></li>
+      <li><span class="api-name">ShowInstanceStatus</span><br><span class="api-desc">检查流水线创建状态</span></li>
+      <li><span class="api-name">CreatePipelineNew</span><br><span class="api-desc">创建流水线</span></li>
+      <li><span class="api-name">RetryPipelineRun</span><br><span class="api-desc">重试运行流水线</span></li>
+      <li><span class="api-name">ShowPipelineLog</span><br><span class="api-desc">查询流水线日志</span></li>
+      <li><span class="api-name">StopPipelineRun</span><br><span class="api-desc">停止流水线</span></li>
+      <li><span class="api-name">DeletePipeline</span><br><span class="api-desc">删除流水线</span></li>
+      <li><span class="api-name">BatchShowPipelinesLatestStatus</span><br><span class="api-desc">批量获取流水线最新状态</span></li>
+      <li><span class="api-name">RejectManualReview</span><br><span class="api-desc">驳回人工审核</span></li>
+      <li><span class="api-name">AcceptManualReview</span><br><span class="api-desc">通过人工审核</span></li>
+      <li><span class="api-name">RunPipeline</span><br><span class="api-desc">启动流水线</span></li>
+      <li><span class="api-name">ListPipelineRuns</span><br><span class="api-desc">获取流水线执行记录</span></li>
+      <li><span class="api-name">ShowStepOutputs</span><br><span class="api-desc">获取流水线步骤执行输出</span></li>
+      <li><span class="api-name">CreatePipelineByTemplateId</span><br><span class="api-desc">基于模板ID创建流水线</span></li>
+      <li><span class="api-name">ShowPipelineArtifacts</span><br><span class="api-desc">查询流水线构建产物</span></li>
+      <li><span class="api-name">ListPipelines</span><br><span class="api-desc">获取流水线列表/项目下执行状况</span></li>
+      <li><span class="api-name">ShowPipelineRunDetail</span><br><span class="api-desc">获取流水线执行详情</span></li>
+    </ul>
+  </div>
+
+  <div class="api-category">
+    <h3>租户级策略管理</h3>
+    <ul>
+      <li><span class="api-name">DeleteStrategy</span><br><span class="api-desc">删除策略</span></li>
+      <li><span class="api-name">ListStrategy</span><br><span class="api-desc">获取策略列表</span></li>
+      <li><span class="api-name">SwitchStrategy</span><br><span class="api-desc">修改策略状态</span></li>
+      <li><span class="api-name">CreateStrategy</span><br><span class="api-desc">创建策略</span></li>
+      <li><span class="api-name">UpdateStrategy</span><br><span class="api-desc">修改策略</span></li>
+      <li><span class="api-name">ShowStrategy</span><br><span class="api-desc">获取策略详情</span></li>
+    </ul>
+  </div>
+
+  <div class="api-category">
+    <h3>规则管理</h3>
+    <ul>
+      <li><span class="api-name">ShowRule</span><br><span class="api-desc">获取单条规则详情</span></li>
+      <li><span class="api-name">DeleteRule</span><br><span class="api-desc">删除规则</span></li>
+      <li><span class="api-name">CreateRule</span><br><span class="api-desc">创建规则</span></li>
+      <li><span class="api-name">UpdateRule</span><br><span class="api-desc">更新规则</span></li>
+      <li><span class="api-name">ListRule</span><br><span class="api-desc">分页获取规则列表</span></li>
+    </ul>
+  </div>
+
+  <div class="api-category">
+    <h3>项目级策略管理</h3>
+    <ul>
+      <li><span class="api-name">ListProjectStrategy</span><br><span class="api-desc">获取策略列表</span></li>
+      <li><span class="api-name">ShowProjectStrategy</span><br><span class="api-desc">查询项目级策略详情</span></li>
+    </ul>
+  </div>
+
+  <p>以及更多覆盖插件管理、模板配置、流水线自动化、策略控制和规则引擎的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

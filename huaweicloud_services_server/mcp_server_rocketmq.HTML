@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_rocketmq
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-rocketmq --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-rocketmq --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-rocketmq --transport sse --port 8888
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-rocketmq": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_rocketmq/src/mcp_server_rocketmq/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-rocketmq": {
+              "type": "http",
+              "url": "http://127.0.0.1:8888/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-rocketmq": {
+              "type": "sse",
+              "url": "http://localhost:8888/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>Topic管理</h3><ul><li><span class="api-name">UpdateTopic</span><br><span class="api-desc">修改主题。</span></li><li><span class="api-name">ListConsumerGroupOfTopic</span><br><span class="api-desc">查询主题消费组列表。</span></li><li><span class="api-name">DeleteTopic</span><br><span class="api-desc">删除指定主题。</span></li><li><span class="api-name">ShowTopicStatus</span><br><span class="api-desc">查询主题的消息数。</span></li><li><span class="api-name">CreateTopicOrBatchDeleteTopic</span><br><span class="api-desc">创建主题或批量删除主题。</span></li><li><span class="api-name">ShowOneTopic</span><br><span class="api-desc">查询单个主题。</span></li><li><span class="api-name">ListRocketInstanceTopics</span><br><span class="api-desc">该接口用于查询指定RocketMQ实例的Topic列表。</span></li></ul> </div>
+<div class="api-category"><h3>元数据迁移</h3><ul><li><span class="api-name">ListRocketMqMigrationTask</span><br><span class="api-desc">1. 查询实例下所有迁移任务</span></li><li><span class="api-name">CreateRocketMqMigrationTask</span><br><span class="api-desc">新建元数据迁移任务。</span></li><li><span class="api-name">DeleteRocketMqMigrationTask</span><br><span class="api-desc">删除元数据迁移任务。</span></li></ul> </div>
+<div class="api-category"><h3>其他接口</h3><ul><li><span class="api-name">ListEngineProducts</span><br><span class="api-desc">查询相应引擎的产品规格列表。</span></li><li><span class="api-name">ListAvailableZones</span><br><span class="api-desc">在创建实例时,需要配置实例所在的可用区ID,可通过该接口查询可用区的ID。</span></li><li><span class="api-name">ShowRocketMQProductCores</span><br><span class="api-desc">查询RocketMQ产品规格核数。</span></li></ul> </div>
+<div class="api-category"><h3>参数管理</h3><ul><li><span class="api-name">UpdateRocketMqConfigs</span><br><span class="api-desc">该接口用于修改RocketMQ配置。</span></li><li><span class="api-name">ShowRocketMqConfigs</span><br><span class="api-desc">该接口用于查询RocketMQ配置,若成功则返回配置的相关信息。</span></li></ul> </div>
+<div class="api-category"><h3>实例管理</h3><ul><li><span class="api-name">ShowInstanceNodes</span><br><span class="api-desc">查询实例节点信息。</span></li><li><span class="api-name">RestartInstance</span><br><span class="api-desc">重启指定实例。</span></li></ul> </div>
+<div class="api-category"><h3>标签管理</h3><ul><li><span class="api-name">ShowRocketmqProjectTags</span><br><span class="api-desc">查询项目标签。</span></li><li><span class="api-name">BatchCreateOrDeleteRocketmqTag</span><br><span class="api-desc">批量添加或删除实例标签。</span></li><li><span class="api-name">ShowRocketmqTags</span><br><span class="api-desc">查询实例标签。</span></li></ul> </div>
+<div class="api-category"><h3>消息管理</h3><ul><li><span class="api-name">ExportDlqMessage</span><br><span class="api-desc">导出死信消息。</span></li><li><span class="api-name">ListMessages</span><br><span class="api-desc">查询消息。</span></li><li><span class="api-name">SendDlqMessage</span><br><span class="api-desc">重发死信消息。</span></li><li><span class="api-name">ListMessageTrace</span><br><span class="api-desc">查询消息轨迹。</span></li><li><span class="api-name">ValidateConsumedMessage</span><br><span class="api-desc">消费验证。</span></li></ul> </div>
+<div class="api-category"><h3>消费组管理</h3><ul><li><span class="api-name">UpdateConsumerGroup</span><br><span class="api-desc">修改指定消费组参数。</span></li><li><span class="api-name">ShowConsumerListOrDetails</span><br><span class="api-desc">查询消费列表或详情。</span></li><li><span class="api-name">ListInstanceConsumerGroups</span><br><span class="api-desc">查询消费组列表。</span></li><li><span class="api-name">ShowConsumerConnections</span><br><span class="api-desc">查询消费组内消费者列表</span></li><li><span class="api-name">DeleteConsumerGroup</span><br><span class="api-desc">删除指定消费组。</span></li><li><span class="api-name">CreateConsumerGroupOrBatchDeleteConsumerGroup</span><br><span class="api-desc">创建消费组或批量删除消费组。</span></li><li><span class="api-name">ResetConsumeOffset</span><br><span class="api-desc">重置消费进度。</span></li><li><span class="api-name">BatchUpdateConsumerGroup</span><br><span class="api-desc">批量修改消费组。</span></li><li><span class="api-name">ShowGroup</span><br><span class="api-desc">查询指定消费组详情。</span></li></ul> </div>
+<div class="api-category"><h3>生命周期管理</h3><ul><li><span class="api-name">ListBrokers</span><br><span class="api-desc">查询代理列表。</span></li><li><span class="api-name">EnableDns</span><br><span class="api-desc">开启RocketMQ实例域名访问能力。</span></li><li><span class="api-name">DeleteInstance</span><br><span class="api-desc">删除指定的实例,释放该实例的所有资源。</span></li><li><span class="api-name">UpdateInstance</span><br><span class="api-desc">修改实例的名称和描述信息。</span></li><li><span class="api-name">CreateInstanceByEngine</span><br><span class="api-desc">创建实例,该接口支持创建按需和包周期两种计费方式的实例。</span></li><li><span class="api-name">BatchDeleteInstances</span><br><span class="api-desc">批量删除实例。**实例删除后,实例中原有的数据将被删除,且没有备份,请谨慎操作。**</span></li><li><span class="api-name">ShowInstance</span><br><span class="api-desc">查询指定实例的详细信息。</span></li><li><span class="api-name">ListInstances</span><br><span class="api-desc">查询租户的实例列表,支持按照条件查询。</span></li></ul> </div>
+<div class="api-category"><h3>用户管理</h3><ul><li><span class="api-name">ListUser</span><br><span class="api-desc">查询用户列表。</span></li><li><span class="api-name">UpdateUser</span><br><span class="api-desc">修改用户参数。</span></li><li><span class="api-name">ShowUser</span><br><span class="api-desc">查询用户详情。</span></li><li><span class="api-name">ListTopicAccessPolicy</span><br><span class="api-desc">查询主题的授权用户列表。</span></li><li><span class="api-name">CreateUser</span><br><span class="api-desc">创建用户。</span></li><li><span class="api-name">ListConsumeGroupAccessPolicy</span><br><span class="api-desc">查询消费组的授权用户列表。</span></li><li><span class="api-name">DeleteUser</span><br><span class="api-desc">删除用户。</span></li></ul> </div>
+<div class="api-category"><h3>规格变更管理</h3><ul><li><span class="api-name">ResizeInstance</span><br><span class="api-desc">实例规格变更。</span></li><li><span class="api-name">ShowEngineInstanceExtendProductInfo</span><br><span class="api-desc">查询实例的扩容规格列表。</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

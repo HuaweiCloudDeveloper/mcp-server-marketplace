@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>FunctionGraph MCP Server 是一款模型上下文协议（Model Context Protocol）服务器，为 MCP 客户端（如 Claude Desktop、Cline、Cursor）提供与华为云服务 FunctionGraph 交互的能力。可以基于自然语言对 FunctionGraph 资源进行全链管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+         <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+         <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+         <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_functiongraph
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_functiongraph --transport stdio --port 8863
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_functiongraph --transport http  --port 8863
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_functiongraph --transport sse --port 8863
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-vpc-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "http-vpc-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8863/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-vpc-example": {
+              "type": "sse",
+              "url": "http://localhost:8863/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>函数依赖包</h3>
+          <ul>
+            <li><span class="api-name">CreateDependencyVersion</span><br><span class="api-desc">创建依赖包版本</span></li>
+            <li><span class="api-name">ShowDependencyVersion</span><br><span class="api-desc">获取依赖包版本详情</span></li>
+            <li><span class="api-name">ListDependencyVersion</span><br><span class="api-desc">获取依赖包版本列表</span></li>
+            <li><span class="api-name">ListDependencies</span><br><span class="api-desc">获取依赖包列表</span></li>
+            <li><span class="api-name">DeleteDependencyVersion</span><br><span class="api-desc">删除依赖包版本</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数导入导出</h3>
+          <ul>
+            <li><span class="api-name">ExportFunction</span><br><span class="api-desc">导出函数</span></li>
+            <li><span class="api-name">ImportFunction</span><br><span class="api-desc">导入函数</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数应用中心</h3>
+          <ul>
+            <li><span class="api-name">ListFunctionApplications</span><br><span class="api-desc">查询应用程序列表(该功能目前仅支持华北-北京四、华东-上海一)</span></li>
+            <li><span class="api-name">CreateFunctionApp</span><br><span class="api-desc">创建应用程序(该功能目前仅支持华北-北京四、华东-上海一)</span></li>
+            <li><span class="api-name">ShowAppTemplate</span><br><span class="api-desc">查询应用程序模板详情(该功能目前仅支持华北-北京四、华东-上海一)</span></li>
+            <li><span class="api-name">ShowFunctionApp</span><br><span class="api-desc">查询应用程序详情(该功能目前仅支持华北-北京四、华东-上海一)</span></li>
+            <li><span class="api-name">DeleteFunctionApp</span><br><span class="api-desc">删除应用程序(该功能目前仅支持华北-北京四、华东-上海一)</span></li>
+            <li><span class="api-name">ListAppTemplates</span><br><span class="api-desc">查询应用程序模板列表(该功能目前仅支持华北-北京四、华东-上海一)</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数异步配置</h3>
+          <ul>
+            <li><span class="api-name">ListActiveAsyncInvocations</span><br><span class="api-desc">获取函数异步调用活跃请求列表</span></li>
+            <li><span class="api-name">ListAsyncInvocations</span><br><span class="api-desc">获取函数异步调用请求列表</span></li>
+            <li><span class="api-name">ListFunctionAsyncInvokeConfig</span><br><span class="api-desc">获取指定函数所有版本的异步配置列表。</span></li>
+            <li><span class="api-name">ShowFunctionAsyncInvokeConfig</span><br><span class="api-desc">获取指定函数某一版本的异步配置信息。</span></li>
+            <li><span class="api-name">CancelAsyncInvocation</span><br><span class="api-desc">-| 当前仅支持参数recursive为false且force为true的函数。 在1:N的函数做并发异步调用的场景下调用停止异步请求接口时,同一函数实例同时在执行的其他请求也会被一并停止并返回4208 function invocation canceled</span></li>
+            <li><span class="api-name">UpdateFunctionAsyncInvokeConfig</span><br><span class="api-desc">设置函数异步配置信息。</span></li>
+            <li><span class="api-name">DeleteFunctionAsyncInvokeConfig</span><br><span class="api-desc">删除函数异步配置信息。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数指标</h3>
+          <ul>
+            <li><span class="api-name">ShowFunctionMetrics</span><br><span class="api-desc">查询函数流量指标。</span></li>
+            <li><span class="api-name">ListFunctionAsMetric</span><br><span class="api-desc">按指定指标排序的函数列表。</span></li>
+            <li><span class="api-name">ShowFuncReservedInstanceMetrics</span><br><span class="api-desc">查询函数实例使用情况指标。</span></li>
+            <li><span class="api-name">ListFunctionStatistics</span><br><span class="api-desc">获取指定时间段的函数运行指标。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数日志</h3>
+          <ul>
+            <li><span class="api-name">ShowProjectAsyncStatusLogInfo</span><br><span class="api-desc">查询异步日志详情</span></li>
+            <li><span class="api-name">EnableAsyncStatusLog</span><br><span class="api-desc">允许异步状态通知。</span></li>
+            <li><span class="api-name">EnableLtsLogs</span><br><span class="api-desc">开通lts日志上报功能。</span></li>
+            <li><span class="api-name">ShowLtsLogDetails</span><br><span class="api-desc">获取指定函数的lts日志组日志流配置。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数模板</h3>
+          <ul>
+            <li><span class="api-name">ShowFunctionTemplate</span><br><span class="api-desc">获取指定函数模板</span></li>
+            <li><span class="api-name">ListFunctionTemplate</span><br><span class="api-desc">获取函数模板列表</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数流</h3>
+          <ul>
+            <li><span class="api-name">BatchDeleteWorkflows</span><br><span class="api-desc">删除函数流</span></li>
+            <li><span class="api-name">ListWorkflow</span><br><span class="api-desc">查询函数流</span></li>
+            <li><span class="api-name">ShowTenantMetric</span><br><span class="api-desc">获取函数流指标</span></li>
+            <li><span class="api-name">ShowWorkflowExecution</span><br><span class="api-desc">获取指定函数流执行实例。</span></li>
+            <li><span class="api-name">CreateWorkflow</span><br><span class="api-desc">创建函数流</span></li>
+            <li><span class="api-name">ShowWorkflowExecutionForPage</span><br><span class="api-desc">分页获取指定函数流执行实例列表</span></li>
+            <li><span class="api-name">ShowWorkFlow</span><br><span class="api-desc">获取指定函数流实例的元数据</span></li>
+            <li><span class="api-name">ShowWorkFlowMetric</span><br><span class="api-desc">获取指定函数流指标</span></li>
+            <li><span class="api-name">StartSyncWorkflowExecution</span><br><span class="api-desc">以同步执行方式启动函数流(仅快速模式函数流支持)</span></li>
+            <li><span class="api-name">CreateCallbackWorkflow</span><br><span class="api-desc">回调工作流</span></li>
+            <li><span class="api-name">StartWorkflowExecution</span><br><span class="api-desc">以异步执行方式启动函数流</span></li>
+            <li><span class="api-name">UpdateWorkFlow</span><br><span class="api-desc">修改指定函数流实例的元数据</span></li>
+            <li><span class="api-name">StopWorkFlow</span><br><span class="api-desc">停止函数流</span></li>
+            <li><span class="api-name">RetryWorkFlow</span><br><span class="api-desc">重试函数流</span></li>
+            <li><span class="api-name">ListWorkflowExecutions</span><br><span class="api-desc">获取指定函数流执行实例列表</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数测试事件</h3>
+          <ul>
+            <li><span class="api-name">ListEvents</span><br><span class="api-desc">获取指定函数的测试事件列表</span></li>
+            <li><span class="api-name">CreateEvent</span><br><span class="api-desc">创建测试事件</span></li>
+            <li><span class="api-name">UpdateEvent</span><br><span class="api-desc">更新测试事件详细信息</span></li>
+            <li><span class="api-name">DeleteEvent</span><br><span class="api-desc">删除指定测试事件</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数版本别名</h3>
+          <ul>
+            <li><span class="api-name">UpdateVersionAlias</span><br><span class="api-desc">修改函数版本别名信息。</span></li>
+            <li><span class="api-name">CreateVersionAlias</span><br><span class="api-desc">创建函数灰度版本别名。</span></li>
+            <li><span class="api-name">ListFunctionVersions</span><br><span class="api-desc">获取指定函数的版本列表。</span></li>
+            <li><span class="api-name">DeleteVersionAlias</span><br><span class="api-desc">删除函数版本别名。</span></li>
+            <li><span class="api-name">CreateFunctionVersion</span><br><span class="api-desc">发布函数版本。</span></li>
+            <li><span class="api-name">ShowVersionAlias</span><br><span class="api-desc">获取函数指定的版本别名信息。</span></li>
+            <li><span class="api-name">ListVersionAliases</span><br><span class="api-desc">获取函数版本别名列表。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数生命周期管理</h3>
+          <ul>
+            <li><span class="api-name">CreateVpcEndpoint</span><br><span class="api-desc">创建下沉入口。(该功能目前仅支持华北-北京四、华东-上海一、华东-上海二、西南-贵阳一)</span></li>
+            <li><span class="api-name">ListFunctions</span><br><span class="api-desc">获取函数列表</span></li>
+            <li><span class="api-name">UpdateFuncSnapshot</span><br><span class="api-desc">禁用/启动函数快照,仅支持java运行时函数,且为非latest版本才能开启函数快照功能。</span></li>
+            <li><span class="api-name">CreateFunction</span><br><span class="api-desc">创建指定的函数。</span></li>
+            <li><span class="api-name">ListFunctionTags</span><br><span class="api-desc">查询函数标签列表</span></li>
+            <li><span class="api-name">UpdateFunctionMaxInstanceConfig</span><br><span class="api-desc">更新函数最大实例数</span></li>
+            <li><span class="api-name">ListBridgeVersions</span><br><span class="api-desc">获取servicebridge可用的版本</span></li>
+            <li><span class="api-name">ShowProjectTagsList</span><br><span class="api-desc">查询资源标签。</span></li>
+            <li><span class="api-name">ShowFuncSnapshotState</span><br><span class="api-desc">查询函数快照制作状态。</span></li>
+            <li><span class="api-name">ShowResInstanceInfo</span><br><span class="api-desc">查询资源实例。</span></li>
+            <li><span class="api-name">ShowFunctionCode</span><br><span class="api-desc">获取指定函数的代码。</span></li>
+            <li><span class="api-name">DeleteVpcEndpoint</span><br><span class="api-desc">删除下沉入口。(该功能目前仅支持华北-北京四、华东-上海一、华东-上海二、西南-贵阳一)</span></li>
+            <li><span class="api-name">UpdateFunctionCode</span><br><span class="api-desc">修改指定的函数的代码。</span></li>
+            <li><span class="api-name">DeleteFunction</span><br><span class="api-desc">删除指定的函数或者特定的版本(不允许删除latest版本)。</span></li>
+            <li><span class="api-name">ShowFunctionConfig</span><br><span class="api-desc">获取指定函数的metadata。</span></li>
+            <li><span class="api-name">UpdateFunctionConfig</span><br><span class="api-desc">修改指定的函数的metadata信息。</span></li>
+            <li><span class="api-name">ListBridgeFunctions</span><br><span class="api-desc">获取指定函数绑定的servicebridge函数列表信息。</span></li>
+            <li><span class="api-name">UpdateFunctionCollectState</span><br><span class="api-desc">更新函数置顶状态</span></li>
+            <li><span class="api-name">DeleteTags</span><br><span class="api-desc">删除资源标签。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数触发器</h3>
+          <ul>
+            <li><span class="api-name">DeleteFunctionTrigger</span><br><span class="api-desc">删除触发器。</span></li>
+            <li><span class="api-name">BatchDeleteFunctionTriggers</span><br><span class="api-desc">删除指定函数所有触发器设置。</span></li>
+            <li><span class="api-name">ShowFunctionTrigger</span><br><span class="api-desc">获取特定触发器的信息。</span></li>
+            <li><span class="api-name">ListFunctionTriggers</span><br><span class="api-desc">获取指定函数的所有触发器设置。</span></li>
+            <li><span class="api-name">CreateFunctionTrigger</span><br><span class="api-desc">创建触发器。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数调用</h3>
+          <ul>
+            <li><span class="api-name">InvokeFunction</span><br><span class="api-desc">同步调用指的是客户端请求需要明确等到响应结果,也就是说这样的请求必须得调用到用户的函数,并且等到调用完成才返回。</span></li>
+            <li><span class="api-name">AsyncInvokeFunction</span><br><span class="api-desc">异步执行函数。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数调用链</h3>
+          <ul>
+            <li><span class="api-name">ShowTracing</span><br><span class="api-desc">获取函数调用链配置</span></li>
+            <li><span class="api-name">UpdateTracing</span><br><span class="api-desc">修改函数调用链配置,开通/修改传入aksk,关闭aksk传空</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>函数预留实例</h3>
+          <ul>
+            <li><span class="api-name">ListReservedInstanceConfigs</span><br><span class="api-desc">获取函数预留实例配置列表</span></li>
+            <li><span class="api-name">ListFunctionReservedInstances</span><br><span class="api-desc">获取函数预留实例数量。</span></li>
+            <li><span class="api-name">UpdateFunctionReservedInstancesCount</span><br><span class="api-desc">修改函数预留实例数量。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>安全总览</h3>
+          <ul>
+            <li><span class="api-name">ListStatistics</span><br><span class="api-desc">查询安全总览请求与攻击数量。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>标签管理</h3>
+          <ul>
+            <li><span class="api-name">CreateTags</span><br><span class="api-desc">添加标签</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>触发器管理</h3>
+          <ul>
+            <li><span class="api-name">UpdateTrigger</span><br><span class="api-desc">更新触发器配置</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>配额管理</h3>
+          <ul>
+            <li><span class="api-name">ListQuotas</span><br><span class="api-desc">获取配额信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>防护事件管理</h3>
+          <ul>
+            <li><span class="api-name">ShowEvent</span><br><span class="api-desc">查询指定事件id的防护事件详情</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

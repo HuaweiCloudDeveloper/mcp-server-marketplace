@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_mpc
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-mpc --transport stdio --port 8885
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-mpc --transport http  --port 8885
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-mpc --transport sse --port 8885
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-mpc": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_mpc/src/mcp_server_mpc/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-mpc": {
+              "type": "http",
+              "url": "http://127.0.0.1:8885/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-mpc": {
+              "type": "sse",
+              "url": "http://localhost:8885/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>AnimatedGraphicsTaskManager</h3><ul><li><span class="api-name">ListAnimatedGraphicsTask</span><br><span class="api-desc">查询动图任务的状态。</span></li><li><span class="api-name">CreateAnimatedGraphicsTask</span><br><span class="api-desc">创建动图任务,用于将完整的视频文件或视频文件中的一部分转换为动态图文件,暂只支持输出GIF文件。</span></li><li><span class="api-name">DeleteAnimatedGraphicsTask</span><br><span class="api-desc">取消已下发的生成动图任务,仅支持取消正在排队中的任务。</span></li></ul> </div>
+<div class="api-category"><h3>AuthorizationAndConfiguration</h3><ul><li><span class="api-name">NotifySmnTopicConfig</span><br><span class="api-desc">配置转码服务端事件通知。</span></li><li><span class="api-name">CreateAgenciesTask</span><br><span class="api-desc">开启或关闭"委托授权", 开启后,媒体处理服务将拥有您所有桶的读写权限,子账号不支持委托授权。</span></li><li><span class="api-name">ListAllBuckets</span><br><span class="api-desc">请求查询自己创建的指定的桶区域位置的桶列表。</span></li><li><span class="api-name">ListAllObsObjList</span><br><span class="api-desc">查询桶里的object。</span></li><li><span class="api-name">ListNotifyEvent</span><br><span class="api-desc">查询消息订阅功能板块, SMN主题的所有订阅事件。</span></li><li><span class="api-name">ListNotifySmnTopicConfig</span><br><span class="api-desc">查询消息订阅功能板块, SMN主题的订阅事件的启用状态和订阅消息的启用状态。</span></li><li><span class="api-name">UpdateBucketAuthorized</span><br><span class="api-desc">对OBS桶进行授权或取消授权,媒体处理服务仅拥有已授权桶的读写权限。(暂不支持KMS加密桶的授权)</span></li><li><span class="api-name">ShowAgenciesTask</span><br><span class="api-desc">查询创建委托任务状态。</span></li></ul> </div>
+<div class="api-category"><h3>EncryptManager</h3><ul><li><span class="api-name">DeleteEncryptTask</span><br><span class="api-desc">取消独立加密任务。该API已废弃。</span></li><li><span class="api-name">ListEncryptTask</span><br><span class="api-desc">查询独立加密任务状态。返回任务执行结果或当前状态。该API已废弃。</span></li><li><span class="api-name">CreateEncryptTask</span><br><span class="api-desc">支持独立加密,包括创建、查询、删除独立加密任务。该API已废弃。</span></li></ul> </div>
+<div class="api-category"><h3>ExtractTaskManager</h3><ul><li><span class="api-name">ListExtractTask</span><br><span class="api-desc">查询解析任务的状态和结果。</span></li><li><span class="api-name">CreateExtractTask</span><br><span class="api-desc">创建视频解析任务,解析视频元数据。</span></li><li><span class="api-name">DeleteExtractTask</span><br><span class="api-desc">取消已下发的视频解析任务,仅支持取消正在排队中的任务。</span></li></ul> </div>
+<div class="api-category"><h3>RemuxTaskManager</h3><ul><li><span class="api-name">CreateRemuxTask</span><br><span class="api-desc">创建转封装任务,转换音视频文件的格式,但不改变其分辨率和码率。</span></li><li><span class="api-name">CreateRetryRemuxTask</span><br><span class="api-desc">对失败的转封装任务进行重试。</span></li><li><span class="api-name">ListRemuxTask</span><br><span class="api-desc">查询转封装任务状态。</span></li><li><span class="api-name">CancelRemuxTask</span><br><span class="api-desc">取消已下发的转封装任务,仅支持取消正在排队中的任务。。</span></li><li><span class="api-name">DeleteRemuxTask</span><br><span class="api-desc">删除转封装任务记录,只能删除状态为“已取消”,“转码成功”,“转码失败”的任务记录。</span></li></ul> </div>
+<div class="api-category"><h3>TemplateGroup</h3><ul><li><span class="api-name">ListTemplateGroup</span><br><span class="api-desc">查询转码模板组列表。</span></li><li><span class="api-name">DeleteTemplateGroup</span><br><span class="api-desc">删除转码模板组。</span></li><li><span class="api-name">UpdateTemplateGroup</span><br><span class="api-desc">修改模板组接口。</span></li><li><span class="api-name">CreateTemplateGroup</span><br><span class="api-desc">新建转码模板组,最多支持一进六出。</span></li></ul> </div>
+<div class="api-category"><h3>TenantAccess</h3><ul><li><span class="api-name">UpdateTenantAccessInfo</span><br><span class="api-desc">租户开通媒体转码服务。</span></li><li><span class="api-name">ShowTenantAccessInfo</span><br><span class="api-desc">租户查询媒体转码服务开通状态信息。</span></li></ul> </div>
+<div class="api-category"><h3>ThumbnailsTask</h3><ul><li><span class="api-name">CreateThumbnailsTask</span><br><span class="api-desc">新建截图任务,视频截图将从首帧开始,按设置的时间间隔截图,最后截取末帧。</span></li><li><span class="api-name">DeleteThumbnailsTask</span><br><span class="api-desc">取消已下发截图任务。</span></li><li><span class="api-name">ListThumbnailsTask</span><br><span class="api-desc">查询截图任务状态。返回任务执行结果,包括状态、输入、输出等信息。</span></li></ul> </div>
+<div class="api-category"><h3>TranscodeTask</h3><ul><li><span class="api-name">CreateTranscodingTask</span><br><span class="api-desc">新建转码任务可以将视频进行转码,并在转码过程中压制水印、视频截图等。视频转码前需要配置转码模板。</span></li><li><span class="api-name">ListTranscodingTask</span><br><span class="api-desc">查询转码任务状态。</span></li><li><span class="api-name">DeleteTranscodingTaskByConsole</span><br><span class="api-desc">删除转码任务记录,只能删除状态为“已取消”,“转码成功”,“转码失败”的转码任务记录。</span></li><li><span class="api-name">DeleteTranscodingTask</span><br><span class="api-desc">取消已下发转码任务。</span></li><li><span class="api-name">ListStatSummary</span><br><span class="api-desc">查询最近一周,最近一月或者自定义时间段的“转码时长”,“调用转码API次数”。</span></li></ul> </div>
+<div class="api-category"><h3>TranscodeTemplate</h3><ul><li><span class="api-name">ListTemplate</span><br><span class="api-desc">查询用户自定义转码配置模板。</span></li><li><span class="api-name">UpdateTransTemplate</span><br><span class="api-desc">更新转码模板。</span></li><li><span class="api-name">DeleteTemplate</span><br><span class="api-desc">删除转码模板。</span></li><li><span class="api-name">CreateTransTemplate</span><br><span class="api-desc">新建转码模板,采用自定义的模板转码。</span></li></ul> </div>
+<div class="api-category"><h3>WatermarkTemplateManager</h3><ul><li><span class="api-name">ListWatermarkTemplate</span><br><span class="api-desc">查询自定义水印模板。支持指定模板ID查询,或分页全量查询。</span></li><li><span class="api-name">DeleteWatermarkTemplate</span><br><span class="api-desc">删除自定义水印模板。</span></li><li><span class="api-name">UpdateWatermarkTemplate</span><br><span class="api-desc">更新自定义水印模板。</span></li><li><span class="api-name">CreateWatermarkTemplate</span><br><span class="api-desc">自定义水印模板。</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

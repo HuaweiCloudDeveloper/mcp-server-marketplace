@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_dws
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-dws --transport stdio --port 8851
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-dws --transport http  --port 8851
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-dws --transport sse --port 8851
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-dws": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_dws/src/mcp_server_dws/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-dws": {
+              "type": "http",
+              "url": "http://127.0.0.1:8851/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-dws": {
+              "type": "sse",
+              "url": "http://localhost:8851/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>主机监控</h3><ul><li><span class="api-name">ListMonitorIndicators</span><br><span class="api-desc">查询性能监控指标。</span></li><li><span class="api-name">ListMetrics</span><br><span class="api-desc">查询集群使用指标列表。</span></li><li><span class="api-name">ListQueries</span><br><span class="api-desc">该接口用于查询实时SQL列表。</span></li><li><span class="api-name">ListMetricsData</span><br><span class="api-desc">获取指定指标相关采集数据。</span></li><li><span class="api-name">ListHostDisk</span><br><span class="api-desc">openApi查询磁盘信息。</span></li><li><span class="api-name">ListHostOverview</span><br><span class="api-desc">openApi查询主机概览。</span></li><li><span class="api-name">ListMonitorIndicatorData</span><br><span class="api-desc">openApi查询历史监控数据。</span></li><li><span class="api-name">ShowQueryDetail</span><br><span class="api-desc">查询SQL执行信息。</span></li><li><span class="api-name">ListHostNet</span><br><span class="api-desc">openapi获取网卡状态。</span></li><li><span class="api-name">ListTablesStatistic</span><br><span class="api-desc">该接口用于查询表倾斜或脏页率信息。</span></li></ul> </div>
+<div class="api-category"><h3>事件管理</h3><ul><li><span class="api-name">ListEvents</span><br><span class="api-desc">查询事件列表。</span></li><li><span class="api-name">DeleteEventSub</span><br><span class="api-desc">删除订阅的事件。</span></li><li><span class="api-name">CreateEventSub</span><br><span class="api-desc">添加订阅的事件。</span></li><li><span class="api-name">ListEventSubs</span><br><span class="api-desc">查询订阅的事件。</span></li><li><span class="api-name">ListEventSpecs</span><br><span class="api-desc">查询事件配置。</span></li><li><span class="api-name">UpdateEventSub</span><br><span class="api-desc">更新订阅事件。</span></li></ul> </div>
+<div class="api-category"><h3>任务管理</h3><ul><li><span class="api-name">ListJobDetails</span><br><span class="api-desc">查询任务进度信息。</span></li></ul> </div>
+<div class="api-category"><h3>升级管理</h3><ul><li><span class="api-name">UpdateMaintenanceWindow</span><br><span class="api-desc">您可以根据业务需求,设置可维护时间段。建议将可维护时间段设置在业务低峰期,避免业务在维护过程中异常中断。</span></li><li><span class="api-name">ListUpdatableVersion</span><br><span class="api-desc">获取集群可升级的目标版本。</span></li><li><span class="api-name">ExecuteClusterUpgradeAction</span><br><span class="api-desc">下发集群升级相关操作。</span></li><li><span class="api-name">ListUpdateRecord</span><br><span class="api-desc">通过此接口获取当前集群升级记录。</span></li></ul> </div>
+<div class="api-category"><h3>参数配置</h3><ul><li><span class="api-name">ListClusterConfigurationsParameter</span><br><span class="api-desc">查询集群所关联的参数组。</span></li><li><span class="api-name">UpdateConfiguration</span><br><span class="api-desc">修改集群使用的参数配置信息。</span></li><li><span class="api-name">ListConfigurationsAuditRecords</span><br><span class="api-desc">查询参数修改审计记录。</span></li><li><span class="api-name">ListClusterConfigurations</span><br><span class="api-desc">查询集群所关联的参数组。</span></li></ul> </div>
+<div class="api-category"><h3>可用区</h3><ul><li><span class="api-name">ListAvailabilityZones</span><br><span class="api-desc">在创建实例时,需要配置实例所在的可用区ID,可通过该接口查询可用区的ID。</span></li></ul> </div>
+<div class="api-category"><h3>告警管理</h3><ul><li><span class="api-name">UpdateAlarmSub</span><br><span class="api-desc">更新订阅的告警。</span></li><li><span class="api-name">ListAlarmStatistic</span><br><span class="api-desc">查询告警统计。</span></li><li><span class="api-name">ListAlarmConfigs</span><br><span class="api-desc">查询告警配置。</span></li><li><span class="api-name">DeleteAlarmSub</span><br><span class="api-desc">删除订阅的告警。</span></li><li><span class="api-name">ListAlarmSubs</span><br><span class="api-desc">查询订阅告警。</span></li><li><span class="api-name">CreateAlarmSub</span><br><span class="api-desc">创建告警订阅。</span></li><li><span class="api-name">ListAlarmDetail</span><br><span class="api-desc">查询告警详情列表。</span></li></ul> </div>
+<div class="api-category"><h3>审计日志</h3><ul><li><span class="api-name">ListAuditLog</span><br><span class="api-desc">查询审计日志记录。</span></li></ul> </div>
+<div class="api-category"><h3>容灾管理</h3><ul><li><span class="api-name">DeleteDisasterRecovery</span><br><span class="api-desc">该接口用于删除容灾操作。</span></li><li><span class="api-name">ListAvailableDisasterClusters</span><br><span class="api-desc">该接口用于查询可用的容灾集群列表。</span></li><li><span class="api-name">UpdateDisasterInfo</span><br><span class="api-desc">该接口用于更新容灾配置操作。</span></li><li><span class="api-name">StartDisasterRecovery</span><br><span class="api-desc">该接口用于启动容灾操作。</span></li><li><span class="api-name">ShowDisasterDetail</span><br><span class="api-desc">该接口用于查询单个容灾详情。</span></li><li><span class="api-name">ShowDisasterProgress</span><br><span class="api-desc">该接口用于查询容灾进度详情信息操作。</span></li><li><span class="api-name">CreateDisasterRecovery</span><br><span class="api-desc">该接口用于创建集群间容灾。</span></li><li><span class="api-name">PauseDisasterRecovery</span><br><span class="api-desc">该接口用于停止容灾操作。</span></li><li><span class="api-name">ListDisasterRecover</span><br><span class="api-desc">该接口用于查询容灾列表。</span></li><li><span class="api-name">SwitchoverDisasterRecovery</span><br><span class="api-desc">该接口用于容灾进行灾备切换操作。</span></li><li><span class="api-name">CheckDisasterName</span><br><span class="api-desc">该接口用于查询容灾名称是否可用。</span></li><li><span class="api-name">RestoreDisaster</span><br><span class="api-desc">该接口用于主备集群进行异常切换,备集群恢复可用状态后进行的容灾恢复操作。</span></li><li><span class="api-name">SwitchFailoverDisaster</span><br><span class="api-desc">该接口用于容灾异常场景下进行主备集群切换操作。</span></li></ul> </div>
+<div class="api-category"><h3>快照管理</h3><ul><li><span class="api-name">ListSnapshotDetails</span><br><span class="api-desc">该接口用于使用快照ID查询快照详情。</span></li><li><span class="api-name">ListSnapshots</span><br><span class="api-desc">该接口用于查询快照列表。</span></li><li><span class="api-name">RestoreCluster</span><br><span class="api-desc">该接口用于使用快照恢复集群。</span></li><li><span class="api-name">AddSnapshotCrossRegionPolicy</span><br><span class="api-desc">该接口用于设置跨区域备份配置。</span></li><li><span class="api-name">CreateSnapshot</span><br><span class="api-desc">该接口用于为指定集群创建快照。</span></li><li><span class="api-name">ListSnapshotCrossRegion</span><br><span class="api-desc">该接口用于获取跨区域快照可用局点。</span></li><li><span class="api-name">DeleteSnapshotPolicy</span><br><span class="api-desc">该接口用于删除一个快照策略。</span></li><li><span class="api-name">CheckTableRestore</span><br><span class="api-desc">该接口用于用户恢复表名检测。</span></li><li><span class="api-name">ListClusterSnapshots</span><br><span class="api-desc">该接口用于查询集群快照列表。</span></li><li><span class="api-name">ListSnapshotStatistics</span><br><span class="api-desc">快照统计信息。</span></li><li><span class="api-name">CopySnapshot</span><br><span class="api-desc">该接口用于复制一个自动快照。</span></li><li><span class="api-name">CreateSnapshotPolicy</span><br><span class="api-desc">该接口用于设置快照策略。</span></li><li><span class="api-name">DeleteSnapshotCrossRegionPolicy</span><br><span class="api-desc">该接口用于删除跨区域备份配置。</span></li><li><span class="api-name">DeleteSnapshot</span><br><span class="api-desc">该接口用于删除一个指定手动快照。</span></li><li><span class="api-name">ListSnapshotCrossRegionPolicy</span><br><span class="api-desc">该接口用于查询所有跨区域快照配置。</span></li><li><span class="api-name">RestoreTable</span><br><span class="api-desc">该接口用于恢复表。</span></li><li><span class="api-name">ListSnapshotPolicy</span><br><span class="api-desc">查询快照策略。</span></li></ul> </div>
+<div class="api-category"><h3>数据库权限管理</h3><ul><li><span class="api-name">UpdateDatabaseAuthority</span><br><span class="api-desc">修改数据库对象权限。</span></li><li><span class="api-name">ListDatabaseUsers</span><br><span class="api-desc">查询所有数据库用户/角色。</span></li><li><span class="api-name">ListDatabaseUserAuthorities</span><br><span class="api-desc">查询用户/角色拥有权限。</span></li><li><span class="api-name">ShowDatabaseAuthority</span><br><span class="api-desc">查询数据库对象权限。</span></li><li><span class="api-name">ExecuteDatabaseOmUserAction</span><br><span class="api-desc">进行数据库运维账户操作。</span></li><li><span class="api-name">ShowDatabaseUser</span><br><span class="api-desc">查询指定用户信息。</span></li><li><span class="api-name">SyncIamUsers</span><br><span class="api-desc">同步IAM用户到数据库。</span></li><li><span class="api-name">ExportUserAuthority</span><br><span class="api-desc">导出数据库用户/角色的权限列表,接口返回的是输出流,xlsx文件。</span></li><li><span class="api-name">CreateDatabaseUser</span><br><span class="api-desc">创建数据库用户/角色。</span></li><li><span class="api-name">UpdateDatabaseUserInfo</span><br><span class="api-desc">修改指定用户信息。</span></li><li><span class="api-name">ShowDatabaseOmUserStatus</span><br><span class="api-desc">获得数据库运维账户状态。</span></li><li><span class="api-name">DeleteDatabaseUser</span><br><span class="api-desc">删除数据库用户。</span></li><li><span class="api-name">ListSyncRecords</span><br><span class="api-desc">查询身份源同步记录。</span></li><li><span class="api-name">ExportDatabaseUsers</span><br><span class="api-desc">导出数据库用户/角色,接口返回的是输出流,xlsx文件。</span></li></ul> </div>
+<div class="api-category"><h3>数据源</h3><ul><li><span class="api-name">ListDataSource</span><br><span class="api-desc">该接口用于查询数据源。</span></li><li><span class="api-name">DeleteDataSource</span><br><span class="api-desc">该接口用于删除一个数据源。</span></li><li><span class="api-name">CreateDataSource</span><br><span class="api-desc">该接口用于创建一个数据源。</span></li><li><span class="api-name">UpdateDataSource</span><br><span class="api-desc">该接口用于更新一个数据源。</span></li></ul> </div>
+<div class="api-category"><h3>日志管理</h3><ul><li><span class="api-name">DisableLtsLogs</span><br><span class="api-desc">该接口用于关闭集群LTS云日志服务。</span></li><li><span class="api-name">ListLtsLogs</span><br><span class="api-desc">获取LTS日志列表。</span></li><li><span class="api-name">EnableLtsLogs</span><br><span class="api-desc">该接口用于开启集群LTS云日志服务。</span></li></ul> </div>
+<div class="api-category"><h3>标签管理</h3><ul><li><span class="api-name">ListTags</span><br><span class="api-desc">查询项目标签列表。</span></li><li><span class="api-name">BatchCreateResourceTag</span><br><span class="api-desc">为指定集群批量添加标签。</span></li><li><span class="api-name">ListClusterTags</span><br><span class="api-desc">查询指定集群的标签信息。</span></li><li><span class="api-name">BatchDeleteResourceTag</span><br><span class="api-desc">为指定集群批量删除标签。</span></li></ul> </div>
+<div class="api-category"><h3>节点变更</h3><ul><li><span class="api-name">ShowClusterRedistribution</span><br><span class="api-desc">该接口用于查看当前集群的重分布模式、重分布进度、数据表重分布详情等监控信息。</span></li><li><span class="api-name">ResizeClusterWithExistedNodes</span><br><span class="api-desc">此接口用于从空闲节点扩容。</span></li><li><span class="api-name">ResizeCluster</span><br><span class="api-desc">此接口用于扩容集群,亦可用于添加空闲节点。默认情况下:表示执行扩容操作。</span></li><li><span class="api-name">ListClusterCn</span><br><span class="api-desc">查询集群的CN节点列表。</span></li><li><span class="api-name">ListTargetFlavors</span><br><span class="api-desc">查询支持变更的目标规格列表。</span></li><li><span class="api-name">DeleteClusterNodes</span><br><span class="api-desc">此接口用于删除空闲节点。</span></li><li><span class="api-name">ExecuteFlavorChange</span><br><span class="api-desc">执行规格变更。</span></li><li><span class="api-name">ExpandInstanceStorage</span><br><span class="api-desc">随着客户业务的发展,磁盘空间往往最先出现资源瓶颈,在其他资源尚且充足的情况下,通过磁盘扩容可快速缓解存储资源瓶颈现象,操作过程中无需暂停业务,并且不会造成CPU、内存等资源浪费。  </span></li><li><span class="api-name">BatchDeleteClusterCn</span><br><span class="api-desc">当用户集群创建后,实际需要的CN数量会随着业务需求而发生变化,因此管理CN节点功能的实现使用户可以根据实际需求动态调整集群CN数量。</span></li><li><span class="api-name">ShowClusterStorageExpandRange</span><br><span class="api-desc">此接口可用于查看磁盘扩容操作时支持的扩容范围。</span></li><li><span class="api-name">StopRedistribution</span><br><span class="api-desc">该接口用于暂停运行状态下的重分布操作,重分布暂停状态可设置重分布优先级,修改重分布并发数等操作。</span></li><li><span class="api-name">CheckGrowCluster</span><br><span class="api-desc">此接口用于集群扩容前检查,提前识别子网不足、权限不足等问题导致的扩容失败。</span></li><li><span class="api-name">ListRedistributionSchema</span><br><span class="api-desc">获取待重分布表所属模式信息。</span></li><li><span class="api-name">ExecuteRedistributionCluster</span><br><span class="api-desc">该接口用于集群扩容后将老节点数据均匀分布到新扩节点的数据重分布操作,数据“重分布”后将大大提升业务响应速率。</span></li><li><span class="api-name">UpdateRedistributionConfigurations</span><br><span class="api-desc">更新重分布配置。</span></li><li><span class="api-name">SetRedistributionPriority</span><br><span class="api-desc">更新重分布表优先级。</span></li><li><span class="api-name">RestoreRedistribution</span><br><span class="api-desc">此接口用于恢复暂停状态下的重分布操作,仅支持DWS2.0集群。</span></li><li><span class="api-name">ShrinkCluster</span><br><span class="api-desc">该接口用于缩容集群。</span></li><li><span class="api-name">ListClusterNodes</span><br><span class="api-desc">查询节点列表。</span></li><li><span class="api-name">BatchCreateClusterCn</span><br><span class="api-desc">当用户集群创建后,实际需要的CN数量会随着业务需求而发生变化,因此管理CN节点功能的实现使用户可以根据实际需求动态调整集群CN数量。</span></li><li><span class="api-name">ListClusterScaleInNumbers</span><br><span class="api-desc">查询合适的缩容数。</span></li><li><span class="api-name">CheckClusterShrink</span><br><span class="api-desc">缩容前检查,确保缩容前、缩容后均满足正常操作要求。</span></li></ul> </div>
+<div class="api-category"><h3>资源管理</h3><ul><li><span class="api-name">ListWorkloadQueue</span><br><span class="api-desc">查询工作负载队列。</span></li><li><span class="api-name">ListSchemas</span><br><span class="api-desc">查询集群模式空间信息。</span></li><li><span class="api-name">ShowWorkloadPlanStage</span><br><span class="api-desc">查询工作负载计划阶段详细信息。</span></li><li><span class="api-name">ShowWorkloadPlan</span><br><span class="api-desc">查询某个工作负载计划详细信息。</span></li><li><span class="api-name">AddWorkloadPlanStage</span><br><span class="api-desc">添加工作负载计划阶段。</span></li><li><span class="api-name">ListWorkloadRules</span><br><span class="api-desc">查询当前集群的异常规则列表。</span></li><li><span class="api-name">UpdateQueueResources</span><br><span class="api-desc">更新工作负载队列资源配置信息。</span></li><li><span class="api-name">DeleteWorkloadPlanStage</span><br><span class="api-desc">删除工作负载计划删除工作负载计划阶段。</span></li><li><span class="api-name">CreateClusterWorkload</span><br><span class="api-desc">打开或关闭资源管理功能,新集群默认是打开状态。</span></li><li><span class="api-name">ShowWorkloadQueue</span><br><span class="api-desc">获得工作负载队列详细信息。</span></li><li><span class="api-name">CreateWorkloadPlan</span><br><span class="api-desc">添加工作负载计划。</span></li><li><span class="api-name">StopWorkloadPlan</span><br><span class="api-desc">停止工作负载计划。</span></li><li><span class="api-name">UpdateWorkloadPlanStage</span><br><span class="api-desc">修改资源管理计划阶段。</span></li><li><span class="api-name">DeleteWorkloadQueue</span><br><span class="api-desc">该接口用于删除资源池。</span></li><li><span class="api-name">ListClusterWorkload</span><br><span class="api-desc">查询资管管理开关。</span></li><li><span class="api-name">AddWorkloadRule</span><br><span class="api-desc">添加异常规则。</span></li><li><span class="api-name">ListWorkloadQueueUsers</span><br><span class="api-desc">获得工作负载队列的绑定用户列表。</span></li><li><span class="api-name">AddWorkloadQueue</span><br><span class="api-desc">添加工作负载队列。</span></li><li><span class="api-name">DeleteWorkloadPlan</span><br><span class="api-desc">删除工作负载计划。</span></li><li><span class="api-name">DeleteQueueUserList</span><br><span class="api-desc">删除工作负载队列的绑定用户。</span></li><li><span class="api-name">StartWorkloadPlan</span><br><span class="api-desc">启动工作负载计划。</span></li><li><span class="api-name">SwitchPlanStage</span><br><span class="api-desc">切换工作负载计划阶段。</span></li><li><span class="api-name">ListPlanExecLogs</span><br><span class="api-desc">查看计划执行日志。</span></li><li><span class="api-name">UpdateSchemas</span><br><span class="api-desc">更新模式空间限额。</span></li><li><span class="api-name">ListWorkloadPlans</span><br><span class="api-desc">查询集群中所有资源管理计划。</span></li><li><span class="api-name">AddQueueUserList</span><br><span class="api-desc">添加工作负载队列的绑定用户。</span></li></ul> </div>
+<div class="api-category"><h3>连接管理</h3><ul><li><span class="api-name">AssociateElb</span><br><span class="api-desc">集群绑定Elb接口。</span></li><li><span class="api-name">ListElbs</span><br><span class="api-desc">查询集群可以关联的Elb列表。</span></li><li><span class="api-name">DeleteClusterDns</span><br><span class="api-desc">删除指定集群域名。</span></li><li><span class="api-name">AssociateEip</span><br><span class="api-desc">集群绑定Eip。</span></li><li><span class="api-name">UpdateClusterDns</span><br><span class="api-desc">为指定集群修改域名。</span></li><li><span class="api-name">DisassociateElb</span><br><span class="api-desc">集群解绑Elb接口。</span></li><li><span class="api-name">CreateClusterDns</span><br><span class="api-desc">为指定集群申请域名。</span></li><li><span class="api-name">DisassociateEip</span><br><span class="api-desc">集群解绑Eip。</span></li><li><span class="api-name">ListClusterEndpoints</span><br><span class="api-desc">查询连接信息。包括公网域名、内网域名等。</span></li></ul> </div>
+<div class="api-category"><h3>逻辑集群管理</h3><ul><li><span class="api-name">ListLogicalClusterRings</span><br><span class="api-desc">查询逻辑集群可用ring环节点信息。</span></li><li><span class="api-name">EnableLogicalCluster</span><br><span class="api-desc">此接口用于切换逻辑集群开关,仅用于控制逻辑集群相关功能模块是否在页面展示。在集群已经是逻辑集群的场景下,修改该接口无任何作用及影响。</span></li><li><span class="api-name">ListLogicalClusterPlans</span><br><span class="api-desc">此接口用于查询逻辑集群定时增删计划。</span></li><li><span class="api-name">CreateLogicalClusterPlan</span><br><span class="api-desc">此接口用于添加逻辑集群定时增删计划。</span></li><li><span class="api-name">RestartLogicalCluster</span><br><span class="api-desc">此接口用于重启逻辑集群。</span></li><li><span class="api-name">ShrinkLogicalCluster</span><br><span class="api-desc">逻辑集群缩容,支持从弹性池缩容,或是从逻辑集群中缩容。</span></li><li><span class="api-name">ConvertToLogicalCluster</span><br><span class="api-desc">物理集群转换到逻辑集群。</span></li><li><span class="api-name">ListLogicalClusterVolumes</span><br><span class="api-desc">查询逻辑集群磁盘信息。</span></li><li><span class="api-name">EnableLogicalClusterPlan</span><br><span class="api-desc">启用逻辑集群定时增删计划。</span></li><li><span class="api-name">ListLogicalClusters</span><br><span class="api-desc">查询逻辑集群列表。</span></li><li><span class="api-name">DisableLogicalClusterPlan</span><br><span class="api-desc">停用逻辑集群定时增删计划。</span></li><li><span class="api-name">DeleteLogicalClusterPlan</span><br><span class="api-desc">此接口用于删除逻辑集群定时增删计划。</span></li><li><span class="api-name">CreateLogicalCluster</span><br><span class="api-desc">创建逻辑集群。</span></li><li><span class="api-name">UpdateLogicalCluster</span><br><span class="api-desc">此接口用于编辑修改逻辑集群。</span></li><li><span class="api-name">DeleteLogicalCluster</span><br><span class="api-desc">此接口用于删除逻辑集群。</span></li><li><span class="api-name">ListLogicalClusterTasks</span><br><span class="api-desc">查询逻辑集群任务信息。</span></li><li><span class="api-name">UpdateLogicalClusterPlan</span><br><span class="api-desc">此接口用于编辑修改编辑逻辑集群增删计划。</span></li></ul> </div>
+<div class="api-category"><h3>配额管理</h3><ul><li><span class="api-name">ListStatistics</span><br><span class="api-desc">查询当前可用资源数量,其中包括“可用集群和总集群(个)”、“可用节点和总节点(个)”、“总容量(GB)”。</span></li><li><span class="api-name">ListQuotas</span><br><span class="api-desc">查询单租户在GaussDB(DWS)服务下的配额信息。</span></li></ul> </div>
+<div class="api-category"><h3>集群管理</h3><ul><li><span class="api-name">ShowClusters</span><br><span class="api-desc">该接口用于查询并显示集群列表。</span></li><li><span class="api-name">SaveClusterDescriptionInfo</span><br><span class="api-desc">修改集群描述信息。</span></li><li><span class="api-name">DeleteDwsCluster</span><br><span class="api-desc">此接口用于删除集群。集群删除后将释放此集群的所有资源,包括客户数据。为了安全起见,请在删除集群前为这个集群创建快照。</span></li><li><span class="api-name">CreateClusterV2</span><br><span class="api-desc">该接口用于创建集群。</span></li><li><span class="api-name">CheckCluster</span><br><span class="api-desc">创建集群前预检查,提前识别子网不足、配额不足等问题,避免发起创建集群请求后创建失败。</span></li><li><span class="api-name">ShowClusterEncryptInfo</span><br><span class="api-desc">获取集群加密信息。非加密集群不支持该功能,返回信息为空。</span></li><li><span class="api-name">ListTagsForResource</span><br><span class="api-desc">查询指定集群的企业项目信息。</span></li><li><span class="api-name">SwitchOverCluster</span><br><span class="api-desc">当集群状态为“非均衡”时会出现某些节点主实例增多,从而负载压力较大。这种情况下集群状态是正常的,但整体性能要低于均衡状态。可进行集群主备恢复操作将集群状态切换为“可用“状态。</span></li><li><span class="api-name">ShowClusterVolume</span><br><span class="api-desc">查询租户侧节点磁盘使用情况信息。</span></li><li><span class="api-name">ShowClusterFlavor</span><br><span class="api-desc">查询集群使用的规格详情。</span></li><li><span class="api-name">ShowResourceStatistics</span><br><span class="api-desc">该接口用于查询资源统计。</span></li><li><span class="api-name">ModifyClusterTimezone</span><br><span class="api-desc">修改集群时区。该操作会将操作系统及数据库的时区都进行修改。</span></li><li><span class="api-name">StopCluster</span><br><span class="api-desc">停止集群。</span></li><li><span class="api-name">ListClusterDetails</span><br><span class="api-desc">该接口用于查询集群详情。</span></li><li><span class="api-name">ListDssPools</span><br><span class="api-desc">获取专属分布式存储池列表,只包括用户开通的SSD专属资源池信息。</span></li><li><span class="api-name">ChangeSecurityGroup</span><br><span class="api-desc">该接口用于修改集群安全组。</span></li><li><span class="api-name">CreateCluster</span><br><span class="api-desc">该接口用于创建集群。</span></li><li><span class="api-name">ListTopoRings</span><br><span class="api-desc">查询集群拓扑ring环节点信息。</span></li><li><span class="api-name">RestartCluster</span><br><span class="api-desc">此接口用于重启集群。</span></li><li><span class="api-name">DeleteCluster</span><br><span class="api-desc">此接口用于删除集群。集群删除后将释放此集群的所有资源,包括客户数据。为了安全起见,请在删除集群前为这个集群创建快照。</span></li><li><span class="api-name">CancelReadonlyCluster</span><br><span class="api-desc">当集群进入只读状态时,无法进行数据库相关操作,用户可以在管理控制台解除集群的只读状态。触发只读状态可能是由于磁盘使用率过高,因此需要对集群数据进行清理或扩容。 - 解除只读支持1.7.2及以上版本。</span></li><li><span class="api-name">ResetPassword</span><br><span class="api-desc">此接口用于重置集群管理员密码。</span></li><li><span class="api-name">ListClusters</span><br><span class="api-desc">该接口用于查询并显示集群列表。</span></li><li><span class="api-name">EncryptCluster</span><br><span class="api-desc">转加密集群。</span></li><li><span class="api-name">ListClusterActions</span><br><span class="api-desc">查询集群任务详情。</span></li><li><span class="api-name">ListNodeTypes</span><br><span class="api-desc">该接口用于查询所有GaussDB(DWS)服务支持的规格信息。</span></li><li><span class="api-name">ShowInstance</span><br><span class="api-desc">查询单个实例。</span></li><li><span class="api-name">StartCluster</span><br><span class="api-desc">启动集群。</span></li><li><span class="api-name">ModifyClusterName</span><br><span class="api-desc">修改集群名称。</span></li><li><span class="api-name">RotateKey</span><br><span class="api-desc">轮转加密集群密钥。</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

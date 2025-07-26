@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ecs --transport stdio --port 8009
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ecs --transport http  --port 8009
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ecs --transport sse --port 8009
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8000/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+        
+        <div class="api-category">
+        <h3>DDM实例管理</h3>
+        <ul>
+        <li><span class="api-name">UpdateInstanceSecurityGroup</span><br><span class="api-desc">修改DDM实例安全组。</span><br></li>
+        </ul>
+        </div>
+
+        <div class="api-category">
+<h3>云堡垒机信息查询</h3>
+<ul>
+<li><span class="api-name">SearchQuota</span><br><span class="api-desc">查询云堡垒机配额信息。</span></li>
+<li><span class="api-name">ShowAvailableZoneInfo</span><br><span class="api-desc">获取云堡垒机服务可用分区信息。</span></li>
+<li><span class="api-name">ShowNetworkConfiguration</span><br><span class="api-desc">检查云堡垒机实例网络信息。</span></li>
+<li><span class="api-name">ListCbhInstance</span><br><span class="api-desc">获取当前租户下的云堡垒机实例列表。</span></li>
+<li><span class="api-name">ListQuotaStatus</span><br><span class="api-desc">获取当前租户所选择的可用分区、性能规格所对应的弹性云服务器是否可用。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>云堡垒机管理</h3>
+<ul>
+<li><span class="api-name">StopCbhInstance</span><br><span class="api-desc">关闭云堡垒机实例。</span></li>
+<li><span class="api-name">ResetLoginMethod</span><br><span class="api-desc">重置admin用户多因子认证方式。</span></li>
+<li><span class="api-name">UpgradeCbhInstance</span><br><span class="api-desc">升级云堡垒机实例</span></li>
+<li><span class="api-name">InstallCbhEip</span><br><span class="api-desc">云堡垒机实例绑定弹性公网IP</span></li>
+<li><span class="api-name">UninstallCbhEip</span><br><span class="api-desc">云堡垒机实例解绑弹性公网IP。</span></li>
+<li><span class="api-name">StartCbhInstance</span><br><span class="api-desc">启动云堡垒机实例。</span></li>
+<li><span class="api-name">RestartCbhInstance</span><br><span class="api-desc">重启云堡垒机实例。</span></li>
+<li><span class="api-name">ChangeInstanceNetwork</span><br><span class="api-desc">修改云堡垒机实例网络。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>其他接口</h3>
+<ul>
+<li><span class="api-name">ListAvailableZones</span><br><span class="api-desc">在创建实例时,需要配置实例所在的可用区ID,可通过该接口查询可用区的ID。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>委托授权</h3>
+<ul>
+<li><span class="api-name">ShowAuthorization</span><br><span class="api-desc">获取租户给云堡垒机服务委托授权信息。</span></li>
+<li><span class="api-name">RegisterAuthorization</span><br><span class="api-desc">租户创建或取消云堡垒机服务的委托授权。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>实例管理</h3>
+<ul>
+<li><span class="api-name">StopInstance</span><br><span class="api-desc">实例进行关机,通过暂时停止按需实例以节省费用,实例默认停止七天。</span></li>
+<li><span class="api-name">ResetPassword</span><br><span class="api-desc">重置密码(只针对开通SSL的实例)。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>操作管理</h3>
+<ul>
+<li><span class="api-name">ResetInstancePassword</span><br><span class="api-desc">重置云堡垒机实例web登录admin用户密码。</span></li>
+<li><span class="api-name">LoginInstanceAdmin</span><br><span class="api-desc">用户登录堡垒机实例admin的console。</span></li>
+<li><span class="api-name">LoginInstance</span><br><span class="api-desc">IAM用户登录堡垒机实例console。</span></li>
+<li><span class="api-name">RebootInstance</span><br><span class="api-desc">重启云堡垒机实例。</span></li>
+<li><span class="api-name">ShowOmUrl</span><br><span class="api-desc">获取运维链接</span></li>
+<li><span class="api-name">ResetInstanceLoginMethod</span><br><span class="api-desc">重置堡垒机实例admin用户登录方式。</span></li>
+<li><span class="api-name">RollbackInstance</span><br><span class="api-desc">回退升级的云堡垒机实例。</span></li>
+<li><span class="api-name">ChangeInstanceType</span><br><span class="api-desc">修改单机堡垒机实例类型。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>数据库管理</h3>
+<ul>
+<li><span class="api-name">StartInstance</span><br><span class="api-desc">启动数据库,同时支持节点级别的启动操作</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>标签管理</h3>
+<ul>
+<li><span class="api-name">ListInstancesByTag</span><br><span class="api-desc">使用标签过滤实例。</span></li>
+<li><span class="api-name">BatchCreateInstanceTag</span><br><span class="api-desc">操作堡垒机实例资源标签。</span></li>
+<li><span class="api-name">ShowInstanceTags</span><br><span class="api-desc">查询指定实例的标签信息。</span></li>
+<li><span class="api-name">CountInstancesByTag</span><br><span class="api-desc">统计符合标签条件的实例数量。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>流水线管理</h3>
+<ul>
+<li><span class="api-name">ShowInstanceStatus</span><br><span class="api-desc">检查流水线创建状态</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>独享实例管理</h3>
+<ul>
+<li><span class="api-name">CreateInstance</span><br><span class="api-desc">创建WAF独享引擎实例。独享模式支持的局点包括:华东-青岛、中东-利雅得、华北-北京一、华北-北京四、华北-乌兰察布一、华东-上海一、华东-上海二、华南-广州、华南-深圳、中国-香港、西南-贵阳一、亚太-曼谷、 亚太-新加坡、非洲约翰内斯堡、土耳其-伊斯坦布尔;普通租户类独享支持的局点:华北-北京四、华东-上海一、华南-广州、中国-香港、亚太-曼谷、 亚太-新加坡。</span></li>
+<li><span class="api-name">DeleteInstance</span><br><span class="api-desc">删除WAF独享引擎信息。独享模式只在部分局点支持,包括:华北-北京四、华东-上海一、华南-广州、华南-深圳 、中国-香港、亚太-曼谷、 亚太-新加坡。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>生命周期管理</h3>
+<ul>
+<li><span class="api-name">UpgradeInstance</span><br><span class="api-desc">实例内核升级</span></li>
+<li><span class="api-name">ListInstances</span><br><span class="api-desc">查询租户的实例列表,支持按照条件查询。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>网络管理</h3>
+<ul>
+<li><span class="api-name">InstallInstanceEip</span><br><span class="api-desc">云堡垒机实例绑定弹性公网IP。</span></li>
+<li><span class="api-name">UninstallInstanceEip</span><br><span class="api-desc">为云堡垒机实例解绑弹性公网IP。</span></li>
+<li><span class="api-name">SwitchInstanceVpc</span><br><span class="api-desc">切换堡垒机虚拟私有云</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>获取IAM登录实例链接</h3>
+<ul>
+<li><span class="api-name">LoginCbh</span><br><span class="api-desc">获取当前IAM用户登录堡垒机的免登录链接</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>规格变更管理</h3>
+<ul>
+<li><span class="api-name">ResizeInstance</span><br><span class="api-desc">实例规格变更。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>规格管理</h3>
+<ul>
+<li><span class="api-name">ListSpecifications</span><br><span class="api-desc">查询云堡垒机规格信息。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>订单管理</h3>
+<ul>
+<li><span class="api-name">CreateCbh</span><br><span class="api-desc">创建云堡垒机实例。(创建云堡垒机实例订单前,先调用此接口)</span></li>
+<li><span class="api-name">CreateInstanceOrder</span><br><span class="api-desc">创建云堡垒机实例订单。(调用此接口前先调用创建云堡垒机实例接口)</span></li>
+<li><span class="api-name">ChangeInstanceOrder</span><br><span class="api-desc">创建变更云堡垒机实例订单。(调用此接口前先调用创建变更云堡垒机实例任务接口,当前接口未开放)</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>配额</h3>
+<ul>
+<li><span class="api-name">ShowQuota</span><br><span class="api-desc">查询单租户在VPC服务下的网络资源配额,包括vpc配额、子网配额、安全组配额、安全组规则配额、弹性公网IP配额,vpn配额等。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>配额管理</h3>
+<ul>
+<li><span class="api-name">ShowEcsQuota</span><br><span class="api-desc">获取当前租户所选择的可用分区里的堡垒机ECS规格是否可用。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>镜像标签</h3>
+<ul>
+<li><span class="api-name">ListTags</span><br><span class="api-desc">根据不同条件查询镜像标签列表信息。</span></li>
+</ul>
+</div>
+        
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

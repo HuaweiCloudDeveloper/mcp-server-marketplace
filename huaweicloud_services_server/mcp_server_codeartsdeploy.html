@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>CodeArtsDeploy MCP 服务器是一款模型上下文协议（Model Context Protocol）服务器，为 MCP 客户端（如 Claude Desktop、Cline、Cursor）提供与华为云服务 CodeArtsDeploy 的交互能力。可基于自然语言实现对 CodeArtsDeploy 资源的全链路管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ecs --transport stdio --port 8024
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ecs --transport http  --port 8024
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ecs --transport sse --port 8024
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8000/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+<!-- 右侧工具栏 -->
+<div class="sidebar">
+  <h2 style="margin-top:0;">应用部署工具列表</h2>
+
+  <!-- 应用分组管理 -->
+  <div class="api-category">
+    <h3>应用分组管理</h3>
+    <ul>
+      <li><span class="api-name">MoveAppGroups</span><br><span class="api-desc">调整分组位置</span></li>
+      <li><span class="api-name">UpdateAppGroups</span><br><span class="api-desc">修改分组信息</span></li>
+      <li><span class="api-name">MoveAppToGroup</span><br><span class="api-desc">移动应用到分组（支持批量）</span></li>
+      <li><span class="api-name">ListAppGroups</span><br><span class="api-desc">查询分组列表</span></li>
+      <li><span class="api-name">CreateAppGroups</span><br><span class="api-desc">创建新分组</span></li>
+      <li><span class="api-name">DeleteAppGroups</span><br><span class="api-desc">删除分组</span></li>
+    </ul>
+  </div>
+
+  <!-- 应用管理 -->
+  <div class="api-category">
+    <h3>应用管理</h3>
+    <ul>
+      <li><span class="api-name">CreateApp</span><br><span class="api-desc">创建新应用</span></li>
+      <li><span class="api-name">UpdateAppInfo</span><br><span class="api-desc">更新应用信息</span></li>
+      <li><span class="api-name">ListAllApp</span><br><span class="api-desc">查询应用列表</span></li>
+      <li><span class="api-name">CopyApplication</span><br><span class="api-desc">复制应用配置</span></li>
+      <li><span class="api-name">ShowAppDetailById</span><br><span class="api-desc">查看应用详情</span></li>
+      <li><span class="api-name">UpdateAppDisableStatus</span><br><span class="api-desc">禁用/启用应用</span></li>
+      <li><span class="api-name">CheckIsDuplicateAppName</span><br><span class="api-desc">检查同名应用</span></li>
+      <li><span class="api-name">BatchDeleteApp</span><br><span class="api-desc">批量删除应用</span></li>
+      <li><span class="api-name">DeleteApplication</span><br><span class="api-desc">删除平台应用</span></li>
+    </ul>
+  </div>
+
+  <!-- 权限管理 -->
+  <div class="api-category">
+    <h3>权限管理</h3>
+    <ul>
+      <li><span class="api-name">BatchUpdateApplicationPermissions</span><br><span class="api-desc">批量修改应用权限</span></li>
+      <li><span class="api-name">ListApplicationPermissions</span><br><span class="api-desc">查询应用权限矩阵</span></li>
+      <li><span class="api-name">BatchUpdatePermissionLevel</span><br><span class="api-desc">配置鉴权级别</span></li>
+      <li><span class="api-name">CheckCanCreate</span><br><span class="api-desc">检查创建权限</span></li>
+      <li><span class="api-name">ListEnvironmentPermissions</span><br><span class="api-desc">查询环境权限</span></li>
+      <li><span class="api-name">UpdateEnvironmentPermission</span><br><span class="api-desc">编辑环境权限</span></li>
+      <li><span class="api-name">ListHostGroupPermissions</span><br><span class="api-desc">查询主机集群权限</span></li>
+      <li><span class="api-name">UpdateHostGroupPermissions</span><br><span class="api-desc">修改主机集群权限</span></li>
+      <li><span class="api-name">CheckWhetherHostGroupCanBeCreated</span><br><span class="api-desc">检查主机集群创建权限</span></li>
+    </ul>
+  </div>
+
+  <!-- 环境管理 -->
+  <div class="api-category">
+    <h3>环境管理</h3>
+    <ul>
+      <li><span class="api-name">CreateEnvironment</span><br><span class="api-desc">创建新环境</span></li>
+      <li><span class="api-name">UpdateEnvironment</span><br><span class="api-desc">编辑环境配置</span></li>
+      <li><span class="api-name">ListEnvironments</span><br><span class="api-desc">查询环境列表</span></li>
+      <li><span class="api-name">ShowEnvironmentDetail</span><br><span class="api-desc">查看环境详情</span></li>
+      <li><span class="api-name">DeleteEnvironment</span><br><span class="api-desc">删除环境</span></li>
+      <li><span class="api-name">ListEnvironmentHosts</span><br><span class="api-desc">查询环境内主机</span></li>
+      <li><span class="api-name">ImportHostToEnvironment</span><br><span class="api-desc">导入主机到环境</span></li>
+      <li><span class="api-name">DeleteHostFromEnvironment</span><br><span class="api-desc">从环境删除主机</span></li>
+    </ul>
+  </div>
+
+  <!-- 主机管理 -->
+  <div class="api-category">
+    <h3>主机管理</h3>
+    <ul>
+      <li><span class="api-name">ShowHostDetail</span><br><span class="api-desc">查询主机详情</span></li>
+      <li><span class="api-name">UpdateHostInfo</span><br><span class="api-desc">编辑主机信息</span></li>
+      <li><span class="api-name">ListNewHosts</span><br><span class="api-desc">查询主机集群下的主机</span></li>
+      <li><span class="api-name">BatchDeleteHosts</span><br><span class="api-desc">批量删除主机</span></li>
+      <li><span class="api-name">CopyHostsToTarget</span><br><span class="api-desc">复制主机到集群</span></li>
+      <li><span class="api-name">ListHosts</span><br><span class="api-desc">查询集群主机列表详情</span></li>
+      <li><span class="api-name">ListHostGroups</span><br><span class="api-desc">查询服务器组列表</span></li>
+    </ul>
+  </div>
+
+  <!-- 主机集群管理 -->
+  <div class="api-category">
+    <h3>主机集群管理</h3>
+    <ul>
+      <li><span class="api-name">CreateHostCluster</span><br><span class="api-desc">创建主机集群</span></li>
+      <li><span class="api-name">UpdateHostCluster</span><br><span class="api-desc">编辑主机集群</span></li>
+      <li><span class="api-name">ListHostClusters</span><br><span class="api-desc">查询集群列表</span></li>
+      <li><span class="api-name">ShowHostClusterDetail</span><br><span class="api-desc">查看集群详情</span></li>
+      <li><span class="api-name">DeleteHostCluster</span><br><span class="api-desc">删除主机集群</span></li>
+      <li><span class="api-name">ListAssociateEnvironmentsInfos</span><br><span class="api-desc">查询集群关联环境</span></li>
+      <li><span class="api-name">ListHostGroupBaseInfos</span><br><span class="api-desc">查询环境基本信息</span></li>
+    </ul>
+  </div>
+
+  <!-- 部署与监控 -->
+  <div class="api-category">
+    <h3>部署与监控</h3>
+    <ul>
+      <li><span class="api-name">StartDeployTask</span><br><span class="api-desc">开始部署应用</span></li>
+      <li><span class="api-name">ShowProjectSuccessRate</span><br><span class="api-desc">项目部署成功率</span></li>
+      <li><span class="api-name">ListTaskSuccessRate</span><br><span class="api-desc">应用部署成功率</span></li>
+      <li><span class="api-name">ListDeployTaskHistoryByDate</span><br><span class="api-desc">查询部署记录</span></li>
+      <li><span class="api-name">ShowExecutionParams</span><br><span class="api-desc">查询执行参数</span></li>
+    </ul>
+  </div>
+
+  <!-- 云模式防护网站管理 -->
+  <div class="api-category">
+    <h3>云模式防护网站管理</h3>
+    <ul>
+      <li><span class="api-name">CreateHost</span><br><span class="api-desc">创建云模式防护域名</span></li>
+      <li><span class="api-name">DeleteHost</span><br><span class="api-desc">删除云模式防护域名</span></li>
+    </ul>
+  </div>
+
+  <p>以及更多用于主机集群操作、云模式防护网站管理等的API。</p>
+</div>
+
+    </div>
+  </div>
+</body>
+</html>

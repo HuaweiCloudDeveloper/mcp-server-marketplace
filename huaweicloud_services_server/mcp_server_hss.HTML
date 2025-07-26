@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ecs --transport stdio --port 8869
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ecs --transport http  --port 8869
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ecs --transport sse --port 8869
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8000/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+<h3>Tags</h3>
+<ul>
+<li><span class="api-name">ListProjectTags</span><br><span class="api-desc">查询租户在指定项目中指定资源类型下的所有标签</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>主机安装与配置</h3>
+<ul>
+<li><span class="api-name">ListLoginWhiteIp</span><br><span class="api-desc">查询SSH登录IP白名单列表</span></li>
+<li><span class="api-name">ListLoginCommonLocation</span><br><span class="api-desc">查询常用登录地信息</span></li>
+<li><span class="api-name">SetTwoFactorLoginConfig</span><br><span class="api-desc">设置双因子登录配置</span></li>
+<li><span class="api-name">ListTwoFactorLoginHost</span><br><span class="api-desc">查询双因子主机列表</span></li>
+<li><span class="api-name">ListLoginCommonIp</span><br><span class="api-desc">查询常用登录IP信息</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>主机管理</h3>
+<ul>
+<li><span class="api-name">ListHostStatus</span><br><span class="api-desc">查询云服务器列表</span></li>
+<li><span class="api-name">ListPolicies</span><br><span class="api-desc">查询主机策略列表</span></li>
+<li><span class="api-name">DeleteHostsGroup</span><br><span class="api-desc">删除服务器组</span></li>
+<li><span class="api-name">ListHostGroups</span><br><span class="api-desc">查询服务器组列表</span></li>
+<li><span class="api-name">AddHostsGroup</span><br><span class="api-desc">创建服务器组</span></li>
+<li><span class="api-name">ChangeHostsGroup</span><br><span class="api-desc">编辑服务器组</span></li>
+<li><span class="api-name">SwitchHostsProtectStatus</span><br><span class="api-desc">切换防护状态</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>事件管理</h3>
+<ul>
+<li><span class="api-name">ChangeIsolatedFile</span><br><span class="api-desc">恢复已隔离文件</span></li>
+<li><span class="api-name">ListQueryExportTask</span><br><span class="api-desc">查询导出任务信息</span></li>
+<li><span class="api-name">ListBlockedIp</span><br><span class="api-desc">查询已拦截IP列表</span></li>
+<li><span class="api-name">ChangeBlockedIp</span><br><span class="api-desc">解除已拦截IP</span></li>
+<li><span class="api-name">ListIsolatedFile</span><br><span class="api-desc">查询已隔离文件列表</span></li>
+<li><span class="api-name">ListDownloadExportedFile</span><br><span class="api-desc">下载导出文件</span></li>
+<li><span class="api-name">DeleteIsolatedFile</span><br><span class="api-desc">删除已隔离文件</span></li>
+<li><span class="api-name">ShowLatestExportTaskByType</span><br><span class="api-desc">查询导出任务信息</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>入侵检测</h3>
+<ul>
+<li><span class="api-name">ListSecurityEvents</span><br><span class="api-desc">查入侵事件列表</span></li>
+<li><span class="api-name">ChangeEvent</span><br><span class="api-desc">处理告警事件</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>动态端口蜜罐</h3>
+<ul>
+<li><span class="api-name">CreateDecoyPortPolicy</span><br><span class="api-desc">新增动态端口蜜罐策略</span></li>
+<li><span class="api-name">ShowDecoyPortPolicyDetails</span><br><span class="api-desc">查看动态端口蜜罐策略详情</span></li>
+<li><span class="api-name">SwitchDecoyPortHostPolicy</span><br><span class="api-desc">切换主机动态端口蜜罐策略</span></li>
+<li><span class="api-name">ListDecoyPortPolicy</span><br><span class="api-desc">查看动态端口蜜罐策略</span></li>
+<li><span class="api-name">DeleteDecoyPortHostPolicy</span><br><span class="api-desc">关闭主机动态端口蜜罐策略</span></li>
+<li><span class="api-name">ModifyDecoyPortPolicy</span><br><span class="api-desc">编辑动态端口蜜罐策略</span></li>
+<li><span class="api-name">DeleteDecoyPortPolicy</span><br><span class="api-desc">删除动态端口蜜罐策略</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>勒索防护</h3>
+<ul>
+<li><span class="api-name">StopProtection</span><br><span class="api-desc">关闭勒索病毒防护</span></li>
+<li><span class="api-name">UpdateBackupPolicyInfo</span><br><span class="api-desc">修改存储库绑定的备份策略</span></li>
+<li><span class="api-name">ListRansomwareProtectionNodes</span><br><span class="api-desc">查询勒索防护服务器列表,与云备份服务配合使用。因此使用勒索相关接口之前确保该局点有云备份服务</span></li>
+<li><span class="api-name">ListProtectionServer</span><br><span class="api-desc">查询勒索防护服务器列表,与云备份服务配合使用。因此使用勒索相关接口之前确保该局点有云备份服务</span></li>
+<li><span class="api-name">ListBackupVaults</span><br><span class="api-desc">查询备份存储库列表</span></li>
+<li><span class="api-name">ShowBackupPolicyInfo</span><br><span class="api-desc">查询HSS存储库绑定的备份策略信息,确保已经购买了勒索防护存储库,可以从cbr云备份服务进行验证,确保已经存在HSS_projectid命名的存储库已经购买</span></li>
+<li><span class="api-name">ShowSingleBackupPolicyInfo</span><br><span class="api-desc">查询单个备份策略信息</span></li>
+<li><span class="api-name">UpdateProtectionPolicy</span><br><span class="api-desc">修改勒索防护策略</span></li>
+<li><span class="api-name">AddProtectionPolicy</span><br><span class="api-desc">添加防护策略</span></li>
+<li><span class="api-name">ListOperationLogsByVaultName</span><br><span class="api-desc">查询备份恢复任务列表</span></li>
+<li><span class="api-name">ListProtectionPolicy</span><br><span class="api-desc">查询勒索病毒的防护策略列表</span></li>
+<li><span class="api-name">BatchStartProtection</span><br><span class="api-desc">批量开启勒索病毒防护,若开启备份防护,请保证该region有cbr云备份服务</span></li>
+<li><span class="api-name">DeleteProtectionPolicy</span><br><span class="api-desc">删除防护策略</span></li>
+<li><span class="api-name">StartProtection</span><br><span class="api-desc">开启勒索病毒防护,请保证该region有cbr云备份服务,勒索服务与云备份服务有关联关系</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>基线管理</h3>
+<ul>
+<li><span class="api-name">ShowBaselineScanStatus</span><br><span class="api-desc">查询基线扫描手动检测结果</span></li>
+<li><span class="api-name">ChangePasswordComplexityStatus</span><br><span class="api-desc">对口令复杂度检测未通过的主机进行忽略/取消忽略</span></li>
+<li><span class="api-name">ListRiskConfigs</span><br><span class="api-desc">查询租户的服务器安全配置检测结果列表</span></li>
+<li><span class="api-name">ListPasswordComplexity</span><br><span class="api-desc">查询口令复杂度策略检测报告</span></li>
+<li><span class="api-name">ListRiskConfigCheckRules</span><br><span class="api-desc">查询指定安全配置项的检查项列表</span></li>
+<li><span class="api-name">ShowRiskConfigDetail</span><br><span class="api-desc">查询指定安全配置项的检查结果</span></li>
+<li><span class="api-name">ListWeakPasswordUsers</span><br><span class="api-desc">查询弱口令检测结果列表</span></li>
+<li><span class="api-name">ChangeCheckRuleAction</span><br><span class="api-desc">对未通过的配置检查项进行忽略/取消忽略/修复/验证操作</span></li>
+<li><span class="api-name">ListRiskConfigHosts</span><br><span class="api-desc">查询指定安全配置项的受影响服务器列表</span></li>
+<li><span class="api-name">ShowCheckRuleDetail</span><br><span class="api-desc">查询配置检查项检测报告</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>安全组</h3>
+<ul>
+<li><span class="api-name">ListSecurityGroups</span><br><span class="api-desc">查询某租户下的安全组列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>安全运营</h3>
+<ul>
+<li><span class="api-name">ListAntivirusHandleHistory</span><br><span class="api-desc">查询病毒扫描历史处置记录列表</span></li>
+<li><span class="api-name">ListEventHandleHistory</span><br><span class="api-desc">查询告警事件历史处置记录列表</span></li>
+<li><span class="api-name">ListVulHandleHistory</span><br><span class="api-desc">查询漏洞历史处置记录列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>安装配置</h3>
+<ul>
+<li><span class="api-name">ListOrganizationTree</span><br><span class="api-desc">查询账号组织</span></li>
+<li><span class="api-name">ListAgentInstallScript</span><br><span class="api-desc">查询agent安装脚本</span></li>
+<li><span class="api-name">ListAccounts</span><br><span class="api-desc">查询多账号列表</span></li>
+<li><span class="api-name">DeleteAccount</span><br><span class="api-desc">删除账号</span></li>
+<li><span class="api-name">BatchAddAccounts</span><br><span class="api-desc">批量添加账号</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>容器安装与配置</h3>
+<ul>
+<li><span class="api-name">BatchUpgradeAgentDaemonset</span><br><span class="api-desc">批量升级集群daemonset</span></li>
+<li><span class="api-name">ShowMultiCloudClusterProxyScript</span><br><span class="api-desc">获取多云集群的代理安装脚本</span></li>
+<li><span class="api-name">UpdateAgentDaemonset</span><br><span class="api-desc">更新集群daemonset</span></li>
+<li><span class="api-name">SyncMultiCloudClusterStatus</span><br><span class="api-desc">同步多云集群的接入状态</span></li>
+<li><span class="api-name">ShowAgentDaemonsetDetailInfo</span><br><span class="api-desc">获取集群daemonset信息</span></li>
+<li><span class="api-name">RemoveMultiCloudClusters</span><br><span class="api-desc">删除多云集群</span></li>
+<li><span class="api-name">ShowMultiCloudClusterImageCommand</span><br><span class="api-desc">获取多云集群的上传镜像指令</span></li>
+<li><span class="api-name">BatchDeleteAgentDaemonset</span><br><span class="api-desc">批量卸载集群daemonset</span></li>
+<li><span class="api-name">CreateAgentDaemonset</span><br><span class="api-desc">创建集群daemonset</span></li>
+<li><span class="api-name">UpdateMultiCloudClusters</span><br><span class="api-desc">更新多云集群</span></li>
+<li><span class="api-name">ParseMultiCloudClusterConfig</span><br><span class="api-desc">解析多云集群的配置文件</span></li>
+<li><span class="api-name">DeleteAgentDaemonset</span><br><span class="api-desc">删除集群daemonset</span></li>
+<li><span class="api-name">CreateMultiCloudClusters</span><br><span class="api-desc">创建多云集群</span></li>
+<li><span class="api-name">ShowAgentDaemonsetDeployTemplate</span><br><span class="api-desc">获取部署模板,在安装Daemonset的时候提供选择</span></li>
+<li><span class="api-name">ListMultiCloudClusters</span><br><span class="api-desc">查询多云集群</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>容器管理</h3>
+<ul>
+<li><span class="api-name">ShowContainerNodeStatistics</span><br><span class="api-desc">查询容器节点防护总览数据</span></li>
+<li><span class="api-name">CreateClustersInfo</span><br><span class="api-desc">同步集群信息</span></li>
+<li><span class="api-name">SwitchContainerProtectStatus</span><br><span class="api-desc">切换防护状态</span></li>
+<li><span class="api-name">ListContainers</span><br><span class="api-desc">查询容器基本信息列表</span></li>
+<li><span class="api-name">ShowKubernetesEndpointInfo</span><br><span class="api-desc">查询容器Kubernetes端点详情</span></li>
+<li><span class="api-name">ShowKubernetesServiceInfo</span><br><span class="api-desc">查询容器Kubernetes服务详情</span></li>
+<li><span class="api-name">ListContainerCmdLogs</span><br><span class="api-desc">查询容器内运行的命令列表</span></li>
+<li><span class="api-name">ListK8sPods</span><br><span class="api-desc">查询pod基本信息列表</span></li>
+<li><span class="api-name">ShowK8sPodDetail</span><br><span class="api-desc">查询pod详细信息</span></li>
+<li><span class="api-name">ListKubernetesServiceDetails</span><br><span class="api-desc">查询容器Kubernetes服务列表</span></li>
+<li><span class="api-name">ExportContainerList</span><br><span class="api-desc">创建容器导出任务</span></li>
+<li><span class="api-name">ShowK8sContainerDetail</span><br><span class="api-desc">查询容器详细信息</span></li>
+<li><span class="api-name">ListContainerLogs</span><br><span class="api-desc">查询容器日志列表</span></li>
+<li><span class="api-name">ListKubernetesEndpointDetails</span><br><span class="api-desc">查询容器Kubernetes端点列表</span></li>
+<li><span class="api-name">ListKubernetesClusterDetails</span><br><span class="api-desc">查询容器Kubernetes集群列表</span></li>
+<li><span class="api-name">ListContainerNodes</span><br><span class="api-desc">查询容器节点列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>容器网络隔离信息</h3>
+<ul>
+<li><span class="api-name">SyncClusterList</span><br><span class="api-desc">同步容器集群最新数据</span></li>
+<li><span class="api-name">SyncContainerNetworkPolicyList</span><br><span class="api-desc">同步集群下容器网络策略最新数据</span></li>
+<li><span class="api-name">SyncContainerNetworkNode</span><br><span class="api-desc">同步集群下容器网络策略最新数据</span></li>
+<li><span class="api-name">CreateContainerNetworkPolicy</span><br><span class="api-desc">容器集群网络添加配置策略</span></li>
+<li><span class="api-name">ListContainerNetworkClusters</span><br><span class="api-desc">查询容器防护的集群信息</span></li>
+<li><span class="api-name">ShowContainerNetworkInfo</span><br><span class="api-desc">查询容器集群网络的网络信息</span></li>
+<li><span class="api-name">ListWorkLoads</span><br><span class="api-desc">查询集群下某一命名空间下的工作负载</span></li>
+<li><span class="api-name">SyncSecurityGroupPolicies</span><br><span class="api-desc">同步集群下安全组策略最新数据</span></li>
+<li><span class="api-name">ListContainerNetworkPolicy</span><br><span class="api-desc">查询容器集群网络的策略列表</span></li>
+<li><span class="api-name">UpdateSecurityGroupPolicy</span><br><span class="api-desc">更新安全组策略(云原生网络模型)</span></li>
+<li><span class="api-name">CreateSecurityGroupPolicy</span><br><span class="api-desc">创建安全组策略(云原生网络模型)</span></li>
+<li><span class="api-name">ListContainerNetworkNodeList</span><br><span class="api-desc">查询容器集群网络的策略列表</span></li>
+<li><span class="api-name">ListSecurityGroupPolicies</span><br><span class="api-desc">查询云原生网络模式2.0的集群已配置的安全组策略</span></li>
+<li><span class="api-name">DeleteSecurityGroupPolicy</span><br><span class="api-desc">删除安全组策略(云原生网络模型)</span></li>
+<li><span class="api-name">UpdateContainerNetworkPolicy</span><br><span class="api-desc">容器集群网络更新配置策略</span></li>
+<li><span class="api-name">DeleteContainerNetworkPolicy</span><br><span class="api-desc">容器集群网络删除配置策略</span></li>
+<li><span class="api-name">ShowNetworkStatistics</span><br><span class="api-desc">集群网络策略总览</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>容器资产</h3>
+<ul>
+<li><span class="api-name">ListK8sCronJobs</span><br><span class="api-desc">查询cronjobs基本信息列表</span></li>
+<li><span class="api-name">ListK8sDeployments</span><br><span class="api-desc">查询deployment基本信息列表</span></li>
+<li><span class="api-name">ListK8sJobs</span><br><span class="api-desc">查询jobs基本信息列表</span></li>
+<li><span class="api-name">ListK8sDaemonSets</span><br><span class="api-desc">查询daemonsets基本信息列表</span></li>
+<li><span class="api-name">ListK8sStatefulSets</span><br><span class="api-desc">查询statefulset基本信息列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>容器镜像</h3>
+<ul>
+<li><span class="api-name">ShowImageCheckRuleDetail</span><br><span class="api-desc">查询镜像配置检查项检测报告</span></li>
+<li><span class="api-name">ListImageVulnerabilities</span><br><span class="api-desc">查询镜像的漏洞信息</span></li>
+<li><span class="api-name">ListSwrImageRepository</span><br><span class="api-desc">查询swr镜像仓库镜像列表,如果需要从swr同步最新镜像,需要先调用“从swr同步镜像”接口</span></li>
+<li><span class="api-name">ListContainerImageLogs</span><br><span class="api-desc">查询容器镜像操作日志</span></li>
+<li><span class="api-name">BatchScanSwrImage</span><br><span class="api-desc">镜像仓库镜像批量扫描</span></li>
+<li><span class="api-name">RunImageSynchronize</span><br><span class="api-desc">从SWR服务同步镜像列表</span></li>
+<li><span class="api-name">ListVulnerabilityCve</span><br><span class="api-desc">漏洞对应cve信息</span></li>
+<li><span class="api-name">ListImageRiskConfigRules</span><br><span class="api-desc">查询镜像指定安全配置项的检查项列表</span></li>
+<li><span class="api-name">ListImageLocal</span><br><span class="api-desc">本地镜像列表查询</span></li>
+<li><span class="api-name">ListImageRiskConfigs</span><br><span class="api-desc">查询镜像安全配置检测结果列表,当前支持检测CentOS 7、Debian 10、EulerOS和Ubuntu16镜像的系统配置项、SSH应用配置项。</span></li>
+<li><span class="api-name">ListContainerImages</span><br><span class="api-desc">查询容器镜像列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>应用模板管理</h3>
+<ul>
+<li><span class="api-name">ListApps</span><br><span class="api-desc">查询应用模板列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>应用防护</h3>
+<ul>
+<li><span class="api-name">ListProtectionServers</span><br><span class="api-desc">查询防护服务器列表:查询防护服务器相关数据,包含服务器名称、ip地址、操作系统、服务器组名称、防护策略、防护状态、微服务防护状态、RASP防护状态、RASP攻击数量信息</span></li>
+<li><span class="api-name">ShowRaspProtectStatistics</span><br><span class="api-desc">防护数据统计:统计已添加防护服务器的数量以及近七天微服务RASP攻击数量</span></li>
+<li><span class="api-name">ShowAppRaspSwitchStatus</span><br><span class="api-desc">查询应用防护开启状态:查询单台服务器的应用防护功能开启状态</span></li>
+<li><span class="api-name">ListRaspEvents</span><br><span class="api-desc">查询应用防护事件列表:展示防护事件相关信息,包含告警级别、服务器名称、告警名称、告警时间、攻击源ip、攻击源url数据</span></li>
+<li><span class="api-name">AddPolicy</span><br><span class="api-desc">添加防护策略:创建防护策略,包含策略名称、相关规则开启状态、防护动作以及检测规则配置</span></li>
+<li><span class="api-name">ListRaspPolicies</span><br><span class="api-desc">查询防护策略列表:查询创建的防护策略信息,包含防护策略名称、检测规则、关联服务器数量</span></li>
+<li><span class="api-name">ListCheckFeatureRule</span><br><span class="api-desc">查询检测规则列表:查询默认检测规则信息,包含14种检测规则,默认都不开启</span></li>
+<li><span class="api-name">ShowRaspPolicyDetail</span><br><span class="api-desc">查询防护策略详情:查询防护策略配置的相关检测规则信息,包含14种检测规则</span></li>
+<li><span class="api-name">ShowRaspServerDetail</span><br><span class="api-desc">查询防护服务器java应用详情:查询防护服务器的java应用状态列表</span></li>
+<li><span class="api-name">SwitchRasp</span><br><span class="api-desc">开启/关闭应用防护,选择开启的防护策略,选择需要防护的服务器,下发防护策略,可传入端口号更新防护端口,关闭防护则清空策略</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>标签管理</h3>
+<ul>
+<li><span class="api-name">DeleteResourceInstanceTag</span><br><span class="api-desc">删除单个资源下的标签</span></li>
+<li><span class="api-name">BatchCreateTags</span><br><span class="api-desc">批量创建标签</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>漏洞管理</h3>
+<ul>
+<li><span class="api-name">ShowVulScanPolicy</span><br><span class="api-desc">查询漏洞扫描策略</span></li>
+<li><span class="api-name">ChangeVulScanPolicy</span><br><span class="api-desc">修改漏洞扫描策略</span></li>
+<li><span class="api-name">ListVulScanTask</span><br><span class="api-desc">查询漏洞扫描任务列表</span></li>
+<li><span class="api-name">ListVulScanTaskHost</span><br><span class="api-desc">查询漏洞扫描任务对应的主机列表</span></li>
+<li><span class="api-name">ListHostVuls</span><br><span class="api-desc">查询单台服务器漏洞信息</span></li>
+<li><span class="api-name">ShowVulStatics</span><br><span class="api-desc">查询漏洞管理统计数据</span></li>
+<li><span class="api-name">ChangeVulStatus</span><br><span class="api-desc">修改漏洞的状态</span></li>
+<li><span class="api-name">ListVulnerabilities</span><br><span class="api-desc">查询漏洞列表</span></li>
+<li><span class="api-name">CreateVulnerabilityScanTask</span><br><span class="api-desc">创建漏洞扫描任务</span></li>
+<li><span class="api-name">ExportVuls</span><br><span class="api-desc">导出漏洞及漏洞影响的主机的相关信息</span></li>
+<li><span class="api-name">ListVulHosts</span><br><span class="api-desc">查询单个漏洞影响的云服务器信息</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>病毒查杀</h3>
+<ul>
+<li><span class="api-name">ShowAntivirusPayPerScanStatus</span><br><span class="api-desc">查询“病毒查杀按次计费”开关状态</span></li>
+<li><span class="api-name">ChangeAntivirusPolicy</span><br><span class="api-desc">编辑自定义查杀策略</span></li>
+<li><span class="api-name">ListAntiVirusTask</span><br><span class="api-desc">查看病毒扫描任务列表</span></li>
+<li><span class="api-name">DeleteAntivirusPolicy</span><br><span class="api-desc">删除自定义查杀策略</span></li>
+<li><span class="api-name">ExportAntiVirusResult</span><br><span class="api-desc">导出病毒扫描结果列表</span></li>
+<li><span class="api-name">HandleAntiVirusResult</span><br><span class="api-desc">处置病毒扫描结果</span></li>
+<li><span class="api-name">ListAntiVirusResult</span><br><span class="api-desc">查询病毒扫描结果列表</span></li>
+<li><span class="api-name">CreateAntiVirusTask</span><br><span class="api-desc">创建病毒扫描任务</span></li>
+<li><span class="api-name">ShowAntivirusStatistic</span><br><span class="api-desc">查询病毒查杀统计信息</span></li>
+<li><span class="api-name">ListAntiVirusPolicy</span><br><span class="api-desc">查询自定义查杀策略列表</span></li>
+<li><span class="api-name">CreateAntiVirusPolicy</span><br><span class="api-desc">创建自定义查杀策略</span></li>
+<li><span class="api-name">ListAntiVirusHost</span><br><span class="api-desc">查询病毒查杀可选服务器列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>白名单管理</h3>
+<ul>
+<li><span class="api-name">AddLoginWhiteList</span><br><span class="api-desc">添加登录白名单</span></li>
+<li><span class="api-name">RemoveAlarmWhiteList</span><br><span class="api-desc">删除告警白名单</span></li>
+<li><span class="api-name">RemoveLoginWhiteList</span><br><span class="api-desc">删除登录白名单</span></li>
+<li><span class="api-name">UpdateSystemUserWhiteList</span><br><span class="api-desc">修改系统用户白名单</span></li>
+<li><span class="api-name">ListSystemUserWhiteList</span><br><span class="api-desc">查询系统用户白名单列表</span></li>
+<li><span class="api-name">RemoveSystemUserWhiteList</span><br><span class="api-desc">删除系统用户白名单</span></li>
+<li><span class="api-name">ListLoginWhiteList</span><br><span class="api-desc">查询登录白名单列表</span></li>
+<li><span class="api-name">AddSystemUserWhiteList</span><br><span class="api-desc">添加系统用户白名单</span></li>
+<li><span class="api-name">ListAlarmWhiteList</span><br><span class="api-desc">查询告警白名单列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>端口</h3>
+<ul>
+<li><span class="api-name">ListPorts</span><br><span class="api-desc">查询提交请求的租户的所有端口,单次查询最多返回2000条数据。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>策略管理</h3>
+<ul>
+<li><span class="api-name">ListPolicyGroup</span><br><span class="api-desc">查询策略组列表</span></li>
+<li><span class="api-name">AssociatePolicyGroup</span><br><span class="api-desc">部署策略组</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>组织管理</h3>
+<ul>
+<li><span class="api-name">ListNamespaces</span><br><span class="api-desc">查询组织列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>网页防篡改</h3>
+<ul>
+<li><span class="api-name">SetRaspSwitch</span><br><span class="api-desc">开启/关闭动态网页防篡改防护,下发/清空动态网页防篡改策略</span></li>
+<li><span class="api-name">ListWtpProtectHost</span><br><span class="api-desc">查询防护列表:查询网页防篡改主机防护状态列表信息</span></li>
+<li><span class="api-name">ListHostProtectHistoryInfo</span><br><span class="api-desc">查询主机静态网页防篡改防护动态:展示服务器名称、服务器ip、防护策略、检测时间、防护文件、事件描述信息</span></li>
+<li><span class="api-name">ListHostRaspProtectHistoryInfo</span><br><span class="api-desc">查询主机动态网页防篡改防护动态:包含告警级别、服务器ip、服务器名称、威胁类型、告警时间、攻击源ip、攻击源url信息</span></li>
+<li><span class="api-name">SetWtpProtectionStatusInfo</span><br><span class="api-desc">开启/关闭网页防篡改功能防护,下发/清空网页防篡改策略</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>资产管理</h3>
+<ul>
+<li><span class="api-name">ListAutoLaunchs</span><br><span class="api-desc">查询自启动项的服务列表</span></li>
+<li><span class="api-name">ListWebSiteStatistics</span><br><span class="api-desc">资产管理-资产指纹-Web站点左侧树</span></li>
+<li><span class="api-name">ListAppChangeHistories</span><br><span class="api-desc">获取软件信息的历史变动记录</span></li>
+<li><span class="api-name">ListProcessesHost</span><br><span class="api-desc">具备该进程的主机/容器信息</span></li>
+<li><span class="api-name">ListWebAppAndServices</span><br><span class="api-desc">资产管理-资产指纹-右侧WebAppAndService资产信息</span></li>
+<li><span class="api-name">ListJarPackageHostInfo</span><br><span class="api-desc">查询指定中间件的服务器列表,通过传入中间件名称参数,返回对应的中间件服务器列表</span></li>
+<li><span class="api-name">ListAppStatistics</span><br><span class="api-desc">查询软件列表,支持通过软件名称查询对应的服务器数</span></li>
+<li><span class="api-name">ShowAssetStatistic</span><br><span class="api-desc">资产统计信息,账号、端口、进程等</span></li>
+<li><span class="api-name">ShowHostAssetManualCollectStatus</span><br><span class="api-desc">查询单主机资产指纹采集状态</span></li>
+<li><span class="api-name">ListPortHost</span><br><span class="api-desc">具备该端口的主机/容器信息</span></li>
+<li><span class="api-name">ListUsers</span><br><span class="api-desc">查询账号的服务器列表</span></li>
+<li><span class="api-name">ListProcessStatistics</span><br><span class="api-desc">查询进程列表,通过传入进程路径参数查询对应的服务器数</span></li>
+<li><span class="api-name">ListAutoLaunchStatistics</span><br><span class="api-desc">查询自启动信息,支持通过传入自启动名称查询启动类型和服务器数</span></li>
+<li><span class="api-name">ListUserChangeHistories</span><br><span class="api-desc">获取账户变动历史记录信息</span></li>
+<li><span class="api-name">ListGlobalAssetScanTask</span><br><span class="api-desc">查询资产全局扫描任务状态</span></li>
+<li><span class="api-name">ListAutoLaunchChangeHistories</span><br><span class="api-desc">获取自启动项的历史变动记录</span></li>
+<li><span class="api-name">RunHostAssetManualCollect</span><br><span class="api-desc">采集单主机资产指纹</span></li>
+<li><span class="api-name">ListWebFrameworkStatistics</span><br><span class="api-desc">资产管理-资产指纹-Web框架左侧树</span></li>
+<li><span class="api-name">ShowCommonPort</span><br><span class="api-desc">呈现某一端口详细信息,如本地端口:80 类型:TCP 危险程度:正常 端口描述:常用于SSH(SecureShell)-远程登录协议,用于安全登录文件传输(SCP,SFTP)及端口重新定向。</span></li>
+<li><span class="api-name">ListKernelModuleHostInfo</span><br><span class="api-desc">资产管理-资产指纹-内核模块的服务器列表</span></li>
+<li><span class="api-name">ListWebAppAndServiceStatistics</span><br><span class="api-desc">资产管理-资产指纹-左侧WebAppAndService名称树信息</span></li>
+<li><span class="api-name">ListWebFrameworkHostInfo</span><br><span class="api-desc">资产管理-资产指纹-Web框架的服务器列表</span></li>
+<li><span class="api-name">CreateGlobalAssetScanTask</span><br><span class="api-desc">创建全局资产扫描任务</span></li>
+<li><span class="api-name">ListUserStatistics</span><br><span class="api-desc">查询账号信息列表,支持通过传入账号名称参数查询对应的服务器数</span></li>
+<li><span class="api-name">ListWebSiteHostInfo</span><br><span class="api-desc">资产管理-资产指纹-Web站点的服务器列表</span></li>
+<li><span class="api-name">ListKernelModuleStatistics</span><br><span class="api-desc">资产管理-资产指纹-内核模块左侧树</span></li>
+<li><span class="api-name">ListPortStatistics</span><br><span class="api-desc">查询开放端口列表,支持通过传入端口或协议类型查询服务器数</span></li>
+<li><span class="api-name">ListJarPackageStatistics</span><br><span class="api-desc">查询中间件列表,支持通过中间件名称查询对应的服务器树</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>配额管理</h3>
+<ul>
+<li><span class="api-name">CreateQuotasOrder</span><br><span class="api-desc">HSS服务创建订单订购配额,只支持包周期计费模式</span></li>
+<li><span class="api-name">ShowProductdataOfferingInfos</span><br><span class="api-desc">查询产商品信息</span></li>
+<li><span class="api-name">ShowResourceQuotas</span><br><span class="api-desc">查询配额信息</span></li>
+<li><span class="api-name">ListQuotasDetail</span><br><span class="api-desc">查询配额详情</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>防护策略管理</h3>
+<ul>
+<li><span class="api-name">UpdatePolicy</span><br><span class="api-desc">更新防护策略,请求体可只传需要更新的部分</span></li>
+<li><span class="api-name">DeletePolicy</span><br><span class="api-desc">删除防护策略,若策略正在使用,则需要先接解除域名与策略的绑定关系才能删除策略。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>集群管理</h3>
+<ul>
+<li><span class="api-name">ListCceClusterDetectRisk</span><br><span class="api-desc">批量获取容器集群风险信息</span></li>
+<li><span class="api-name">ShowClusterAssetStatistics</span><br><span class="api-desc">查询集群资产统计数量</span></li>
+<li><span class="api-name">AddCceIntegrationProtection</span><br><span class="api-desc">新建cce集成防护配置</span></li>
+<li><span class="api-name">ListCommonTips</span><br><span class="api-desc">获取部分提示信息</span></li>
+<li><span class="api-name">ListCceClusterConfig</span><br><span class="api-desc">获取集群配置</span></li>
+<li><span class="api-name">SyncClusterProtectionEvent</span><br><span class="api-desc">同步集群防护事件</span></li>
+<li><span class="api-name">ListClusterAuditLogs</span><br><span class="api-desc">查询k8s集群审计日志列表</span></li>
+<li><span class="api-name">ShowClusterProtectPolicyTemplate</span><br><span class="api-desc">查询集群防护策略模板</span></li>
+<li><span class="api-name">ListClusterEventLogs</span><br><span class="api-desc">查询k8s集群事件列表</span></li>
+<li><span class="api-name">ListClusterProtectPolicyTemplates</span><br><span class="api-desc">查询集群防护策略模板列表</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>集群防护</h3>
+<ul>
+<li><span class="api-name">DeleteClusterProtectionPolicy</span><br><span class="api-desc">删除集群防护策略</span></li>
+<li><span class="api-name">CreateClusterProtectionPolicy</span><br><span class="api-desc">新建集群防护策略</span></li>
+<li><span class="api-name">ChangeClusterEvents</span><br><span class="api-desc">修改告警状态</span></li>
+<li><span class="api-name">ListClusterProtectionItem</span><br><span class="api-desc">获取集群所有防护项</span></li>
+<li><span class="api-name">ListClusterProtectOverview</span><br><span class="api-desc">集群防护概览</span></li>
+<li><span class="api-name">ListClusterProtectionInfo</span><br><span class="api-desc">查询集群防护信息</span></li>
+<li><span class="api-name">ChangeClusterProtectionPolicy</span><br><span class="api-desc">修改集群防护策略</span></li>
+<li><span class="api-name">ListClusterProtectionDefaultPolicy</span><br><span class="api-desc">获取集群防护默认策略列表</span></li>
+<li><span class="api-name">ListClusterProtectionPolicy</span><br><span class="api-desc">获取集群防护策略列表</span></li>
+<li><span class="api-name">SwitchClusterProtectionMode</span><br><span class="api-desc">操作集群防护模式</span></li>
+<li><span class="api-name">ListClusterEvents</span><br><span class="api-desc">获取所有集群中告警事件</span></li>
+<li><span class="api-name">ListClusterProtectionPolicyDetail</span><br><span class="api-desc">查看指定策略的详情</span></li>
+</ul>
+</div>
+
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

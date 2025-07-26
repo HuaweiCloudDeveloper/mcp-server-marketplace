@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_vod
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-vod --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-vod --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-vod --transport sse --port 8888
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-vod": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_vod/src/mcp_server_vod/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-vod": {
+              "type": "http",
+              "url": "http://127.0.0.1:8888/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-vod": {
+              "type": "sse",
+              "url": "http://localhost:8888/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>OBS托管管理</h3><ul><li><span class="api-name">ListTakeOverTask</span><br><span class="api-desc">查询OBS存量托管任务列表。</span></li><li><span class="api-name">ShowTakeOverTaskDetails</span><br><span class="api-desc">查询OBS存量托管任务详情。</span></li><li><span class="api-name">ShowTakeOverAssetDetails</span><br><span class="api-desc">查询OBS托管媒资的详细信息。</span></li></ul> </div>
+<div class="api-category"><h3>媒资上传</h3><ul><li><span class="api-name">PublishAssetFromObs</span><br><span class="api-desc">若您在使用点播服务前,已经在OBS桶中存储了音视频文件,您可以使用该接口将存储在OBS桶中的音视频文件转存到点播服务中,使用点播服务的音视频管理功能。调用该接口前,您需要调用[桶授权](https://support.huaweicloud.com/api-vod/vod_04_0199.html)接口,将存储音视频文件的OBS桶授权给点播服务。</span></li><li><span class="api-name">UploadMetaDataByUrl</span><br><span class="api-desc">基于音视频源文件URL,将音视频文件离线拉取上传到点播服务。</span></li><li><span class="api-name">CheckMd5Duplication</span><br><span class="api-desc">校验媒资文件是否已存储于视频点播服务中。</span></li><li><span class="api-name">UpdateBucketAuthorized</span><br><span class="api-desc">用户可以通过该接口将OBS桶授权给点播服务或取消点播服务的授权。</span></li><li><span class="api-name">CreateTakeOverTask</span><br><span class="api-desc">通过存量托管的方式,将已存储在OBS桶中的音视频文件同步到点播服务。</span></li><li><span class="api-name">ShowAssetTempAuthority</span><br><span class="api-desc">客户端请求创建媒资时,如果媒资文件超过20MB,需采用分段的方式向OBS上传,在每次与OBS交互前,客户端需通过此接口获取到授权方可与OBS交互。</span></li><li><span class="api-name">CreateAssetByFileUpload</span><br><span class="api-desc">调用该接口创建媒资时,需要将对应的媒资文件上传到点播服务的OBS桶中。</span></li><li><span class="api-name">ConfirmAssetUpload</span><br><span class="api-desc">媒资分段上传完成后,需要调用此接口通知点播服务媒资上传的状态,表示媒资上传创建完成。</span></li></ul> </div>
+<div class="api-category"><h3>媒资分类</h3><ul><li><span class="api-name">ListAssetCategory</span><br><span class="api-desc">查询指定分类信息,及其子分类(即下一级分类)的列表。</span></li><li><span class="api-name">UpdateAssetCategory</span><br><span class="api-desc">修改媒资分类。</span></li><li><span class="api-name">DeleteAssetCategory</span><br><span class="api-desc">删除媒资分类。</span></li><li><span class="api-name">CreateAssetCategory</span><br><span class="api-desc">创建媒资分类。</span></li></ul> </div>
+<div class="api-category"><h3>媒资刷新</h3><ul><li><span class="api-name">ShowRefreshResult</span><br><span class="api-desc">查询刷新结果。</span></li><li><span class="api-name">RefreshAsset</span><br><span class="api-desc">媒资状态为完成态、删除态、发布态,可通过指定媒资ID或URL向CDN进行刷新。将CDN节点缓存的资源强制过期,用户下次访问时CDN将回源获取最新的资源返回给用户,同时将新的资源缓存到CDN节点。单租户每天最多刷新1000个。</span></li></ul> </div>
+<div class="api-category"><h3>媒资处理</h3><ul><li><span class="api-name">CancelExtractAudioTask</span><br><span class="api-desc">取消提取音频任务,只有排队中的提取音频任务才可以取消。</span></li><li><span class="api-name">CreateAssetReviewTask</span><br><span class="api-desc">对上传的媒资进行审核。审核后,可以调用[查询媒资详细信息](https://support.huaweicloud.com/api-vod/vod_04_0202.html)接口查看审核结果。</span></li><li><span class="api-name">CreateAssetProcessTask</span><br><span class="api-desc">实现视频转码、截图、加密等处理。既可以同时启动多种操作,也可以只启动一种操作。</span></li><li><span class="api-name">UpdateAsset</span><br><span class="api-desc">媒资创建后,单独上传封面、更新视频文件或更新已有封面。</span></li><li><span class="api-name">UpdateCoverByThumbnail</span><br><span class="api-desc">将视频截图生成的某张图片设置成封面。</span></li><li><span class="api-name">CancelAssetTranscodeTask</span><br><span class="api-desc">取消媒资转码任务,只能取消排队中的转码任务。</span></li><li><span class="api-name">CreateExtractAudioTask</span><br><span class="api-desc">本接口为异步接口,创建音频提取任务下发成功后会返回asset_id和提取的audio_asset_id,但此时音频提取任务并没有立即完成,可通过消息订阅界面配置的音频提取完成事件来获取音频提取任务完成与否。</span></li></ul> </div>
+<div class="api-category"><h3>媒资存储模式管理</h3><ul><li><span class="api-name">ShowVodRetrieval</span><br><span class="api-desc">## 典型场景 ##</span></li><li><span class="api-name">UpdateStorageModeType</span><br><span class="api-desc">修改媒资降冷粒度。</span></li><li><span class="api-name">ShowStorageModeType</span><br><span class="api-desc">查询媒资降冷配置。</span></li><li><span class="api-name">UpdateStorageMode</span><br><span class="api-desc">## 接口功能 ##</span></li></ul> </div>
+<div class="api-category"><h3>媒资管理</h3><ul><li><span class="api-name">ShowAssetDetail</span><br><span class="api-desc">查询指定媒资的详细信息。</span></li><li><span class="api-name">UpdateAssetMeta</span><br><span class="api-desc">修改媒资属性。</span></li><li><span class="api-name">ListAssetList</span><br><span class="api-desc">查询媒资列表,列表中的每一条记录包含媒资的概要信息。</span></li><li><span class="api-name">ShowAssetMeta</span><br><span class="api-desc">查询媒资信息,支持指定媒资ID、分类、状态、起止时间查询。</span></li><li><span class="api-name">PublishAssets</span><br><span class="api-desc">将媒资设置为发布状态。支持批量发布。</span></li><li><span class="api-name">DeleteAssets</span><br><span class="api-desc">删除媒资。</span></li><li><span class="api-name">UnpublishAssets</span><br><span class="api-desc">将媒资设置为未发布状态。</span></li></ul> </div>
+<div class="api-category"><h3>媒资预热</h3><ul><li><span class="api-name">ShowPreheatingAsset</span><br><span class="api-desc">查询预热结果。</span></li><li><span class="api-name">CreatePreheatingAsset</span><br><span class="api-desc">媒资发布后,可通过指定媒资ID或URL向CDN预热。用户初次请求时,将由CDN节点提供请求媒资,加快用户下载缓存时间,提高用户体验。单租户每天最多预热1000个。</span></li></ul> </div>
+<div class="api-category"><h3>字幕管理</h3><ul><li><span class="api-name">ModifySubtitle</span><br><span class="api-desc">多字幕封装,仅支持 HLS VTT格式和HLS SRT格式</span></li></ul> </div>
+<div class="api-category"><h3>密钥查询</h3><ul><li><span class="api-name">ShowAssetCipher</span><br><span class="api-desc">终端播放HLS加密视频时,向租户管理系统请求密钥,租户管理系统先查询其本地有没有已缓存的密钥,没有时则调用此接口向VOD查询。该接口的具体使用场景请参见[通过HLS加密防止视频泄露](https://support.huaweicloud.com/bestpractice-vod/vod_10_0004.html)。</span></li></ul> </div>
+<div class="api-category"><h3>水印模板管理</h3><ul><li><span class="api-name">UpdateWatermarkTemplate</span><br><span class="api-desc">修改水印模板</span></li><li><span class="api-name">CreateWatermarkTemplate</span><br><span class="api-desc">创建水印模板。</span></li><li><span class="api-name">DeleteWatermarkTemplate</span><br><span class="api-desc">删除水印模板</span></li><li><span class="api-name">ListWatermarkTemplate</span><br><span class="api-desc">查询水印模板</span></li><li><span class="api-name">ConfirmImageUpload</span><br><span class="api-desc">确认水印图片上传状态。</span></li></ul> </div>
+<div class="api-category"><h3>统计分析</h3><ul><li><span class="api-name">ShowVodStatistics</span><br><span class="api-desc">查询点播源站的统计数据,包括存储空间、转码时长。</span></li><li><span class="api-name">ListDomainLogs</span><br><span class="api-desc">查询指定点播域名某段时间内在CDN的相关日志。</span></li><li><span class="api-name">ListAssetDailySummaryLog</span><br><span class="api-desc">查询媒资日播放统计数据。</span></li><li><span class="api-name">ListTopStatistics</span><br><span class="api-desc">查询指定域名在指定日期播放次数排名Top 100的媒资统计数据。</span></li><li><span class="api-name">ShowCdnStatistics</span><br><span class="api-desc">查询CDN的统计数据,包括流量、峰值带宽、请求总数、请求命中率、流量命中率。</span></li></ul> </div>
+<div class="api-category"><h3>转码产物管理</h3><ul><li><span class="api-name">DeleteTranscodeProduct</span><br><span class="api-desc">删除转码产物。</span></li></ul> </div>
+<div class="api-category"><h3>转码模板管理</h3><ul><li><span class="api-name">DeleteTranscodeTemplate</span><br><span class="api-desc">删除自定义模板</span></li><li><span class="api-name">CreateTranscodeTemplate</span><br><span class="api-desc">创建自定义转码模板。</span></li><li><span class="api-name">UpdateTranscodeTemplate</span><br><span class="api-desc">修改转码模板</span></li><li><span class="api-name">ListTranscodeTemplate</span><br><span class="api-desc">查询转码模板列表</span></li></ul> </div>
+<div class="api-category"><h3>转码模板组管理</h3><ul><li><span class="api-name">DeleteTemplateGroup</span><br><span class="api-desc">删除自定义转码模板组。</span></li><li><span class="api-name">UpdateTemplateGroup</span><br><span class="api-desc">修改自定义转码模板组。</span></li><li><span class="api-name">CreateTemplateGroup</span><br><span class="api-desc">创建自定义转码模板组。</span></li><li><span class="api-name">ListTemplateGroup</span><br><span class="api-desc">查询转码模板组列表。</span></li></ul> </div>
+<div class="api-category"><h3>转码模板集合管理</h3><ul><li><span class="api-name">DeleteTemplateGroupCollection</span><br><span class="api-desc">删除转码模板组集合</span></li><li><span class="api-name">UpdateTemplateGroupCollection</span><br><span class="api-desc">修改转码模板组结合</span></li><li><span class="api-name">CreateTemplateGroupCollection</span><br><span class="api-desc">创建转码模板组集合</span></li><li><span class="api-name">ListTemplateGroupCollection</span><br><span class="api-desc">查询转码模板组集合</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
