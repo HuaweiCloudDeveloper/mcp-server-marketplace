@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云BMS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>BMS MCP Server 是一款模型上下文协议（Model Context Protocol）服务器，为 MCP 客户端（如 Claude Desktop、Cline、Cursor）提供与华为云服务 BMS 交互的能力。BMS资源的全链条管理可以基于自然语言进行。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+         <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+         <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+         <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_bms
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_bms --transport stdio --port 8007
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_bms --transport http  --port 8007
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_bms --transport sse --port 8007
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-vpc-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "http-vpc-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8007/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-vpc-example": {
+              "type": "sse",
+              "url": "http://localhost:8007/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>Job管理</h3>
+          <ul>
+            <li><span class="api-name">ShowJobInfos</span><br><span class="api-desc">查询Job的执行状态。对于创建裸金属服务器物理机、挂卸卷等异步API,命令下发后,会返回job_id,通过job_id可以查询任务的执行状态</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>查询API版本信息</h3>
+          <ul>
+            <li><span class="api-name">ShowVersionsInfo</span><br><span class="api-desc">查询裸金属服务器当前所有可用的API版本</span></li>
+            <li><span class="api-name">ShowSpecifiedVersion</span><br><span class="api-desc">查询裸金属服务指定接口版本的信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>状态管理</h3>
+          <ul>
+            <li><span class="api-name">ShowServerRemoteConsole</span><br><span class="api-desc">获取弹性云服务器VNC远程登录地址。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>裸金属服务器二维标签管理</h3>
+          <ul>
+            <li><span class="api-name">BatchDeleteBaremetalServerTags</span><br><span class="api-desc">- 为指定云服务器批量删除标签。</span></li>
+            <li><span class="api-name">BatchCreateBaremetalServerTags</span><br><span class="api-desc">- 为指定裸金属服务器批量添加标签。</span></li>
+            <li><span class="api-name">ShowBaremetalServerTags</span><br><span class="api-desc">- 查询指定云服务器的标签信息。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>裸金属服务器云硬盘管理</h3>
+          <ul>
+            <li><span class="api-name">AttachBaremetalServerVolume</span><br><span class="api-desc">裸金属服务器创建成功后,如果发现磁盘不够用或者当前磁盘不满足要求,可以将已有云硬盘挂载给裸金属服务器,作为数据盘使用</span></li>
+            <li><span class="api-name">DetachBaremetalServerVolume</span><br><span class="api-desc">将挂载至裸金属服务器中的磁盘卸载;对于挂载在系统盘盘位(也就是“/dev/sda”挂载点)上的磁盘,不允许执行卸载操作;对于挂载在数据盘盘位(非“/dev/sda”挂载点)上的磁盘,支持离线卸载和在线卸载(裸金属服务器处于“运行中”状态)磁盘</span></li>
+            <li><span class="api-name">ShowBaremetalServerVolumeInfo</span><br><span class="api-desc">查询裸金属服务器挂载的磁盘信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>裸金属服务器元数据管理</h3>
+          <ul>
+            <li><span class="api-name">UpdateBaremetalServerMetadata</span><br><span class="api-desc">更新裸金属服务器元数据。如果元数据中没有待更新字段,则自动添加该字段。如果元数据中已存在待更新字段,则直接更新字段值;如果元数据中的字段不再请求参数中,则保持不变</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>裸金属服务器密码管理</h3>
+          <ul>
+            <li><span class="api-name">ShowResetPwd</span><br><span class="api-desc">查询是否支持一键重置密码</span></li>
+            <li><span class="api-name">ResetPwdOneClick</span><br><span class="api-desc">在裸金属服务器支持一键重置密码功能的前提下,重置裸金属服务器管理帐号(root用户或Administrator用户)的密码。可以通过6.10.1-查询是否支持一键重置密码API查询是否支持一键重置密码。</span></li>
+            <li><span class="api-name">ShowWindowsBaremetalServerPwd</span><br><span class="api-desc">获取Windows裸金属服务器初始安装时系统生成的管理员帐户(Administrator帐户或Cloudbase-init设置的帐户)随机密码。如果裸金属服务器是通过私有镜像创建的,请确保已安装Cloudbase-init。公共镜像默认已安装该软件</span></li>
+            <li><span class="api-name">DeleteWindowsBareMetalServerPassword</span><br><span class="api-desc">清除Windows裸金属服务器初始安装时系统生成的密码记录。清除密码后,不影响裸金属服务器密码登录功能,但不能再使用获取密码功能来查询该裸金属服务器密码。如果裸金属服务器是通过私有镜像创建的,请确保已安装Cloudbase-init。公共镜像默认已安装该软件</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>裸金属服务器状态管理</h3>
+          <ul>
+            <li><span class="api-name">BatchStopBaremetalServers</span><br><span class="api-desc">根据给定的裸金属服务器ID列表,批量关闭裸金属服务器</span></li>
+            <li><span class="api-name">BatchStartBaremetalServers</span><br><span class="api-desc">根据给定的裸金属服务器ID列表,批量启动裸金属服务器</span></li>
+            <li><span class="api-name">BatchRebootBaremetalServers</span><br><span class="api-desc">根据给定的裸金属服务器ID列表,批量重启裸金属服务器</span></li>
+            <li><span class="api-name">ChangeBaremetalServerName</span><br><span class="api-desc">修改裸金属服务器名称</span></li>
+            <li><span class="api-name">ChangeBaremetalServerOs</span><br><span class="api-desc">切换裸金属服务器的操作系统。切换操作系统支持密码或者密钥注入,该接口支持企业项目细粒度权限的校验,具体细粒度请参见 bms:servers:changeOS</span></li>
+            <li><span class="api-name">ReinstallBaremetalServerOs</span><br><span class="api-desc">重装裸金属服务器的操作系统。快速发放裸金属服务器支持裸金属服务器数据盘不变的情况下,使用原镜像重装系统盘。重装操作系统支持密码或者密钥注入</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>裸金属服务器生命周期管理</h3>
+          <ul>
+            <li><span class="api-name">ListBareMetalServers</span><br><span class="api-desc">用户根据设置的请求条件筛选裸金属服务器,并获取裸金属服务器的详细信息。该接口支持查询裸金属服务器计费方式,以及是否被冻结。</span></li>
+            <li><span class="api-name">ListBareMetalServerDetails</span><br><span class="api-desc">获取裸金属服务器详细信息,该接口支持查询裸金属服务器的计费方式,以及是否被冻结</span></li>
+            <li><span class="api-name">ListBareMetalServersDetail</span><br><span class="api-desc">用户根据设置的请求条件筛选裸金属服务器,并获取裸金属服务器的详细信息。</span></li>
+            <li><span class="api-name">CreateBareMetalServers</span><br><span class="api-desc">创建一台或多台裸金属服务器,裸金属服务器的登录鉴权方式包括两种:密钥对、密码。为安全起见,推荐使用密钥对方式</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>裸金属服务器租户配额管理</h3>
+          <ul>
+            <li><span class="api-name">ShowTenantQuota</span><br><span class="api-desc">查询该租户下,所有资源的配额信息,包括已使用配额</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>裸金属服务器网卡管理</h3>
+          <ul>
+            <li><span class="api-name">UpdateBaremetalServerInterfaceAttachments</span><br><span class="api-desc"></span></li>
+            <li><span class="api-name">ShowBaremetalServerInterfaceAttachments</span><br><span class="api-desc">查询裸金属服务器的网卡信息,比如网卡的IP地址、MAC地址</span></li>
+            <li><span class="api-name">AddServerNics</span><br><span class="api-desc"></span></li>
+            <li><span class="api-name">DeleteServerNics</span><br><span class="api-desc"></span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>裸金属服务器规格管理</h3>
+          <ul>
+            <li><span class="api-name">ListBaremetalFlavorDetailExtends</span><br><span class="api-desc">查询裸金属服务器的规格详情和规格的扩展信息。您可以调用此接口查询“baremetal:extBootType”参数取值,以确认某个规格是否支持快速发放</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

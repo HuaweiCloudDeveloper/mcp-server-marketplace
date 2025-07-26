@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云SWR上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>SWR MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务SWR交互的能力，支持基于自然语言对SWR资源进行全链路管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_swr
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-swr --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-swr --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-swr --transport sse --port 8888
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+          <p>支持以下客户端与MCP服务交互：</p>
+          <ul>
+            <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+            <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+            <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+            <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+          </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-swr": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run", 
+                "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_swr/src/mcp_server_swr/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+          <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-swr": {
+              "type": "http",
+              "url": "http://127.0.0.1:8888/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-swr": {
+              "type": "sse",
+              "url": "http://localhost:8888/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>临时登录指令</h3>
+          <ul>
+            <li><span class="api-name">CreateAuthorizationToken</span><br><span class="api-desc">生成增强型登录指令</span></li>
+            <li><span class="api-name">CreateSecret</span><br><span class="api-desc">生成临时登录指令</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>共享帐号管理</h3>
+          <ul>
+            <li><span class="api-name">UpdateRepoDomains</span><br><span class="api-desc">更新共享帐号</span></li>
+            <li><span class="api-name">ListRepoDomains</span><br><span class="api-desc">获取共享帐号列表</span></li>
+            <li><span class="api-name">DeleteRepoDomains</span><br><span class="api-desc">删除共享帐号</span></li>
+            <li><span class="api-name">ShowAccessDomain</span><br><span class="api-desc">判断共享租户是否存在</span></li>
+            <li><span class="api-name">CreateRepoDomains</span><br><span class="api-desc">创建共享帐号</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>其他</h3>
+          <ul>
+            <li><span class="api-name">ShowShareFeatureGates</span><br><span class="api-desc">查询服务特性开关信息</span></li>
+            <li><span class="api-name">ShowDomainOverview</span><br><span class="api-desc">获取租户总览信息</span></li>
+            <li><span class="api-name">ShowDomainResourceReports</span><br><span class="api-desc">获取租户资源统计信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>查询版本操作</h3>
+          <ul>
+            <li><span class="api-name">ShowApiVersion</span><br><span class="api-desc">查询指定的标签管理服务API版本号详情</span></li>
+            <li><span class="api-name">ListApiVersions</span><br><span class="api-desc">查询标签管理服务的API版本列表</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>组织权限管理</h3>
+          <ul>
+            <li><span class="api-name">ShowNamespaceAuth</span><br><span class="api-desc">查询组织权限</span></li>
+            <li><span class="api-name">CreateNamespaceAuth</span><br><span class="api-desc">创建组织权限</span></li>
+            <li><span class="api-name">UpdateNamespaceAuth</span><br><span class="api-desc">更新组织权限</span></li>
+            <li><span class="api-name">DeleteNamespaceAuth</span><br><span class="api-desc">删除组织权限</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>组织管理</h3>
+          <ul>
+            <li><span class="api-name">DeleteNamespaces</span><br><span class="api-desc">删除组织</span></li>
+            <li><span class="api-name">CreateNamespace</span><br><span class="api-desc">创建组织</span></li>
+            <li><span class="api-name">ListNamespaces</span><br><span class="api-desc">查询组织列表</span></li>
+            <li><span class="api-name">ShowNamespace</span><br><span class="api-desc">获取组织详情</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>视频流管理</h3>
+          <ul>
+            <li><span class="api-name">UpdateRetention</span><br><span class="api-desc">更新视频转储信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>触发器管理</h3>
+          <ul>
+            <li><span class="api-name">ListTriggersDetails</span><br><span class="api-desc">获取镜像仓库下的触发器列表</span></li>
+            <li><span class="api-name">CreateTrigger</span><br><span class="api-desc">创建触发器</span></li>
+            <li><span class="api-name">UpdateTrigger</span><br><span class="api-desc">更新触发器配置</span></li>
+            <li><span class="api-name">ShowTrigger</span><br><span class="api-desc">获取触发器详情</span></li>
+            <li><span class="api-name">DeleteTrigger</span><br><span class="api-desc">删除触发器</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>配额管理</h3>
+          <ul>
+            <li><span class="api-name">ListQuotas</span><br><span class="api-desc">获取配额信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>镜像仓库管理</h3>
+          <ul>
+            <li><span class="api-name">ListReposDetails</span><br><span class="api-desc">查询镜像仓库列表</span></li>
+            <li><span class="api-name">ListSharedReposDetails</span><br><span class="api-desc">查询共享镜像列表</span></li>
+            <li><span class="api-name">CreateRepo</span><br><span class="api-desc">在组织下创建镜像仓库</span></li>
+            <li><span class="api-name">DeleteRepo</span><br><span class="api-desc">删除组织下的镜像仓库</span></li>
+            <li><span class="api-name">UpdateRepo</span><br><span class="api-desc">更新镜像概要信息</span></li>
+            <li><span class="api-name">ShowRepository</span><br><span class="api-desc">查询镜像仓库概要信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>镜像同步管理</h3>
+          <ul>
+            <li><span class="api-name">ListImageAutoSyncReposDetails</span><br><span class="api-desc">获取自动同步任务列表</span></li>
+            <li><span class="api-name">CreateImageSyncRepo</span><br><span class="api-desc">创建镜像自动同步任务</span></li>
+            <li><span class="api-name">DeleteImageSyncRepo</span><br><span class="api-desc">删除镜像自动同步任务</span></li>
+            <li><span class="api-name">CreateManualImageSyncRepo</span><br><span class="api-desc">手动同步镜像</span></li>
+            <li><span class="api-name">ShowSyncJob</span><br><span class="api-desc">查询同步任务状态</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>镜像权限管理</h3>
+          <ul>
+            <li><span class="api-name">UpdateUserRepositoryAuth</span><br><span class="api-desc">更新镜像权限</span></li>
+            <li><span class="api-name">ShowUserRepositoryAuth</span><br><span class="api-desc">查询镜像权限</span></li>
+            <li><span class="api-name">CreateUserRepositoryAuth</span><br><span class="api-desc">创建镜像权限</span></li>
+            <li><span class="api-name">DeleteUserRepositoryAuth</span><br><span class="api-desc">删除镜像权限</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>镜像版本管理</h3>
+          <ul>
+            <li><span class="api-name">CreateRepoTag</span><br><span class="api-desc">创建镜像tag</span></li>
+            <li><span class="api-name">DeleteRepoTag</span><br><span class="api-desc">删除镜像tag</span></li>
+            <li><span class="api-name">ListRepositoryTags</span><br><span class="api-desc">查询镜像tag列表</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>镜像老化规则管理</h3>
+          <ul>
+            <li><span class="api-name">DeleteRetention</span><br><span class="api-desc">删除镜像老化规则</span></li>
+            <li><span class="api-name">ListRetentions</span><br><span class="api-desc">获取镜像老化规则列表</span></li>
+            <li><span class="api-name">ListRetentionHistories</span><br><span class="api-desc">获取镜像老化记录</span></li>
+            <li><span class="api-name">CreateRetention</span><br><span class="api-desc">创建镜像老化规则</span></li>
+            <li><span class="api-name">ShowRetention</span><br><span class="api-desc">获取镜像老化规则记录</span></li>
+          </ul>
+        </div>
+
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

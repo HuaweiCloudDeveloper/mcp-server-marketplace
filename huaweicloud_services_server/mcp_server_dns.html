@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>DNS MCP 服务器是一款基于模型上下文协议（MCP）的服务器，为 MCP 客户端（如 Claude Desktop、Cline、Cursor）提供与华为云服务 DNS 交互的能力。可基于自然语言实现对 DNS 资源的全生命周期管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ecs --transport stdio --port 8846
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ecs --transport http  --port 8846
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ecs --transport sse --port 8846
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8000/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+<!-- 右侧工具栏 -->
+<div class="sidebar">
+  <h2 style="margin-top:0;">API工具列表</h2>
+
+  <!-- DNSSEC -->
+  <div class="api-category">
+    <h3>DNSSEC</h3>
+    <ul>
+      <li><span class="api-name">EnableDnssecConfig</span><br><span class="api-desc">开启公网域名的DNSSEC</span></li>
+      <li><span class="api-name">ShowDnssecConfig</span><br><span class="api-desc">查询公网域名的DNSSEC</span></li>
+      <li><span class="api-name">DisableDnssecConfig</span><br><span class="api-desc">关闭公网域名的DNSSEC</span></li>
+    </ul>
+  </div>
+
+  <!-- 公网域名管理 -->
+  <div class="api-category">
+    <h3>公网域名管理</h3>
+    <ul>
+      <li><span class="api-name">ShowPublicZoneNameServer</span><br><span class="api-desc">查询公网域名的名称服务器</span></li>
+      <li><span class="api-name">UpdatePublicZoneStatus</span><br><span class="api-desc">设置公网域名状态</span></li>
+      <li><span class="api-name">ListPublicZones</span><br><span class="api-desc">查询公网域名列表</span></li>
+      <li><span class="api-name">CreatePublicZone</span><br><span class="api-desc">创建公网域名</span></li>
+      <li><span class="api-name">UpdatePublicZone</span><br><span class="api-desc">修改公网域名</span></li>
+      <li><span class="api-name">ShowPublicZone</span><br><span class="api-desc">查询公网域名</span></li>
+      <li><span class="api-name">DeletePublicZone</span><br><span class="api-desc">删除公网域名</span></li>
+    </ul>
+  </div>
+
+  <!-- 内网域名管理 -->
+  <div class="api-category">
+    <h3>内网域名管理</h3>
+    <ul>
+      <li><span class="api-name">DeletePrivateZone</span><br><span class="api-desc">删除内网域名</span></li>
+      <li><span class="api-name">SetPrivateZoneProxyPattern</span><br><span class="api-desc">设置子域名递归解析代理</span></li>
+      <li><span class="api-name">ShowPrivateZone</span><br><span class="api-desc">查询内网域名</span></li>
+      <li><span class="api-name">ListPrivateZones</span><br><span class="api-desc">查询内网域名列表</span></li>
+      <li><span class="api-name">ShowPrivateZoneNameServer</span><br><span class="api-desc">查询内网域名的名称服务器</span></li>
+      <li><span class="api-name">UpdatePrivateZoneStatus</span><br><span class="api-desc">设置内网域名状态</span></li>
+      <li><span class="api-name">AssociateRouter</span><br><span class="api-desc">在内网域名上关联VPC</span></li>
+      <li><span class="api-name">CreatePrivateZone</span><br><span class="api-desc">创建内网域名</span></li>
+      <li><span class="api-name">DisassociateRouter</span><br><span class="api-desc">在内网域名上解关联VPC</span></li>
+      <li><span class="api-name">UpdatePrivateZone</span><br><span class="api-desc">修改内网域名</span></li>
+    </ul>
+  </div>
+
+  <!-- 反向解析管理 -->
+  <div class="api-category">
+    <h3>反向解析管理</h3>
+    <ul>
+      <li><span class="api-name">ListPtrs</span><br><span class="api-desc">查询反向解析记录列表</span></li>
+      <li><span class="api-name">DeletePtr</span><br><span class="api-desc">恢复反向解析默认值</span></li>
+      <li><span class="api-name">UpdatePtr</span><br><span class="api-desc">修改反向解析记录</span></li>
+      <li><span class="api-name">CreatePtr</span><br><span class="api-desc">创建反向解析记录</span></li>
+      <li><span class="api-name">ShowPtr</span><br><span class="api-desc">查询反向解析记录</span></li>
+    </ul>
+  </div>
+
+  <!-- 名称服务器管理 -->
+  <div class="api-category">
+    <h3>名称服务器管理</h3>
+    <ul>
+      <li><span class="api-name">ListNameServers</span><br><span class="api-desc">查询名称服务器列表</span></li>
+    </ul>
+  </div>
+
+  <!-- 批量接口管理 -->
+  <div class="api-category">
+    <h3>批量接口管理</h3>
+    <ul>
+      <li><span class="api-name">BatchDeleteRecordSetWithLine</span><br><span class="api-desc">批量删除记录集</span></li>
+      <li><span class="api-name">BatchSetRecordSetsStatus</span><br><span class="api-desc">批量设置记录集状态</span></li>
+      <li><span class="api-name">CreateRecordSetWithBatchLines</span><br><span class="api-desc">批量线路创建记录集</span></li>
+      <li><span class="api-name">BatchDeleteZones</span><br><span class="api-desc">批量删除域名</span></li>
+      <li><span class="api-name">BatchDeletePtrRecords</span><br><span class="api-desc">批量删除反向解析</span></li>
+      <li><span class="api-name">BatchSetZonesStatus</span><br><span class="api-desc">批量设置域名状态</span></li>
+      <li><span class="api-name">BatchDeleteRecordSets</span><br><span class="api-desc">批量删除记录集</span></li>
+      <li><span class="api-name">BatchUpdateRecordSetWithLine</span><br><span class="api-desc">批量修改记录集</span></li>
+    </ul>
+  </div>
+
+  <!-- API版本管理 -->
+  <div class="api-category">
+    <h3>API版本管理</h3>
+    <ul>
+      <li><span class="api-name">ShowApiInfo</span><br><span class="api-desc">查询指定API版本信息</span></li>
+      <li><span class="api-name">ListApiVersions</span><br><span class="api-desc">查询API版本列表</span></li>
+    </ul>
+  </div>
+
+  <!-- 标签管理 -->
+  <div class="api-category">
+    <h3>标签管理</h3>
+    <ul>
+      <li><span class="api-name">DeleteTag</span><br><span class="api-desc">删除密钥标签</span></li>
+      <li><span class="api-name">ListTag</span><br><span class="api-desc">标签管理</span></li>
+      <li><span class="api-name">CreateTag</span><br><span class="api-desc">为资源添加标签</span></li>
+      <li><span class="api-name">BatchCreateTag</span><br><span class="api-desc">批量添加/删除标签</span></li>
+      <li><span class="api-name">ShowResourceTag</span><br><span class="api-desc">查询资源标签</span></li>
+    </ul>
+  </div>
+
+  <!-- 线路管理 -->
+  <div class="api-category">
+    <h3>线路管理</h3>
+    <ul>
+      <li><span class="api-name">ShowLineGroup</span><br><span class="api-desc">查询线路分组</span></li>
+      <li><span class="api-name">UpdateLineGroups</span><br><span class="api-desc">更新线路分组</span></li>
+      <li><span class="api-name">DeleteLineGroup</span><br><span class="api-desc">删除线路分组</span></li>
+      <li><span class="api-name">CreateLineGroup</span><br><span class="api-desc">创建线路分组</span></li>
+      <li><span class="api-name">ListLineGroups</span><br><span class="api-desc">查询线路分组列表</span></li>
+      <li><span class="api-name">ListCustomLine</span><br><span class="api-desc">查询自定义线路</span></li>
+      <li><span class="api-name">CreateCustomLine</span><br><span class="api-desc">创建自定义线路</span></li>
+      <li><span class="api-name">UpdateCustomLine</span><br><span class="api-desc">更新自定义线路</span></li>
+      <li><span class="api-name">DeleteCustomLine</span><br><span class="api-desc">删除自定义线路</span></li>
+    </ul>
+  </div>
+
+  <!-- 终端节点管理 -->
+  <div class="api-category">
+    <h3>终端节点管理</h3>
+    <ul>
+      <li><span class="api-name">DeleteEndpoint</span><br><span class="api-desc">删除终端节点</span></li>
+      <li><span class="api-name">CreateEndpoint</span><br><span class="api-desc">创建终端节点</span></li>
+      <li><span class="api-name">ListEndpoints</span><br><span class="api-desc">查询终端节点列表</span></li>
+      <li><span class="api-name">DisassociateEndpointIpaddress</span><br><span class="api-desc">终端节点解绑IP地址</span></li>
+      <li><span class="api-name">ShowEndpoint</span><br><span class="api-desc">查询终端节点</span></li>
+      <li><span class="api-name">ListEndpointVpcs</span><br><span class="api-desc">查询终端节点VPC列表</span></li>
+      <li><span class="api-name">AssociateEndpointIpaddress</span><br><span class="api-desc">终端节点绑定IP地址</span></li>
+      <li><span class="api-name">ListEndpointIpaddresses</span><br><span class="api-desc">查询终端节点IP地址列表</span></li>
+      <li><span class="api-name">UpdateEndpoint</span><br><span class="api-desc">更新访问端点</span></li>
+    </ul>
+  </div>
+
+  <!-- 记录集管理 -->
+  <div class="api-category">
+    <h3>记录集管理</h3>
+    <ul>
+      <li><span class="api-name">SetRecordSetsStatus</span><br><span class="api-desc">设置记录集状态</span></li>
+      <li><span class="api-name">DeleteRecordSets</span><br><span class="api-desc">删除记录集</span></li>
+      <li><span class="api-name">ListRecordSetsWithLine</span><br><span class="api-desc">查询租户记录集列表</span></li>
+      <li><span class="api-name">ShowRecordSetByZone</span><br><span class="api-desc">查询域名下的记录集</span></li>
+      <li><span class="api-name">ShowRecordSetWithLine</span><br><span class="api-desc">查询记录集</span></li>
+      <li><span class="api-name">UpdateRecordSets</span><br><span class="api-desc">修改记录集</span></li>
+      <li><span class="api-name">ListPublicZoneLines</span><br><span class="api-desc">查询公网域名线路列表</span></li>
+      <li><span class="api-name">CreateRecordSetWithLine</span><br><span class="api-desc">创建记录集</span></li>
+    </ul>
+  </div>
+
+  <!-- 账号管理 -->
+  <div class="api-category">
+    <h3>账号管理</h3>
+    <ul>
+      <li><span class="api-name">ShowDomainQuota</span><br><span class="api-desc">查询账号配额</span></li>
+    </ul>
+  </div>
+
+  <!-- 转发规则管理 -->
+  <div class="api-category">
+    <h3>转发规则管理</h3>
+    <ul>
+      <li><span class="api-name">AssociateResolverRuleRouter</span><br><span class="api-desc">转发规则关联VPC</span></li>
+      <li><span class="api-name">ListResolverRules</span><br><span class="api-desc">查询转发规则列表</span></li>
+      <li><span class="api-name">DeleteResolverRule</span><br><span class="api-desc">删除转发规则</span></li>
+      <li><span class="api-name">ShowResolverRule</span><br><span class="api-desc">查询转发规则</span></li>
+      <li><span class="api-name">CreateResolverRule</span><br><span class="api-desc">创建转发规则</span></li>
+      <li><span class="api-name">UpdateResolverRule</span><br><span class="api-desc">修改转发规则</span></li>
+      <li><span class="api-name">DisassociateResolverRuleRouter</span><br><span class="api-desc">转发规则解关联VPC</span></li>
+    </ul>
+  </div>
+
+  <!-- 镜像标签管理 -->
+  <div class="api-category">
+    <h3>镜像标签管理</h3>
+    <ul>
+      <li><span class="api-name">ListTags</span><br><span class="api-desc">查询镜像标签列表</span></li>
+    </ul>
+  </div>
+
+  <p>以及更多用于域名解析、资源管理和网络配置的API工具。</p>
+</div>
+
+    </div>
+  </div>
+</body>
+</html>

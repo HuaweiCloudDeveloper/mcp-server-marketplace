@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_iam
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-iam --transport stdio --port 8870
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-iam --transport http  --port 8870
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-iam --transport sse --port 8870
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-iam": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_iam/src/mcp_server_iam/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-iam": {
+              "type": "http",
+              "url": "http://127.0.0.1:8870/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-iam": {
+              "type": "sse",
+              "url": "http://localhost:8870/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>AccountSummary</h3><ul><li><span class="api-name">GetAccountSummaryV5</span><br><span class="api-desc">该接口可以用于获取此账号中IAM实体使用情况和IAM配额的摘要信息。</span></li></ul> </div>
+<div class="api-category"><h3>Credential管理</h3><ul><li><span class="api-name">CreatePermanentAccessKey</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)给IAM用户创建永久访问密钥,或IAM用户给自己创建永久访问密钥。</span></li><li><span class="api-name">CreateTemporaryAccessKeyByToken</span><br><span class="api-desc">该接口可以用于通过token来获取临时AK/SK和securitytoken。</span></li><li><span class="api-name">CreateTemporaryAccessKeyByAgency</span><br><span class="api-desc">该接口可以用于通过委托来获取临时访问密钥(临时AK/SK)和securitytoken。</span></li><li><span class="api-name">UpdatePermanentAccessKey</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改IAM用户的指定永久访问密钥,或IAM用户修改自己的指定永久访问密钥。</span></li><li><span class="api-name">DeletePermanentAccessKey</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)删除IAM用户的指定永久访问密钥,或IAM用户删除自己的指定永久访问密钥。</span></li><li><span class="api-name">ListPermanentAccessKeys</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询IAM用户的所有永久访问密钥,或IAM用户查询自己的所有永久访问密钥。</span></li><li><span class="api-name">ShowPermanentAccessKey</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询IAM用户的指定永久访问密钥,或IAM用户查询自己的指定永久访问密钥。</span></li></ul> </div>
+<div class="api-category"><h3>IAM用户管理</h3><ul><li><span class="api-name">KeystoneUpdateUserByAdmin</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改IAM用户信息。</span></li><li><span class="api-name">KeystoneListGroupsForUser</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询IAM用户所属用户组,或IAM用户查询自己所属用户组。</span></li><li><span class="api-name">ShowUserLoginProtect</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询指定IAM用户的登录保护状态信息,或IAM用户查询自己的登录保护状态信息。</span></li><li><span class="api-name">UpdateLoginProtect</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改账号操作保护。</span></li><li><span class="api-name">CreateUser</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)创建IAM用户。</span></li><li><span class="api-name">KeystoneUpdateUserPassword</span><br><span class="api-desc">该接口可以用于IAM用户修改自己的密码。</span></li><li><span class="api-name">ShowUserMfaDevice</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询指定IAM用户的MFA绑定信息,或IAM用户查询自己的MFA绑定信息。</span></li><li><span class="api-name">ListUserMfaDevices</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询IAM用户的MFA绑定信息列表。</span></li><li><span class="api-name">KeystoneShowUser</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询IAM用户详情,或IAM用户查询自己的用户详情。</span></li><li><span class="api-name">ListUserLoginProtects</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询IAM用户的登录保护状态列表。</span></li><li><span class="api-name">KeystoneDeleteUser</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)删除指定IAM用户。</span></li><li><span class="api-name">KeystoneListUsersForGroupByAdmin</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询用户组中所包含的IAM用户。</span></li><li><span class="api-name">KeystoneCreateUser</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)创建IAM用户。IAM用户首次登录时需要修改密码。</span></li><li><span class="api-name">KeystoneListUsers</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询IAM用户列表。</span></li><li><span class="api-name">ShowUser</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询IAM用户详情,或IAM用户查询自己的详情。</span></li><li><span class="api-name">UpdateUser</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改IAM用户信息 。</span></li><li><span class="api-name">UpdateUserInformation</span><br><span class="api-desc">该接口可以用于IAM用户修改自己的用户信息。</span></li></ul> </div>
+<div class="api-category"><h3>Token管理</h3><ul><li><span class="api-name">KeystoneCreateUserTokenByPassword</span><br><span class="api-desc">该接口可以用于通过用户名/密码的方式进行认证来获取IAM用户token。</span></li><li><span class="api-name">KeystoneCreateAgencyToken</span><br><span class="api-desc">该接口可以用于获取委托方的token。</span></li><li><span class="api-name">KeystoneCreateUserTokenByPasswordAndMfa</span><br><span class="api-desc">该接口可以用于通过用户名/密码+虚拟MFA的方式进行认证,在IAM用户开启了的登录保护功能,并选择通过虚拟MFA验证时获取IAM用户token。</span></li><li><span class="api-name">KeystoneValidateToken</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)校验本账号中IAM用户token的有效性,或IAM用户校验自己token的有效性。管理员仅能校验本账号中IAM用户token的有效性,不能校验其他账号中IAM用户token的有效性。如果被校验的token有效,则返回该token的详细信息。</span></li></ul> </div>
+<div class="api-category"><h3>企业项目管理</h3><ul><li><span class="api-name">RevokeRoleFromGroupOnEnterpriseProject</span><br><span class="api-desc">该接口用于删除企业项目关联用户组的权限。</span></li><li><span class="api-name">AssociateRoleToUserOnEnterpriseProject</span><br><span class="api-desc">基于用户为企业项目授权。</span></li><li><span class="api-name">AssociateRoleToAgencyOnEnterpriseProject</span><br><span class="api-desc">该接口可以基于委托为企业项目授权</span></li><li><span class="api-name">ListGroupsForEnterpriseProject</span><br><span class="api-desc">该接口可用于查询企业项目关联的用户组。</span></li><li><span class="api-name">ListEnterpriseProjectsForUser</span><br><span class="api-desc">该接口可用于查询用户所关联的企业项目。</span></li><li><span class="api-name">ListEnterpriseProjectsForGroup</span><br><span class="api-desc">该接口可用于查询用户组所关联的企业项目。</span></li><li><span class="api-name">ListRolesForUserOnEnterpriseProject</span><br><span class="api-desc">该接口可用于查询企业项目直接关联用户的权限。</span></li><li><span class="api-name">AssociateRoleToGroupOnEnterpriseProject</span><br><span class="api-desc">该接口用于基于用户组为企业项目授权。</span></li><li><span class="api-name">ListRolesForGroupOnEnterpriseProject</span><br><span class="api-desc">该接口可用于查询企业项目已关联用户组的权限。</span></li><li><span class="api-name">RevokeRoleFromUserOnEnterpriseProject</span><br><span class="api-desc">删除企业项目直接关联用户的权限。</span></li><li><span class="api-name">ListUsersForEnterpriseProject</span><br><span class="api-desc">该接口可用于查询企业项目直接关联的用户。</span></li><li><span class="api-name">RevokeRoleFromAgencyOnEnterpriseProject</span><br><span class="api-desc">该接口可以删除企业项目委托上的授权</span></li></ul> </div>
+<div class="api-category"><h3>区域管理</h3><ul><li><span class="api-name">KeystoneListRegions</span><br><span class="api-desc">该接口可以用于查询区域列表。</span></li><li><span class="api-name">KeystoneShowRegion</span><br><span class="api-desc">该接口可以用于查询区域详情。</span></li></ul> </div>
+<div class="api-category"><h3>委托管理</h3><ul><li><span class="api-name">DeleteAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)删除委托。</span></li><li><span class="api-name">ListAllProjectsPermissionsForAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询委托所有项目服务权限列表。</span></li><li><span class="api-name">RemoveDomainPermissionFromAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)移除委托的全局服务权限。</span></li><li><span class="api-name">CheckProjectPermissionForAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询委托是否拥有项目服务权限。</span></li><li><span class="api-name">ListProjectPermissionsForAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询项目服务中的委托权限。</span></li><li><span class="api-name">CheckAllProjectsPermissionForAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)检查委托是否具有所有项目服务权限。</span></li><li><span class="api-name">AssociateAgencyWithDomainPermission</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)为委托授予全局服务权限。</span></li><li><span class="api-name">CheckDomainPermissionForAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询委托是否拥有全局服务权限。</span></li><li><span class="api-name">ShowAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询委托详情。</span></li><li><span class="api-name">RemoveProjectPermissionFromAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)移除委托的项目服务权限。</span></li><li><span class="api-name">ListDomainPermissionsForAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询全局服务中的委托权限。</span></li><li><span class="api-name">AssociateAgencyWithAllProjectsPermission</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)为委托授予所有项目服务权限。</span></li><li><span class="api-name">UpdateAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改委托。</span></li><li><span class="api-name">CreateAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)创建委托。</span></li><li><span class="api-name">AssociateAgencyWithProjectPermission</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)为委托授予项目服务权限。</span></li><li><span class="api-name">ListAgencies</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询指定条件下的委托列表。</span></li><li><span class="api-name">RemoveAllProjectsPermissionFromAgency</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)移除委托的所有项目服务权限。</span></li></ul> </div>
+<div class="api-category"><h3>安全设置</h3><ul><li><span class="api-name">DeleteMfaDevice</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)删除MFA设备。</span></li><li><span class="api-name">ShowDomainLoginPolicy</span><br><span class="api-desc">该接口可以用于查询账号登录策略。</span></li><li><span class="api-name">CreateMfaDevice</span><br><span class="api-desc">该接口可以用于创建MFA设备。</span></li><li><span class="api-name">UpdateDomainProtectPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改账号操作保护策略。</span></li><li><span class="api-name">UpdateDomainLoginPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改账号登录策略。</span></li><li><span class="api-name">UpdateDomainPasswordPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改账号密码策略。</span></li><li><span class="api-name">UpdateDomainApiAclPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改账号接口访问策略。</span></li><li><span class="api-name">ShowDomainPasswordPolicy</span><br><span class="api-desc">该接口可以用于查询账号密码策略。</span></li><li><span class="api-name">DeleteBindingDevice</span><br><span class="api-desc">该接口可以用于解绑MFA设备</span></li><li><span class="api-name">CreateBindingDevice</span><br><span class="api-desc">该接口可以用于绑定MFA设备。</span></li><li><span class="api-name">ShowDomainProtectPolicy</span><br><span class="api-desc">该接口可以用于查询账号操作保护策略。</span></li><li><span class="api-name">ShowDomainApiAclPolicy</span><br><span class="api-desc">该接口可以用于查询账号接口访问控制策略。</span></li><li><span class="api-name">ShowDomainConsoleAclPolicy</span><br><span class="api-desc">该接口可以用于查询账号控制台访问控制策略。</span></li><li><span class="api-name">UpdateDomainConsoleAclPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改账号控制台访问策略。</span></li></ul> </div>
+<div class="api-category"><h3>服务和终端节点</h3><ul><li><span class="api-name">KeystoneShowService</span><br><span class="api-desc">该接口可以用于查询服务详情。</span></li><li><span class="api-name">KeystoneListEndpoints</span><br><span class="api-desc">该接口可以用于查询终端节点列表。终端节点用来提供服务访问入口。</span></li><li><span class="api-name">KeystoneShowCatalog</span><br><span class="api-desc">该接口可以用于查询请求头中X-Auth-Token对应的服务目录。</span></li><li><span class="api-name">KeystoneShowEndpoint</span><br><span class="api-desc">该接口可以用于查询终端节点详情。终端节点用来提供服务访问入口。</span></li><li><span class="api-name">KeystoneListServices</span><br><span class="api-desc">该接口可以用于查询服务列表。</span></li></ul> </div>
+<div class="api-category"><h3>权限管理</h3><ul><li><span class="api-name">KeystoneShowPermission</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询权限详情。</span></li><li><span class="api-name">KeystoneListDomainPermissionsForGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询全局服务中的用户组权限。</span></li><li><span class="api-name">KeystoneCheckroleForGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询用户组是否拥有所有项目指定权限。</span></li><li><span class="api-name">KeystoneCheckDomainPermissionForGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询用户组是否拥有全局服务权限。</span></li><li><span class="api-name">KeystoneListProjectPermissionsForGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询项目服务中的用户组权限。</span></li><li><span class="api-name">KeystoneRemoveDomainPermissionFromGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)移除用户组的全局服务权限。</span></li><li><span class="api-name">KeystoneListPermissions</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询权限列表。</span></li><li><span class="api-name">DeleteDomainGroupInheritedRole</span><br><span class="api-desc">该接口可以用于移除用户组的所有项目服务权限。</span></li><li><span class="api-name">KeystoneAssociateGroupWithDomainPermission</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)为用户组授予全局服务权限。</span></li><li><span class="api-name">KeystoneRemoveProjectPermissionFromGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)移除用户组的项目服务权限。</span></li><li><span class="api-name">KeystoneListAllProjectPermissionsForGroup</span><br><span class="api-desc">该接口可以用于管理员查询用户组所有项目服务权限列表。 该接口可以使用全局区域的Endpoint和其他区域的Endpoint调用。IAM的Endpoint请参见:[地区和终端节点](https://developer.huaweicloud.com/endpoint?IAM)。</span></li><li><span class="api-name">KeystoneCheckProjectPermissionForGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询用户组是否拥有项目服务权限。</span></li><li><span class="api-name">UpdateDomainGroupInheritRole</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)为用户组授予所有项目服务权限。</span></li><li><span class="api-name">ShowDomainRoleAssignments</span><br><span class="api-desc">该接口用于查询指定账号中的授权记录。</span></li><li><span class="api-name">KeystoneAssociateGroupWithProjectPermission</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)为用户组授予项目服务权限。</span></li></ul> </div>
+<div class="api-category"><h3>版本信息管理</h3><ul><li><span class="api-name">KeystoneListVersions</span><br><span class="api-desc">该接口用于查询Keystone API的版本信息。</span></li><li><span class="api-name">KeystoneShowVersion</span><br><span class="api-desc">该接口用于查询Keystone API的3.0版本的信息。</span></li></ul> </div>
+<div class="api-category"><h3>用户组管理</h3><ul><li><span class="api-name">KeystoneCheckUserInGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询IAM用户是否在用户组中。</span></li><li><span class="api-name">KeystoneShowGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询用户组详情。</span></li><li><span class="api-name">KeystoneCreateGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)创建用户组。</span></li><li><span class="api-name">KeystoneRemoveUserFromGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)移除用户组中的IAM用户。</span></li><li><span class="api-name">KeystoneDeleteGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)删除用户组。</span></li><li><span class="api-name">KeystoneUpdateGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)更新用户组信息。</span></li><li><span class="api-name">KeystoneListGroups</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询用户组列表。</span></li><li><span class="api-name">KeystoneAddUserToGroup</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)添加IAM用户到用户组。</span></li></ul> </div>
+<div class="api-category"><h3>联邦身份认证管理</h3><ul><li><span class="api-name">KeystoneUpdateIdentityProvider</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)更新身份提供商。</span></li><li><span class="api-name">KeystoneCreateScopedToken</span><br><span class="api-desc">该接口可以用于通过联邦认证方式获取scoped token。</span></li><li><span class="api-name">KeystoneUpdateProtocol</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)更新协议。</span></li><li><span class="api-name">KeystoneListMappings</span><br><span class="api-desc">该接口可以用于查询映射列表。</span></li><li><span class="api-name">KeystoneListIdentityProviders</span><br><span class="api-desc">该接口可以用于查询身份提供商列表。</span></li><li><span class="api-name">CreateMetadata</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)导入Metadata文件。</span></li><li><span class="api-name">KeystoneCreateIdentityProvider</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)注册身份提供商。</span></li><li><span class="api-name">UpdateOpenIdConnectConfig</span><br><span class="api-desc">修改OpenId Connect身份提供商配置</span></li><li><span class="api-name">CreateUnscopedTokenWithIdToken</span><br><span class="api-desc">获取联邦认证token(OpenId Connect Id token方式)。</span></li><li><span class="api-name">KeystoneCreateProtocol</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)注册协议(将协议关联到某一身份提供商)。</span></li><li><span class="api-name">KeystoneCreateMapping</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)注册映射。</span></li><li><span class="api-name">KeystoneListFederationDomains</span><br><span class="api-desc">该接口用于查询联邦用户可以访问的账号列表。</span></li><li><span class="api-name">KeystoneUpdateMapping</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)更新映射。</span></li><li><span class="api-name">ShowMetadata</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询身份提供商导入到IAM中的Metadata文件。</span></li><li><span class="api-name">KeystoneListProtocols</span><br><span class="api-desc">该接口可以用于查询协议列表。</span></li><li><span class="api-name">KeystoneDeleteIdentityProvider</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html) 删除身份提供商。</span></li><li><span class="api-name">KeystoneShowMapping</span><br><span class="api-desc">该接口可以用于查询映射详情。</span></li><li><span class="api-name">ShowOpenIdConnectConfig</span><br><span class="api-desc">查询OpenId Connect身份提供商配置</span></li><li><span class="api-name">CreateTokenWithIdToken</span><br><span class="api-desc">获取联邦认证token(OpenId Connect Id token方式)</span></li><li><span class="api-name">KeystoneDeleteProtocol</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)删除协议。</span></li><li><span class="api-name">CreateOpenIdConnectConfig</span><br><span class="api-desc">创建OpenId Connect身份提供商配置</span></li><li><span class="api-name">KeystoneListFederationProjects</span><br><span class="api-desc">该接口可以用于查询联邦用户可以访问的项目列表。</span></li><li><span class="api-name">KeystoneShowProtocol</span><br><span class="api-desc">该接口可以用于查询协议详情。</span></li><li><span class="api-name">KeystoneShowIdentityProvider</span><br><span class="api-desc">该接口可以用于查询身份提供商详情。</span></li><li><span class="api-name">CreateUnscopeTokenByIdpInitiated</span><br><span class="api-desc">该接口可以用于通过IdP initiated的联邦认证方式获取unscoped token。</span></li><li><span class="api-name">ShowKeystoneMetadataFile</span><br><span class="api-desc">该接口可以用于查询keystone的Metadata文件。</span></li><li><span class="api-name">KeystoneDeleteMapping</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)删除映射。</span></li></ul> </div>
+<div class="api-category"><h3>自定义代理</h3><ul><li><span class="api-name">CreateLoginToken</span><br><span class="api-desc">该接口用于用于获取自定义代理登录票据logintoken。logintoken是系统颁发给自定义代理用户的登录票据,承载用户的身份、session等信息。调用自定义代理URL登录云服务控制台时,可以使用本接口获取的logintoken进行认证。</span></li></ul> </div>
+<div class="api-category"><h3>自定义策略管理</h3><ul><li><span class="api-name">UpdateAgencyCustomPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改委托自定义策略。</span></li><li><span class="api-name">ShowCustomPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询自定义策略详情。</span></li><li><span class="api-name">CreateCloudServiceCustomPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)创建云服务自定义策略。</span></li><li><span class="api-name">DeleteCustomPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)删除自定义策略。</span></li><li><span class="api-name">UpdateCloudServiceCustomPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改云服务自定义策略。</span></li><li><span class="api-name">ListCustomPolicies</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询自定义策略列表。</span></li><li><span class="api-name">CreateAgencyCustomPolicy</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)创建委托自定义策略。</span></li></ul> </div>
+<div class="api-category"><h3>账号管理</h3><ul><li><span class="api-name">KeystoneShowSecurityComplianceByOption</span><br><span class="api-desc">该接口可以用于按条件查询账号密码强度策略,查询结果包括密码强度策略的正则表达式及其描述。</span></li><li><span class="api-name">ShowDomainQuota</span><br><span class="api-desc">该接口可以用于查询账号配额。</span></li><li><span class="api-name">KeystoneShowSecurityCompliance</span><br><span class="api-desc">该接口可以用于查询账号密码强度策略,查询结果包括密码强度策略的正则表达式及其描述。</span></li><li><span class="api-name">KeystoneListAuthDomains</span><br><span class="api-desc">该接口可以用于查询IAM用户可以用访问的账号详情。</span></li></ul> </div>
+<div class="api-category"><h3>项目管理</h3><ul><li><span class="api-name">KeystoneListAuthProjects</span><br><span class="api-desc">该接口可以用于查询IAM用户可以访问的项目列表。</span></li><li><span class="api-name">KeystoneListProjects</span><br><span class="api-desc">该接口可以用于查询指定条件下的项目列表。</span></li><li><span class="api-name">KeystoneCreateProject</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)创建项目。</span></li><li><span class="api-name">KeystoneUpdateProject</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)修改项目信息。</span></li><li><span class="api-name">KeystoneListProjectsForUser</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询指定IAM用户的项目列表,或IAM用户查询自己的项目列表。</span></li><li><span class="api-name">ShowProjectQuota</span><br><span class="api-desc">该接口可以用于查询项目配额。</span></li><li><span class="api-name">UpdateProjectStatus</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)设置项目状态。项目状态包括:正常、冻结。</span></li><li><span class="api-name">ShowProjectDetailsAndStatus</span><br><span class="api-desc">该接口可以用于[管理员](https://support.huaweicloud.com/usermanual-iam/iam_01_0001.html)查询项目详情与状态。</span></li><li><span class="api-name">KeystoneShowProject</span><br><span class="api-desc">该接口可以用于查询项目详情。</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

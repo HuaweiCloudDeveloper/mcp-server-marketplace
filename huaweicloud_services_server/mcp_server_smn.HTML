@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_smn
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-smn --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-smn --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-smn --transport sse --port 8888
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-smn": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_smn/src/mcp_server_smn/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-smn": {
+              "type": "http",
+              "url": "http://127.0.0.1:8888/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-smn": {
+              "type": "sse",
+              "url": "http://localhost:8888/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>Application endpoint操作</h3><ul><li><span class="api-name">CreateApplicationEndpoint</span><br><span class="api-desc">创建应用平台的endpoint终端。</span></li><li><span class="api-name">ListApplicationEndpoints</span><br><span class="api-desc">查询平台的endpoint列表。</span></li><li><span class="api-name">DeleteApplicationEndpoint</span><br><span class="api-desc">删除设备。</span></li><li><span class="api-name">UpdateApplicationEndpoint</span><br><span class="api-desc">更新设备属性。</span></li><li><span class="api-name">ListApplicationEndpointAttributes</span><br><span class="api-desc">获取endpoint的属性。</span></li></ul> </div>
+<div class="api-category"><h3>Application操作</h3><ul><li><span class="api-name">CreateApplication</span><br><span class="api-desc">创建平台应用。</span></li><li><span class="api-name">UpdateApplication</span><br><span class="api-desc">更新应用平台。</span></li><li><span class="api-name">ListApplications</span><br><span class="api-desc">查询应用平台列表。</span></li><li><span class="api-name">ListApplicationAttributes</span><br><span class="api-desc">获取应用平台属性。</span></li><li><span class="api-name">DeleteApplication</span><br><span class="api-desc">删除平台应用。</span></li></ul> </div>
+<div class="api-category"><h3>Application直发消息操作</h3><ul><li><span class="api-name">PublishAppMessage</span><br><span class="api-desc">将消息直发给endpoint设备。</span></li></ul> </div>
+<div class="api-category"><h3>主题操作</h3><ul><li><span class="api-name">DeleteTopic</span><br><span class="api-desc">删除主题。</span></li><li><span class="api-name">ListTopicDetails</span><br><span class="api-desc">查询Topic的详细信息。</span></li><li><span class="api-name">UpdateTopicAttribute</span><br><span class="api-desc">更新主题的策略信息。</span></li><li><span class="api-name">ListTopics</span><br><span class="api-desc">分页查询Topic列表,Topic列表按照Topic创建时间进行降序排列。分页查询可以指定offset以及limit。如果不存在Topic,则返回空列表。</span></li><li><span class="api-name">DeleteTopicAttributeByName</span><br><span class="api-desc">删除指定名称的主题策略。</span></li><li><span class="api-name">DeleteTopicAttributes</span><br><span class="api-desc">删除所有主题策略。</span></li><li><span class="api-name">UpdateTopic</span><br><span class="api-desc">更新显示名。</span></li><li><span class="api-name">ListTopicAttributes</span><br><span class="api-desc">查询主题的策略信息。</span></li><li><span class="api-name">CreateTopic</span><br><span class="api-desc">创建Topic,单用户默认配额为3000。高并发场景下,可能会出现Topic数量超过3000仍创建成功的情况,此为正常现象。</span></li></ul> </div>
+<div class="api-category"><h3>云日志操作</h3><ul><li><span class="api-name">CreateLogtank</span><br><span class="api-desc">为指定Topic绑定一个云日志,用于记录主题消息发送状态等信息。</span></li><li><span class="api-name">UpdateLogtank</span><br><span class="api-desc">更新指定Topic绑定的云日志。</span></li><li><span class="api-name">DeleteLogtank</span><br><span class="api-desc">解绑指定Topic绑定的云日志。</span></li><li><span class="api-name">ListLogtank</span><br><span class="api-desc">查询指定Topic绑定的云日志。</span></li></ul> </div>
+<div class="api-category"><h3>使用标签管理服务</h3><ul><li><span class="api-name">CreateResourceTag</span><br><span class="api-desc">一个资源上最多有10个标签。此接口为幂等接口:创建时,如果创建的标签已经存在(key相同),则覆盖。</span></li><li><span class="api-name">ListResourceInstances</span><br><span class="api-desc">使用标签过滤实例。</span></li><li><span class="api-name">ListProjectTags</span><br><span class="api-desc">查询租户在指定Region和实例类型的所有标签集合。</span></li><li><span class="api-name">DeleteResourceTag</span><br><span class="api-desc">幂等接口:删除时,不对标签做校验。删除的key不存在报404,key不能为空或者空字符串。</span></li><li><span class="api-name">BatchCreateOrDeleteResourceTags</span><br><span class="api-desc">为指定实例批量添加或删除标签。一个资源上最多有10个标签。</span></li><li><span class="api-name">ListResourceTags</span><br><span class="api-desc">查询指定实例的标签信息。</span></li></ul> </div>
+<div class="api-category"><h3>发布消息操作</h3><ul><li><span class="api-name">ShowHttpDetectResult</span><br><span class="api-desc">根据http探测发送返回的task_id查询探测结果。</span></li><li><span class="api-name">PublishMessage</span><br><span class="api-desc">将消息发送给Topic的所有订阅端点。当返回消息ID时,该消息已被保存并开始尝试将其推送给Topic的订阅者。为确保您的消息能够成功推送到各个订阅者,请确保您的消息内容符合当地法律法规要求。</span></li><li><span class="api-name">PublishHttpDetect</span><br><span class="api-desc">基于主题发送http/https探测消息,探测当前http/https 终端是否可用,SMN出口是否能够正常访问该终端。</span></li></ul> </div>
+<div class="api-category"><h3>查询版本操作</h3><ul><li><span class="api-name">ListVersion</span><br><span class="api-desc">查询SMN API V2版本信息。</span></li><li><span class="api-name">ListVersions</span><br><span class="api-desc">查询SMN开放API支持的版本号。</span></li></ul> </div>
+<div class="api-category"><h3>模板操作</h3><ul><li><span class="api-name">ListMessageTemplateDetails</span><br><span class="api-desc">查询模板详情,包括模板内容。</span></li><li><span class="api-name">CreateMessageTemplate</span><br><span class="api-desc">创建一个模板,用户可以按照模板去发送消息,这样可以减少请求的数据量。</span></li><li><span class="api-name">UpdateMessageTemplate</span><br><span class="api-desc">修改消息模板的内容。</span></li><li><span class="api-name">ListMessageTemplates</span><br><span class="api-desc">分页查询模板列表,模板列表按照创建时间进行升序排列。分页查询可以指定offset以及limit。如果不存在模板,则返回空列表。额外的查询参数分别有message_template_name和protocol。</span></li><li><span class="api-name">DeleteMessageTemplate</span><br><span class="api-desc">删除消息模板。删除模板之前的消息请求都可以使用该模板发送,删除之后无法再使用该模板发送消息。</span></li></ul> </div>
+<div class="api-category"><h3>订阅操作</h3><ul><li><span class="api-name">AddSubscriptionFromSubscriptionUser</span><br><span class="api-desc">为指定的Topic添加订阅者,订阅者信息来源为订阅用户列表。</span></li><li><span class="api-name">ListSubscriptions</span><br><span class="api-desc">分页返回请求者的所有的订阅列表,订阅列表按照订阅创建时间进行升序排列。分页查询可以指定offset以及limit。如果订阅者不存在,返回空列表。</span></li><li><span class="api-name">ListSubscriptionsByTopic</span><br><span class="api-desc">分页获取特定Topic的订阅列表,订阅列表按照订阅创建时间进行升序排列。分页查询可以指定offset以及limit。如果指定Topic不存在订阅者,返回空列表。</span></li><li><span class="api-name">CancelSubscription</span><br><span class="api-desc">删除指定的订阅者。</span></li><li><span class="api-name">AddSubscription</span><br><span class="api-desc">为指定Topic添加一个订阅者,如果订阅者的状态为未确认,则向订阅者发送一个确认的消息。待订阅者进行ConfirmSubscription确认后,该订阅者才能收到Topic发布的消息。单Topic默认可添加10000个订阅者,高并发场景下,可能会出现订阅者数量超过10000仍添加成功的情况,此为正常现象。接口是幂等的,如果添加已存在的订阅者,则返回成功,且status code为200,否则status code为201。</span></li><li><span class="api-name">UpdateSubscription</span><br><span class="api-desc">更新订阅者备注。</span></li></ul> </div>
+<div class="api-category"><h3>订阅过滤策略操作</h3><ul><li><span class="api-name">BatchCreateSubscriptionsFilterPolices</span><br><span class="api-desc">创建订阅者的消息过滤策略。</span></li><li><span class="api-name">BatchUpdateSubscriptionsFilterPolices</span><br><span class="api-desc">更新订阅者的消息过滤策略。</span></li><li><span class="api-name">BatchDeleteSubscriptionsFilterPolices</span><br><span class="api-desc">删除订阅者的消息过滤策略。</span></li></ul> </div>
+<div class="api-category"><h3>通知策略</h3><ul><li><span class="api-name">ShowNotifyPolicy</span><br><span class="api-desc">查询通知策略</span></li><li><span class="api-name">CreateNotifyPolicy</span><br><span class="api-desc">创建通知策略</span></li><li><span class="api-name">UpdateNotifyPolicy</span><br><span class="api-desc">修改通知策略,该接口仅支持全量修改,不支持部分修改。</span></li><li><span class="api-name">DeleteNotifyPolicy</span><br><span class="api-desc">删除通知策略</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

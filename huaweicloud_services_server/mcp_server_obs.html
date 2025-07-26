@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>OBS MCP Server是一款Model Context Protocol（Model Context Protocol）服务器，为MCP客户端（如Claude Desktop、Cline、Cursor）提供与华为云服务OBS交互的能力，可以基于自然语言对OBS资源进行全链条管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+         <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+         <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+         <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_obs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_obs --transport stdio --port 8901
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_obs --transport http  --port 8901
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_obs --transport sse --port 8901
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-vpc-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "http-vpc-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8901/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-vpc-example": {
+              "type": "sse",
+              "url": "http://localhost:8901/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>对象操作</h3>
+          <ul>
+            <li><span class="api-name">ListParts</span><br><span class="api-desc">列举已上传的段</span></li>
+            <li><span class="api-name">CopyPart</span><br><span class="api-desc">拷贝段</span></li>
+            <li><span class="api-name">CompleteMultipartUpload</span><br><span class="api-desc">如果用户上传完所有的段,就可以调用合并段接口,系统将在服务端将用户指定的段合并成一个完整的对象。在执行“合并段”操作以前,用户不能下载已经上传的数据。在合并段时需要将多段上传任务初始化时记录的附加消息头信息拷贝到对象元数据中,其处理过程和普通上传对象带这些消息头的处理过程相同。在并发合并段的情况下,仍然遵循Last Write Win策略,但“Last Write”的时间定义为段任务的初始化时间。</span></li>
+            <li><span class="api-name">AbortMultipartUpload</span><br><span class="api-desc">取消多段上传任务</span></li>
+            <li><span class="api-name">ListMultipartUploads</span><br><span class="api-desc">列举桶中已初始化多段任务</span></li>
+            <li><span class="api-name">UploadPart</span><br><span class="api-desc">上传段</span></li>
+            <li><span class="api-name">InitiateMultipartUpload</span><br><span class="api-desc">初始化上传段任务</span></li>
+            <li><span class="api-name">DeleteObjects</span><br><span class="api-desc">批量删除对象特性用于将一个桶内的部分对象一次性删除,删除后不可恢复。批量删除对象要求返回结果里包含每个对象的删除结果。OBS的批量删除对象使用同步删除对象的方式,每个对象的删除结果返回给请求用户。</span></li>
+            <li><span class="api-name">UploadModifyObject</span><br><span class="api-desc">修改写对象操作是指将指定文件桶内的一个对象从指定位置起修改为其他内容。</span></li>
+            <li><span class="api-name">PutObject</span><br><span class="api-desc">用户在OBS系统中创建了桶之后,可以采用PUT操作的方式将对象上传到桶中。上传对象操作是指在指定的桶内增加一个对象,执行该操作需要用户拥有桶的写权限。</span></li>
+            <li><span class="api-name">SetObjectMetadata</span><br><span class="api-desc">用户可以通过本接口添加、修改或删除桶中已经上传的对象的元数据。</span></li>
+            <li><span class="api-name">SetObjectAcl</span><br><span class="api-desc">OBS支持对对象的操作进行权限控制。默认情况下,只有对象的创建者才有该对象的读写权限。用户也可以设置其他的访问策略,比如对一个对象可以设置公共访问策略,允许所有人对其都有读权限。SSE-KMS方式加密的对象即使设置了ACL,跨租户也不生效。</span></li>
+            <li><span class="api-name">DeleteObject</span><br><span class="api-desc">删除对象的操作。如果要删除的对象不存在,则仍然返回成功信息。</span></li>
+            <li><span class="api-name">GetObjectMetadata</span><br><span class="api-desc">拥有对象读权限的用户可以执行HEAD操作命令获取对象元数据,返回信息包含对象的元数据信息。</span></li>
+            <li><span class="api-name">TruncateObject</span><br><span class="api-desc">截断对象操作是指将指定文件桶内的一个对象截断到指定大小。</span></li>
+            <li><span class="api-name">RestoreObject</span><br><span class="api-desc">如果要获取归档存储对象的内容,需要先将对象取回,然后再执行下载数据的操作。对象取回后,会产生一个标准存储类型的对象副本,也就是说会同时存在标准存储类型的对象副本和归档存储类型的对象,在取回对象的保存时间到期后标准存储类型的对象副本会自动删除。</span></li>
+            <li><span class="api-name">UploadObject</span><br><span class="api-desc">上传对象操作是指在指定的桶内增加一个对象,执行该操作需要用户拥有桶的写权限。</span></li>
+            <li><span class="api-name">GetObjectAcl</span><br><span class="api-desc">用户执行获取对象ACL的操作,返回信息包含指定对象的权限控制列表信息。用户必须拥有对指定对象读ACP(access control policy)的权限,才能执行获取对象ACL的操作。</span></li>
+            <li><span class="api-name">GetObject</span><br><span class="api-desc">GET操作从对象存储下载对象。使用GET接口前,请确认必须拥有对象的READ权限。如果对象Owner向匿名用户授予READ访问权限,则可以在不使用鉴权头域的情况下访问该对象。</span></li>
+            <li><span class="api-name">RenameObject</span><br><span class="api-desc">重命名对象操作是指将指定文件桶内的一个对象重命名为其他对象名。</span></li>
+            <li><span class="api-name">AppendObject</span><br><span class="api-desc">追加写对象操作是指在指定桶内的一个对象尾追加上传数据,不存在相同对象键值的对象则创建新对象。</span></li>
+            <li><span class="api-name">CopyObject</span><br><span class="api-desc">复制对象(Copy Object)特性用来为OBS上已经存在的对象创建一个副本。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>查询版本操作</h3>
+          <ul>
+            <li><span class="api-name">ListVersions</span><br><span class="api-desc">查询SMN开放API支持的版本号。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>桶的基础操作</h3>
+          <ul>
+            <li><span class="api-name">GetBucketLocation</span><br><span class="api-desc">对桶拥有读权限的用户可以执行获取桶区域位置信息的操作。</span></li>
+            <li><span class="api-name">DeleteBucket</span><br><span class="api-desc">删除桶操作用于删除用户指定的桶。只有桶的所有者或者拥有桶的删桶policy权限的用户可以执行删除桶的操作,要删除的桶必须是空桶。如果桶中有对象或者有多段任务则认为桶不为空,可以使用列举桶内对象和列举出多段上传任务接口来确认桶是否为空。</span></li>
+            <li><span class="api-name">ListBuckets</span><br><span class="api-desc">OBS用户可以通过请求查询自己创建的桶列表。</span></li>
+            <li><span class="api-name">CreateBucket</span><br><span class="api-desc">创建桶是指按照用户指定的桶名创建一个新桶的操作。</span></li>
+            <li><span class="api-name">ListObjects</span><br><span class="api-desc">对桶拥有读权限的用户可以执行获取桶内对象列表的操作。</span></li>
+            <li><span class="api-name">GetBucketMetadata</span><br><span class="api-desc">对桶拥有读权限的用户可以执行查询桶元数据是否存在的操作。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>桶的高级配置</h3>
+          <ul>
+            <li><span class="api-name">DeleteDirectcoldaccess</span><br><span class="api-desc">删除指定桶的归档对象直读配置信息。</span></li>
+            <li><span class="api-name">SetBucketEncryption</span><br><span class="api-desc">OBS使用PUT操作为桶创建或更新默认服务端加密配置信息。</span></li>
+            <li><span class="api-name">GetBucketPolicy</span><br><span class="api-desc">该接口的实现使用policy子资源来将指定桶的策略返回给客户端。</span></li>
+            <li><span class="api-name">SetBucketObsCompressPolicy</span><br><span class="api-desc">本接口用于为指定桶配置ZIP文件解压策略。接口是幂等的,若桶上已存在相同策略内容,则返回成功,status code返回值为200;否则status code返回值为201。</span></li>
+            <li><span class="api-name">SetDirectcoldaccess</span><br><span class="api-desc">归档对象直读是指用户可以不用取回归档对象,便能直接对其进行操作。</span></li>
+            <li><span class="api-name">GetBucketQuota</span><br><span class="api-desc">桶的拥有者可以执行获取桶配额信息的操作。桶的拥有者的状态是inactive状态不可以查询桶配额信息。桶空间配额值的单位为Byte(字节),0代表不设上限。</span></li>
+            <li><span class="api-name">DeleteBucketObsCompressPolicy</span><br><span class="api-desc">本接口用于删除指定桶中配置的ZIP文件解压策略。删除成功,status code返回值为204。</span></li>
+            <li><span class="api-name">DeleteBucketLifecycle</span><br><span class="api-desc">删除指定桶的生命周期配置信息。删除后桶中的对象不会过期,OBS不会自动删除桶中对象。</span></li>
+            <li><span class="api-name">SetBucketLifecycle</span><br><span class="api-desc">OBS系统支持指定规则来实现定时删除或迁移桶中对象,这就是生命周期配置。典型的应用场景如:</span></li>
+            <li><span class="api-name">SetBucketMirrorBackToSource</span><br><span class="api-desc">本接口用于为指定桶配置镜像回源策略。接口是幂等的,若桶上已存在相同策略内容,则返回成功,status code返回值为200;否则status code返回值为201。</span></li>
+            <li><span class="api-name">GetBucketLifecycle</span><br><span class="api-desc">获取该桶设置的生命周期配置信息。</span></li>
+            <li><span class="api-name">DeleteBucketEncryption</span><br><span class="api-desc">OBS使用DELETE操作来删除指定桶的加密配置。</span></li>
+            <li><span class="api-name">SetBucketPolicy</span><br><span class="api-desc">该接口的实现使用policy子资源创建或者修改一个桶的策略。如果桶已经存在一个策略,那么当前请求中的策略将完全覆盖桶中现存的策略。单个桶的桶策略条数(statement)没有限制,但一个桶中所有桶策略的JSON描述总大小不能超过20KB。</span></li>
+            <li><span class="api-name">SetBucketReplication</span><br><span class="api-desc">跨区域复制是指跨不同区域中的桶自动、异步地复制对象。通过激活跨区域复制,OBS可将新创建的对象及修改的对象从一个源桶复制到不同区域中的目标桶。</span></li>
+            <li><span class="api-name">GetBucketStorageInfo</span><br><span class="api-desc"></span></li>
+            <li><span class="api-name">ListBucketInventory</span><br><span class="api-desc">OBS使用不带清单id的GET操作来获取指定桶的所有清单配置,获取到的清单配置一次性返回,不分页。</span></li>
+            <li><span class="api-name">GetBucketReplication</span><br><span class="api-desc">获取指定桶的复制配置信息。执行该配置操作前需要确保执行者拥有GetReplicationConfiguration权限。</span></li>
+            <li><span class="api-name">GetBucketMirrorBackToSource</span><br><span class="api-desc">本接口用于查询指定桶的镜像回源策略。若策略存在,则返回成功,status code返回值为200。</span></li>
+            <li><span class="api-name">DeleteBucketReplication</span><br><span class="api-desc">删除桶的复制配置。执行该配置操作前需要确保执行者拥有DeleteReplicationConfiguration权限。</span></li>
+            <li><span class="api-name">GetBucketInventory</span><br><span class="api-desc">OBS使用GET操作来获取指定桶的某个清单配置。</span></li>
+            <li><span class="api-name">SetBucketInventory</span><br><span class="api-desc">OBS使用PUT操作为一个桶配置清单规则,每个桶最多可以配置10条清单规则,有关更多桶清单的介绍和使用限制,请参考《对象存储服务开发指南》的[桶清单](https://support.huaweicloud.com/ugobs-obs/obs_41_0044.html)章节。</span></li>
+            <li><span class="api-name">GetBucketCustomdomain</span><br><span class="api-desc">OBS使用GET操作来获取桶的自定义域名。</span></li>
+            <li><span class="api-name">DeleteBucketInventory</span><br><span class="api-desc">OBS使用DELETE操作来删除指定桶的清单配置(通过清单id来指定清单配置)。</span></li>
+            <li><span class="api-name">SetBucketTagging</span><br><span class="api-desc">OBS使用PUT操作为一个已经存在的桶添加标签。</span></li>
+            <li><span class="api-name">GetBucketVersioning</span><br><span class="api-desc">桶的所有者可以获取指定桶的多版本状态。</span></li>
+            <li><span class="api-name">DeleteBucketCustomdomain</span><br><span class="api-desc">OBS使用DELETE操作来删除指定桶的标签。</span></li>
+            <li><span class="api-name">SetBucketVersioning</span><br><span class="api-desc">多版本功能可在用户意外覆盖或删除对象的情况下提供一种恢复手段。用户可以使用多版本功能来保存、检索和还原对象的各个版本,这样用户能够从意外操作或应用程序故障中轻松恢复数据。多版本功能还可用于数据保留和存档。</span></li>
+            <li><span class="api-name">SetBucketQuota</span><br><span class="api-desc">桶空间配额值必须为非负整数,单位为Byte(字节),能设的最大值为2^63 -1。桶的默认配额为0,表示没有限制桶配额。</span></li>
+            <li><span class="api-name">GetBucketAcl</span><br><span class="api-desc">用户执行获取桶ACL的操作,返回信息包含指定桶的权限控制列表信息。用户必须拥有对指定桶READ_ACP的权限或FULL_CONTROL权限,才能执行获取桶ACL的操作。</span></li>
+            <li><span class="api-name">SetBucketStoragePolicy</span><br><span class="api-desc">本接口实现为桶创建或更新桶的默认存储类型配置信息。</span></li>
+            <li><span class="api-name">SetBucketCustomedomain</span><br><span class="api-desc">OBS使用PUT操作为桶设置自定义域名,设置成功之后,用户访问桶的自定义域名就能访问到桶。</span></li>
+            <li><span class="api-name">SetBucketNotification</span><br><span class="api-desc">OBS消息通知功能能够帮助您对桶的重要的操作及时通知到您,确保您安全、及时知道发生在桶上的关键事件。</span></li>
+            <li><span class="api-name">GetBucketNotification</span><br><span class="api-desc">获取指定桶的消息通知配置信息。</span></li>
+            <li><span class="api-name">GetBucketEncryption</span><br><span class="api-desc">OBS使用GET操作来获取指定桶的加密配置。</span></li>
+            <li><span class="api-name">DeleteBucketMirrorBackToSource</span><br><span class="api-desc">本接口用于删除指定桶中配置的镜像回源策略。删除成功,status code返回值为204。</span></li>
+            <li><span class="api-name">GetBucketObsCompressPolicy</span><br><span class="api-desc">本接口用于查询指定桶的ZIP文件解压策略。若策略存在,则返回成功,status code返回值为200。</span></li>
+            <li><span class="api-name">SetBucketLogging</span><br><span class="api-desc">创建桶时,默认是不生成桶的日志的,如果需要生成桶的日志,该桶需要打开日志配置管理的开关。桶日志功能开启后,桶的每次操作将会产生一条日志,并将多条日志打包成一个日志文件。日志文件存放位置需要在开启桶日志功能时指定,可以存放到开启日志功能的桶中,也可以存放到其他你有权限的桶中,但需要和开启日志功能的桶在同一个region中。</span></li>
+            <li><span class="api-name">GetBucketStoragePolicy</span><br><span class="api-desc">获取该桶设置的默认存储类型信息。</span></li>
+            <li><span class="api-name">GetDirectcoldaccess</span><br><span class="api-desc">桶的所有者可以获取指定桶的归档对象直读状态。</span></li>
+            <li><span class="api-name">GetBucketLogging</span><br><span class="api-desc">该接口的目的是查询当前桶的日志管理配置情况。其实现是通过使用http的get方法再加入logging子资源来返回当前桶的日志配置情况。</span></li>
+            <li><span class="api-name">GetBucketTagging</span><br><span class="api-desc">OBS使用GET操作来获取指定桶的标签。</span></li>
+            <li><span class="api-name">DeleteBucketTagging</span><br><span class="api-desc"></span></li>
+            <li><span class="api-name">SetBucketAcl</span><br><span class="api-desc">OBS支持对桶操作进行权限控制。默认情况下,只有桶的创建者才有该桶的读写权限。用户也可以设置其他的访问策略,比如对一个桶可以设置公共访问策略,允许所有人对其都有读权限。</span></li>
+            <li><span class="api-name">DeleteBucketPolicy</span><br><span class="api-desc">该接口的实现是通过使用policy子资源来删除一个指定桶上的策略。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>静态网站托管</h3>
+          <ul>
+            <li><span class="api-name">SetBucketCors</span><br><span class="api-desc">CORS(Cross Origin Resource Sharing),即跨域资源共享,是W3C标准化组织提出的一种规范机制,允许客户端的跨域请求的配置。在通常的网页请求中,由于安全策略SOP(Same Origin Policy)的存在,一个网站的脚本和内容是不能与另一个网站的脚本和内容发生交互的。</span></li>
+            <li><span class="api-name">DeleteBucketWebsite</span><br><span class="api-desc">删除指定桶的网站配置信息。</span></li>
+            <li><span class="api-name">DeleteBucketCors</span><br><span class="api-desc">删除指定桶的CORS配置信息。删除后桶以及桶中的对象将不能再被其他网址发送的请求访问。</span></li>
+            <li><span class="api-name">GetBucketWebsite</span><br><span class="api-desc">获取该桶设置的网站配置信息。</span></li>
+            <li><span class="api-name">SetBucketWebsite</span><br><span class="api-desc">OBS允许在桶内保存静态的网页资源,如.html网页文件、flash文件、音视频文件等,当客户端通过桶的Website接入点访问这些对象资源时,浏览器可以直接解析出这些支持的网页资源,呈现给最终用户。典型的应用场景有:</span></li>
+            <li><span class="api-name">CheckBucketOptions</span><br><span class="api-desc">OPTIONS,称为预请求,是客户端发送给服务端的一种请求,通常被用于检测客户端是否具有对服务端进行操作的权限。只有当预请求成功返回,客户端才开始执行后续的请求。</span></li>
+            <li><span class="api-name">CheckObjectOptions</span><br><span class="api-desc">OPTIONS,称为预请求,是客户端发送给服务端的一种请求,通常被用于检测客户端是否具有对服务端进行操作的权限。只有当预请求成功返回,客户端才开始执行后续的请求。</span></li>
+            <li><span class="api-name">GetBucketCors</span><br><span class="api-desc">获取指定桶的CORS配置信息。</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

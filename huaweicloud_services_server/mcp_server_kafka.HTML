@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_kafka
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-kafka --transport stdio --port 8879
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-kafka --transport http  --port 8879
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-kafka --transport sse --port 8879
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-kafka": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_kafka/src/mcp_server_kafka/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-kafka": {
+              "type": "http",
+              "url": "http://127.0.0.1:8879/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-kafka": {
+              "type": "sse",
+              "url": "http://localhost:8879/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>Smart Connect</h3><ul><li><span class="api-name">PauseConnectorTask</span><br><span class="api-desc">暂停Smart Connect任务。</span></li><li><span class="api-name">RestartConnectorTask</span><br><span class="api-desc">用于**启动未启动的Smart Connect任务**以及**重启已暂停或者运行中的Smart Connect任务**。注意,重启Smart Connect任务将重置同步进度,并重新开始同步任务。</span></li><li><span class="api-name">ShowConnectorTask</span><br><span class="api-desc">查询Smart Connector任务详情。</span></li><li><span class="api-name">DeleteConnector</span><br><span class="api-desc">介绍按需实例如何关闭Smart Connect。</span></li><li><span class="api-name">ListConnectorTasks</span><br><span class="api-desc">查询Smart Connect任务列表。</span></li><li><span class="api-name">DeleteConnectorTask</span><br><span class="api-desc">删除Smart Connector任务。</span></li><li><span class="api-name">ResumeConnectorTask</span><br><span class="api-desc">启动已暂停的Smart Connect任务。</span></li><li><span class="api-name">CreateConnector</span><br><span class="api-desc">开启Smart Connect,提交创建Smart Connect节点任务。</span></li><li><span class="api-name">CreateConnectorTask</span><br><span class="api-desc">创建Smart Connect任务。</span></li></ul> </div>
+<div class="api-category"><h3>主题管理</h3><ul><li><span class="api-name">DeleteKafkaTopicQuota</span><br><span class="api-desc">该接口用于向Kafka实例提交删除topic级别的流控任务,若成功则返回流控任务的job_id。</span></li><li><span class="api-name">ListTopicPartitions</span><br><span class="api-desc">查询Topic的分区列表</span></li><li><span class="api-name">ShowInstanceTopicDetail</span><br><span class="api-desc">查询Kafka实例Topic详细信息。(单个实例调用不要超过1s一次)</span></li><li><span class="api-name">CreateInstanceTopic</span><br><span class="api-desc">该接口用于向Kafka实例创建Topic。</span></li><li><span class="api-name">CreateKafkaTopicQuota</span><br><span class="api-desc">该接口用于向Kafka实例提交创建topic级别的流控任务,若成功则返回流控任务的job_id。</span></li><li><span class="api-name">ShowKafkaTopicQuota</span><br><span class="api-desc">该接口用于查询topic级别的流控任务。</span></li><li><span class="api-name">ListTopicProducers</span><br><span class="api-desc">查询Topic的当前生产者列表。</span></li><li><span class="api-name">SendKafkaMessage</span><br><span class="api-desc">在控制台发送指定消息到Kafka实例</span></li><li><span class="api-name">ListInstanceTopics</span><br><span class="api-desc">该接口用于查询指定Kafka实例的Topic详情。</span></li><li><span class="api-name">UpdateInstanceTopic</span><br><span class="api-desc">修改Kafka实例Topic</span></li><li><span class="api-name">ModifyKafkaTopicQuota</span><br><span class="api-desc">该接口用于向Kafka实例提交修改topic级别的流控任务,若成功则返回流控任务的job_id。</span></li><li><span class="api-name">BatchDeleteInstanceTopic</span><br><span class="api-desc">该接口用于向Kafka实例批量删除Topic。批量删除多个Topic时,部分删除成功,部分失败,此时接口返回删除成功,并在返回中显示删除失败的Topic信息。</span></li></ul> </div>
+<div class="api-category"><h3>其他接口</h3><ul><li><span class="api-name">ListAvailableZones</span><br><span class="api-desc">在创建实例时,需要配置实例所在的可用区ID,可通过该接口查询可用区的ID。</span></li><li><span class="api-name">ShowKafkaProductCores</span><br><span class="api-desc">查询Kafka产品规格核数。</span></li><li><span class="api-name">ShowCesHierarchy</span><br><span class="api-desc">查询实例在CES的监控层级关系。</span></li><li><span class="api-name">ListEngineProducts</span><br><span class="api-desc">查询产品规格列表。</span></li><li><span class="api-name">ShowMaintainWindows</span><br><span class="api-desc">查询维护时间窗开始时间和结束时间。</span></li></ul> </div>
+<div class="api-category"><h3>后台任务管理</h3><ul><li><span class="api-name">ShowBackgroundTask</span><br><span class="api-desc">查询后台任务管理中的指定记录。</span></li><li><span class="api-name">ListBackgroundTasks</span><br><span class="api-desc">查询实例的后台任务列表。</span></li><li><span class="api-name">DeleteBackgroundTask</span><br><span class="api-desc">删除后台任务管理中的指定记录。</span></li></ul> </div>
+<div class="api-category"><h3>实例管理</h3><ul><li><span class="api-name">ShowCoordinators</span><br><span class="api-desc">查询Kafka实例的协调器信息。</span></li><li><span class="api-name">UpdateKafkaPortProtocol</span><br><span class="api-desc">修改Kafka的内网或者公网接入方式。</span></li><li><span class="api-name">CreateKafkaReassignmentTask</span><br><span class="api-desc">该接口用于向Kafka实例提交分区平衡任务,若成功则返回分区平衡任务的job id。</span></li><li><span class="api-name">ShowKafkaTopicPartitionDiskusage</span><br><span class="api-desc">查询topic在Broker上磁盘占用情况。</span></li><li><span class="api-name">CreateReassignmentTask</span><br><span class="api-desc">该接口用于向Kafka实例提交分区平衡任务或计算分区平衡预估时间。</span></li><li><span class="api-name">ResetManagerPassword</span><br><span class="api-desc">重置Manager密码。</span></li><li><span class="api-name">ResetPassword</span><br><span class="api-desc">重置密码(只针对开通SSL的实例)。</span></li><li><span class="api-name">DeleteKafkaUserClientQuotaTask</span><br><span class="api-desc">该接口用于向Kafka实例提交删除用户、客户端级别的流控任务,若成功则返回流控任务的job_id。</span></li><li><span class="api-name">RestartManager</span><br><span class="api-desc">重启Manager。</span></li><li><span class="api-name">CreateKafkaUserClientQuotaTask</span><br><span class="api-desc">该接口用于向Kafka实例提交创建用户、客户端级别的流控任务,若成功则返回流控任务的job_id。</span></li><li><span class="api-name">UpdateInstanceAutoCreateTopic</span><br><span class="api-desc">开启或关闭实例自动创建topic功能。</span></li><li><span class="api-name">ShowCluster</span><br><span class="api-desc">查询Kafka集群元数据信息。</span></li><li><span class="api-name">CloseKafkaManager</span><br><span class="api-desc">关闭Kafka Manager,相应的原来开放出的management相关接口也将不可用。</span></li><li><span class="api-name">UpdateInstanceCrossVpcIp</span><br><span class="api-desc">修改实例跨VPC访问的内网IP。</span></li><li><span class="api-name">UpdateTopicReplica</span><br><span class="api-desc">修改Kafka实例Topic分区的副本。</span></li><li><span class="api-name">UpdateKafkaUserClientQuotaTask</span><br><span class="api-desc">该接口用于向Kafka实例提交修改用户、客户端级别的流控任务,若成功则返回流控任务的job_id。</span></li><li><span class="api-name">ShowKafkaUserClientQuota</span><br><span class="api-desc">该接口用于向Kafka实例查询流控的配置,若成功则返回流控配置的列表。</span></li></ul> </div>
+<div class="api-category"><h3>标签管理</h3><ul><li><span class="api-name">BatchCreateOrDeleteKafkaTag</span><br><span class="api-desc">批量添加或删除实例标签。</span></li><li><span class="api-name">ShowKafkaProjectTags</span><br><span class="api-desc">查询项目标签。</span></li><li><span class="api-name">ShowKafkaTags</span><br><span class="api-desc">查询实例标签。</span></li></ul> </div>
+<div class="api-category"><h3>消息管理</h3><ul><li><span class="api-name">ShowPartitionEndMessage</span><br><span class="api-desc">查询分区最新消息的位置。</span></li><li><span class="api-name">ShowInstanceMessages</span><br><span class="api-desc">查询消息的偏移量和消息内容。</span></li><li><span class="api-name">ShowMessages</span><br><span class="api-desc">查询分区指定时间段的消息。</span></li><li><span class="api-name">ShowPartitionBeginningMessage</span><br><span class="api-desc">查询分区最早消息的位置。</span></li><li><span class="api-name">ShowPartitionMessage</span><br><span class="api-desc">查询分区指定偏移量的消息。</span></li><li><span class="api-name">DeleteKafkaMessage</span><br><span class="api-desc">Kafka删除消息。</span></li></ul> </div>
+<div class="api-category"><h3>消费组管理</h3><ul><li><span class="api-name">DeleteInstanceConsumerGroup</span><br><span class="api-desc">删除指定消费组。</span></li><li><span class="api-name">ResetMessageOffsetWithEngine</span><br><span class="api-desc">Kafka实例不支持在线重置消费进度。在执行重置消费进度之前,必须停止被重置消费组客户端。</span></li><li><span class="api-name">DeleteConsumerGroupOffsets</span><br><span class="api-desc">删除消费组在指定Topic的消费位点。</span></li><li><span class="api-name">CreateKafkaConsumerGroup</span><br><span class="api-desc">实例创建消费组</span></li><li><span class="api-name">ListInstanceConsumerGroupMessageOffset</span><br><span class="api-desc">查询消费组消息位点。</span></li><li><span class="api-name">ListInstanceConsumerGroups</span><br><span class="api-desc">查询所有消费组。</span></li><li><span class="api-name">UpdateInstanceConsumerGroup</span><br><span class="api-desc">修改指定消费组。</span></li><li><span class="api-name">BatchDeleteGroup</span><br><span class="api-desc">该接口用于向Kafka实例批量删除消费组。</span></li><li><span class="api-name">ListInstanceConsumerGroupTopics</span><br><span class="api-desc">查询指定消费组的Topic。</span></li><li><span class="api-name">ShowGroups</span><br><span class="api-desc">查询消费组信息。</span></li><li><span class="api-name">UpdateInstanceGroup</span><br><span class="api-desc">修改所有消费组。</span></li><li><span class="api-name">ListInstanceConsumerGroup</span><br><span class="api-desc">查询指定消费组。</span></li><li><span class="api-name">ListInstanceConsumerGroupMembers</span><br><span class="api-desc">查询指定消费组的消费成员。</span></li></ul> </div>
+<div class="api-category"><h3>生命周期管理</h3><ul><li><span class="api-name">ShowInstanceConfigs</span><br><span class="api-desc">获取实例配置。</span></li><li><span class="api-name">BatchRestartOrDeleteInstances</span><br><span class="api-desc">批量重启或删除实例。</span></li><li><span class="api-name">EnableDns</span><br><span class="api-desc">开启Kafka实例域名访问后,客户端可以通过域名连接Kafka实例。</span></li><li><span class="api-name">ShowInstance</span><br><span class="api-desc">查询指定实例的详细信息。</span></li><li><span class="api-name">UpdateInstance</span><br><span class="api-desc">修改实例信息。</span></li><li><span class="api-name">CreateInstanceByEngine</span><br><span class="api-desc">创建实例。</span></li><li><span class="api-name">ModifyInstanceConfigs</span><br><span class="api-desc">修改实例配置。</span></li><li><span class="api-name">DeleteInstance</span><br><span class="api-desc">删除指定的实例,释放该实例的所有资源。</span></li><li><span class="api-name">CreatePostPaidKafkaInstance</span><br><span class="api-desc">创建实例。</span></li><li><span class="api-name">UpgradeInstance</span><br><span class="api-desc">实例内核升级</span></li><li><span class="api-name">ListInstances</span><br><span class="api-desc">查询租户的实例列表,支持按照条件查询。</span></li></ul> </div>
+<div class="api-category"><h3>用户管理</h3><ul><li><span class="api-name">CreateInstanceUser</span><br><span class="api-desc">创建Kafka实例的用户,用户可连接开启SASL的Kafka实例。  2023年7月15日前创建的Kafka实例,一个实例最多创建20个用户。2023年7月15日及以后创建的Kafka实例,一个实例最多创建500个用户。</span></li><li><span class="api-name">UpdateTopicAccessPolicy</span><br><span class="api-desc">设置用户权限。</span></li><li><span class="api-name">ShowTopicAccessPolicy</span><br><span class="api-desc">查询用户权限。</span></li><li><span class="api-name">UpdateInstanceUser</span><br><span class="api-desc">修改用户参数</span></li><li><span class="api-name">BatchDeleteInstanceUsers</span><br><span class="api-desc">批量删除Kafka实例的用户。</span></li><li><span class="api-name">ShowInstanceUsers</span><br><span class="api-desc">查询用户列表。</span></li><li><span class="api-name">ResetUserPasswrod</span><br><span class="api-desc">重置用户密码</span></li></ul> </div>
+<div class="api-category"><h3>规格变更管理</h3><ul><li><span class="api-name">ShowEngineInstanceExtendProductInfo</span><br><span class="api-desc">查询实例的扩容规格列表。</span></li><li><span class="api-name">ShowKafkaInstanceExtendProductInfo</span><br><span class="api-desc">查询实例的扩容规格列表。</span></li><li><span class="api-name">ResizeKafkaInstance</span><br><span class="api-desc">实例规格变更。当前通过调用API,只支持按需实例进行实例扩容。</span></li><li><span class="api-name">ResizeEngineInstance</span><br><span class="api-desc">实例规格变更。当前通过调用API,只支持按需实例进行实例扩容。</span></li></ul> </div>
+<div class="api-category"><h3>诊断管理</h3><ul><li><span class="api-name">ShowDiagnosisPreCheck</span><br><span class="api-desc">消息积压诊断预检查</span></li><li><span class="api-name">ShowMessageDiagnosisReport</span><br><span class="api-desc">查询诊断报告详情</span></li><li><span class="api-name">CreateMessageDiagnosisTask</span><br><span class="api-desc">创建消息积压诊断任务</span></li><li><span class="api-name">ListMessageDiagnosisReports</span><br><span class="api-desc">查询消息积压诊断报告列表</span></li><li><span class="api-name">BatchDeleteMessageDiagnosisReports</span><br><span class="api-desc">批量删除消息积压诊断报告</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

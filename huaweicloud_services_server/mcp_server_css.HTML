@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_css
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-css --transport stdio --port 8832
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-css --transport http  --port 8832
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-css --transport sse --port 8832
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-css": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_css/src/mcp_server_css/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-css": {
+              "type": "http",
+              "url": "http://127.0.0.1:8832/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-css": {
+              "type": "sse",
+              "url": "http://localhost:8832/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>Kibana公网访问接口</h3><ul><li><span class="api-name">StartKibanaPublic</span><br><span class="api-desc">该接口用于开启Kibana公网访问。</span></li><li><span class="api-name">StopPublicKibanaWhitelist</span><br><span class="api-desc">该接口用于关闭Kibana公网访问控制。</span></li><li><span class="api-name">UpdateCloseKibana</span><br><span class="api-desc">该接口用于关闭Kibana公网访问。包周期类型集群不支持通过api进行关闭Kibana公网访问。</span></li><li><span class="api-name">UpdateAlterKibana</span><br><span class="api-desc">该接口用于修改Kibana公网带宽。</span></li><li><span class="api-name">UpdatePublicKibanaWhitelist</span><br><span class="api-desc">该接口通过修改kibana白名单,修改kibana的访问权限。</span></li></ul> </div>
+<div class="api-category"><h3>Logstash接口</h3><ul><li><span class="api-name">ShowCertsDetail</span><br><span class="api-desc">该接口用于查询证书文件信息。</span></li><li><span class="api-name">DeleteTemplate</span><br><span class="api-desc">该接口用于删除自定义模板。</span></li><li><span class="api-name">ListConfs</span><br><span class="api-desc">该接口用于查询配置文件列表。</span></li><li><span class="api-name">StartHotPipeline</span><br><span class="api-desc">该接口用于热启动pipeline迁移数据。</span></li><li><span class="api-name">ListActions</span><br><span class="api-desc">该接口用于查询操作记录。</span></li><li><span class="api-name">UploadCerts</span><br><span class="api-desc">该接口用于上传证书文件。</span></li><li><span class="api-name">ShowGetConfDetail</span><br><span class="api-desc">该接口用于查询配置文件内容。</span></li><li><span class="api-name">StartConnectivityTest</span><br><span class="api-desc">该接口用于连通性测试。</span></li><li><span class="api-name">CreateCnf</span><br><span class="api-desc">该接口用于创建配置文件。</span></li><li><span class="api-name">StartPipeline</span><br><span class="api-desc">该接口用于启动pipeline迁移数据。</span></li><li><span class="api-name">StopPipeline</span><br><span class="api-desc">该接口用于停止pipeline迁移数据。</span></li><li><span class="api-name">DeleteConf</span><br><span class="api-desc">删除配置文件。</span></li><li><span class="api-name">RebootCluster</span><br><span class="api-desc">重启过程中集群不可用,请谨慎操作。 工作中状态的集群,重启过程会主动停止logstash进程,管道列表“是否保持常驻”值为否,会将所有运行中管道状态置为已停止。“是否保持常驻”值为是,会触发logstash进程恢复机制,将工作中的管道状态置为恢复中,若十分钟内重新拉起logstash进程,管道状态恢复为工作中,否则置为失败状态。</span></li><li><span class="api-name">StopHotPipeline</span><br><span class="api-desc">该接口用于热停止pipeline迁移数据。</span></li><li><span class="api-name">UpdateRoute</span><br><span class="api-desc">该接口用于更新集群路由。</span></li><li><span class="api-name">ListCerts</span><br><span class="api-desc">该接口用于查询证书列表。</span></li><li><span class="api-name">GetRoutes</span><br><span class="api-desc">该接口用于获取集群路由。</span></li><li><span class="api-name">AddFavorite</span><br><span class="api-desc">该接口用于添加到自定义模板。</span></li><li><span class="api-name">ListPipelines</span><br><span class="api-desc">该接口用于查询pipeline列表。</span></li><li><span class="api-name">DeleteCerts</span><br><span class="api-desc">该接口用于删除证书文件。</span></li><li><span class="api-name">ListTemplates</span><br><span class="api-desc">该接口用于查询模板列表。</span></li><li><span class="api-name">UpdateCnf</span><br><span class="api-desc">该接口用于更新配置文件。</span></li></ul> </div>
+<div class="api-category"><h3>公网访问接口</h3><ul><li><span class="api-name">StopPublicWhitelist</span><br><span class="api-desc">该接口用于关闭公网访问控制白名单。</span></li><li><span class="api-name">CreateBindPublic</span><br><span class="api-desc">该接口用于开启公网访问。</span></li><li><span class="api-name">UpdateUnbindPublic</span><br><span class="api-desc">该接口用于关闭公网访问。包周期类型的集群不支持通过api进行关闭公网访问。</span></li><li><span class="api-name">UpdatePublicBandWidth</span><br><span class="api-desc">该接口用于修改公网访问带宽。</span></li><li><span class="api-name">StartPublicWhitelist</span><br><span class="api-desc">该接口用于开启公网访问控制白名单。</span></li></ul> </div>
+<div class="api-category"><h3>参数配置接口</h3><ul><li><span class="api-name">ListYmlsJob</span><br><span class="api-desc">该接口可获取参数配置的任务操作列表。</span></li><li><span class="api-name">ListYmls</span><br><span class="api-desc">该接口用于获取当前集群现有的参数配置列表。</span></li><li><span class="api-name">UpdateYmls</span><br><span class="api-desc">该接口用于修改参数配置。</span></li></ul> </div>
+<div class="api-category"><h3>快照管理接口</h3><ul><li><span class="api-name">CreateAutoCreatePolicy</span><br><span class="api-desc">该接口用于设置自动创建快照,默认一天创建一个快照。</span></li><li><span class="api-name">ShowAutoCreatePolicy</span><br><span class="api-desc">该接口用于查询自动创建快照策略。</span></li><li><span class="api-name">RestoreSnapshot</span><br><span class="api-desc">该接口用于手动恢复一个快照。</span></li><li><span class="api-name">StartAutoCreateSnapshots</span><br><span class="api-desc">该接口用于打开自动备份功能</span></li><li><span class="api-name">UpdateSnapshotSetting</span><br><span class="api-desc">该接口用于修改集群快照的基础配置,可修改OBS桶和IAM委托。</span></li><li><span class="api-name">StartAutoSetting</span><br><span class="api-desc">该接口用于自动设置集群快照的基础配置,包括配置OBS桶和IAM委托。</span></li><li><span class="api-name">StopAutoCreateSnapshots</span><br><span class="api-desc">该接口用于关闭自动备份功能。</span></li><li><span class="api-name">StopSnapshot</span><br><span class="api-desc">该接口用于停用快照功能。</span></li><li><span class="api-name">CreateSnapshot</span><br><span class="api-desc">该接口用于手动创建一个快照。</span></li><li><span class="api-name">DeleteSnapshot</span><br><span class="api-desc">该接口用于删除快照。</span></li><li><span class="api-name">ListSnapshots</span><br><span class="api-desc">该接口用于查询集群的所有快照。</span></li></ul> </div>
+<div class="api-category"><h3>日志管理接口</h3><ul><li><span class="api-name">StopLogAutoBackupPolicy</span><br><span class="api-desc">该接口用于日志自动备份策略关闭。</span></li><li><span class="api-name">StopLogs</span><br><span class="api-desc">该接口用于关闭日志功能。</span></li><li><span class="api-name">StartLogAutoBackupPolicy</span><br><span class="api-desc">该接口用于日志自动备份策略开启。</span></li><li><span class="api-name">StartTargetClusterConnectivityTest</span><br><span class="api-desc">该接口用于连通性测试。</span></li><li><span class="api-name">ListLogsJob</span><br><span class="api-desc">该接口用于查询具体某个集群的日志任务记录列表。</span></li><li><span class="api-name">UpdateLogSetting</span><br><span class="api-desc">该接口用于修改日志基础配置。</span></li><li><span class="api-name">ShowLogBackup</span><br><span class="api-desc">该接口用于查询日志信息。</span></li><li><span class="api-name">CreateLogBackup</span><br><span class="api-desc">该接口用于备份日志。</span></li><li><span class="api-name">StartLogs</span><br><span class="api-desc">该接口用于开启日志功能。</span></li><li><span class="api-name">ShowGetLogSetting</span><br><span class="api-desc">该接口用于日志基础配置查询。</span></li></ul> </div>
+<div class="api-category"><h3>智能运维</h3><ul><li><span class="api-name">DeleteAiOps</span><br><span class="api-desc">该接口用于删除一个检测任务记录。</span></li><li><span class="api-name">ListSmnTopics</span><br><span class="api-desc">该接口用于获取智能运维告警可用的SMN主题。</span></li><li><span class="api-name">CreateAiOps</span><br><span class="api-desc">该接口用于创建一个集群检测任务。</span></li><li><span class="api-name">ListAiOps</span><br><span class="api-desc">该接口用于获取智能运维任务列表及详情。</span></li></ul> </div>
+<div class="api-category"><h3>终端节点接口</h3><ul><li><span class="api-name">ShowVpcepConnection</span><br><span class="api-desc">该接口用于获取终端节点连接。</span></li><li><span class="api-name">StopVpecp</span><br><span class="api-desc">该接口用于关闭终端节点服务。</span></li><li><span class="api-name">UpdateVpcepConnection</span><br><span class="api-desc">该接口用于更新终端节点连接。</span></li><li><span class="api-name">StartVpecp</span><br><span class="api-desc">该接口用于开启终端节点服务。</span></li><li><span class="api-name">UpdateVpcepWhitelist</span><br><span class="api-desc">该接口用于修改终端节点服务白名单。</span></li></ul> </div>
+<div class="api-category"><h3>词库管理接口</h3><ul><li><span class="api-name">ShowIkThesaurus</span><br><span class="api-desc">该接口用于查询自定义词库的加载状态。</span></li><li><span class="api-name">CreateLoadIkThesaurus</span><br><span class="api-desc">该接口用于加载存放于OBS的自定义词库。</span></li><li><span class="api-name">DeleteIkThesaurus</span><br><span class="api-desc">该接口用于删除自定义词库。</span></li></ul> </div>
+<div class="api-category"><h3>负载均衡</h3><ul><li><span class="api-name">ListElbCerts</span><br><span class="api-desc">该接口用于查询证书列表。</span></li><li><span class="api-name">CreateElbListener</span><br><span class="api-desc">该接口用于es监听器配置。</span></li><li><span class="api-name">EnableOrDisableElb</span><br><span class="api-desc">该接口打开或关闭es负载均衡器。</span></li><li><span class="api-name">UpdateEsListener</span><br><span class="api-desc">该接口用于更新es监听器。</span></li><li><span class="api-name">ListElbs</span><br><span class="api-desc">展示查询集群支持的elbv3负载均衡器</span></li><li><span class="api-name">ShowElbDetail</span><br><span class="api-desc">该接口用于获取该esELB的信息,以及页面需要展示健康检查状态。</span></li></ul> </div>
+<div class="api-category"><h3>集群管理接口</h3><ul><li><span class="api-name">UpdateInstance</span><br><span class="api-desc">该接口用于替换失败节点。</span></li><li><span class="api-name">UpdateShrinkNodes</span><br><span class="api-desc">该接口可以对集群现有节点中指定节点进行缩容。包周期类型的集群不支持通过api进行指定节点缩容操作。</span></li><li><span class="api-name">ResetPassword</span><br><span class="api-desc">该接口用于修改集群密码。</span></li><li><span class="api-name">ChangeSecurityGroup</span><br><span class="api-desc">该接口可以在集群创建成功后,修改安全组。</span></li><li><span class="api-name">UpdateClusterName</span><br><span class="api-desc">该接口用于修改集群名称。</span></li><li><span class="api-name">UpdateFlavor</span><br><span class="api-desc">该接口用于变更集群规格。只支持变更ess节点类型。</span></li><li><span class="api-name">UpdateOndemandClusterToPeriod</span><br><span class="api-desc">该接口用于按需集群转包周期集群。</span></li><li><span class="api-name">AddIndependentNode</span><br><span class="api-desc">由于集群数据面业务的增长或者不确定性,很难在一开始就能够把集群的规模形态想明白,该接口能够在非独立master和client的集群上面独立master、client角色。</span></li><li><span class="api-name">UpdateExtendInstanceStorage</span><br><span class="api-desc">该接口用于集群扩容不同类型实例的个数以及存储容量。已经存在独立Master、Client、冷数据节点的集群使用该接口扩容。</span></li><li><span class="api-name">ListClustersDetails</span><br><span class="api-desc">该接口用于查询并显示集群列表以及集群的状态。</span></li><li><span class="api-name">ShowClusterTag</span><br><span class="api-desc">该接口用于查询指定集群的标签信息。</span></li><li><span class="api-name">DownloadCert</span><br><span class="api-desc">该接口用于下载安全证书。</span></li><li><span class="api-name">ShowClusterDetail</span><br><span class="api-desc">该接口用于查询并显示单个集群详情。</span></li><li><span class="api-name">UpdateFlavorByType</span><br><span class="api-desc">修改集群规格。支持修改:</span></li><li><span class="api-name">DeleteClustersTags</span><br><span class="api-desc">此接口用于删除集群标签。</span></li><li><span class="api-name">RetryUpgradeTask</span><br><span class="api-desc">由于升级过程时间较长,可能由于网络等原因导致升级失败,可以通过该接口重试该任务或终止该任务的影响。</span></li><li><span class="api-name">UpdateShrinkCluster</span><br><span class="api-desc">该接口用于集群对不同类型实例的个数以及存储容量进行缩容。包周期类型的集群不支持通过api进行指定节点类型缩容操作。</span></li><li><span class="api-name">RollingRestart</span><br><span class="api-desc">该接口会一个一个重启节点,在索引数量比较多的情况下耗时较长</span></li><li><span class="api-name">UpgradeDetail</span><br><span class="api-desc">由于升级过程时间较长,该接口可以展示当前升级(切换AZ)节点的各个阶段信息。</span></li><li><span class="api-name">UpdateBatchClustersTags</span><br><span class="api-desc">该接口用于对集群批量添加或删除标签。</span></li><li><span class="api-name">ListClustersTags</span><br><span class="api-desc">该接口用于查询指定region下的所有标签集合。</span></li><li><span class="api-name">UpdateAzByInstanceType</span><br><span class="api-desc">该接口通过指定节点类型切换AZ。</span></li><li><span class="api-name">UpgradeCore</span><br><span class="api-desc">该接口用于将低版本的ES升级到高版本或同版本ES。</span></li><li><span class="api-name">CreateCluster</span><br><span class="api-desc">该接口用于创建拥有多种不同节点类型(ess,ess-cold,ess-client,ess-master)组合的集群。</span></li><li><span class="api-name">ChangeMode</span><br><span class="api-desc">该接口用于切换集群的安全模式。</span></li><li><span class="api-name">UpdateExtendCluster</span><br><span class="api-desc">该接口用于集群扩容实例(仅支持扩容elasticsearch实例)。只扩容普通节点,且只针对要扩容的集群实例不存在特殊节点(Master、Client、冷数据节点)的情况。</span></li><li><span class="api-name">ListImages</span><br><span class="api-desc">该接口用于获取当前集群的可升级目标镜像ID。</span></li><li><span class="api-name">DeleteCluster</span><br><span class="api-desc">此接口用于删除集群。集群删除将释放此集群的所有资源,包括客户数据。如果需要保留客户集群数据,建议在删除集群前先创建快照。</span></li><li><span class="api-name">ListFlavors</span><br><span class="api-desc">该接口用于查询并显示支持的实例规格对应的ID。</span></li><li><span class="api-name">RestartCluster</span><br><span class="api-desc">该接口可以用于重启当前集群拥有的全部节点类型,或部分节点类型组合的节点。</span></li><li><span class="api-name">CreateClustersTags</span><br><span class="api-desc">该接口用于给指定集群添加标签。</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

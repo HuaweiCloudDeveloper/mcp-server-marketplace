@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, .05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    ol, p, ul {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ol, ul {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>ER MCP服务器是一款模型上下文协议（Model Context Protocol）服务器，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务ER交互的能力。基于自然语言即可实现对ER资源的全链路管理。</p>
+        </section>
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_er --transport stdio --port 8858
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_er --transport http  --port 8858
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_er --transport sse --port 8858
+          </code></pre>
+        </section>
+        <section>
+          <h2>快速开始</h2>
+          <p>支持以下客户端与MCP服务交互：</p>
+          <ul>
+            <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+            <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+            <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+            <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+          </ul>
+          <h3>客户端通信配置示例</h3>
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-er-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          2. http 模式
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-er-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8858/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-er-example": {
+              "type": "sse",
+              "url": "http://localhost:8858/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+      <div class="sidebar">
+        <h2 style="margin-top:0">API工具列表</h2>
+        <div class="api-category">
+          <h3>Association</h3>
+          <ul>
+            <li><span class="api-name">ListAssociations</span><br><span class="api-desc">查询路由关联列表。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>Attachments</h3>
+          <ul>
+            <li><span class="api-name">ListAttachments</span><br><span class="api-desc">查询企业路由器实例下的连接列表。</span></li>
+            <li><span class="api-name">ShowAttachment</span><br><span class="api-desc">查询连接详情</span></li>
+            <li><span class="api-name">UpdateAttachment</span><br><span class="api-desc">修改连接基本信息。</span></li>
+            <li><span class="api-name">RejectAttachment</span><br><span class="api-desc">拒绝共享连接创建</span></li>
+            <li><span class="api-name">AcceptAttachment</span><br><span class="api-desc">接受共享连接创建</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>AvailableZone</h3>
+          <ul>
+            <li><span class="api-name">ListAvailabilityZone</span><br><span class="api-desc">查询支持创建企业路由器实例的可用区列表,当可用区状态为available时,表示可以创建企业路由器实例。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>EnterpriseRouterInstance</h3>
+          <ul>
+            <li><span class="api-name">ChangeAvailabilityZone</span><br><span class="api-desc">更新企业路由器的可用区信息,企业路由器实例状态为available的时候才能更新。</span></li>
+            <li><span class="api-name">ListEnterpriseRouters</span><br><span class="api-desc">查询企业路由器列表</span></li>
+            <li><span class="api-name">CreateEnterpriseRouter</span><br><span class="api-desc">创建企业路由器实例,如果使能默认关联路由表或使能默认传递路由表,那么系统会默认创建一张路由表,作为默认关联路由表或默认传递路由表。</span></li>
+            <li><span class="api-name">UpdateEnterpriseRouter</span><br><span class="api-desc">更新企业路由器基本信息。</span></li>
+            <li><span class="api-name">ShowEnterpriseRouter</span><br><span class="api-desc">查询企业路由器详情</span></li>
+            <li><span class="api-name">DeleteEnterpriseRouter</span><br><span class="api-desc">删除企业路由器。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>FlowLog</h3>
+          <ul>
+            <li><span class="api-name">EnableFlowLog</span><br><span class="api-desc">开启流日志</span></li>
+            <li><span class="api-name">DisableFlowLog</span><br><span class="api-desc">关闭流日志</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>Propagation</h3>
+          <ul>
+            <li><span class="api-name">ListPropagations</span><br><span class="api-desc">查询路由传播列表。</span></li>
+            <li><span class="api-name">DisablePropagation</span><br><span class="api-desc">解绑连接和路由表的传播关系。</span></li>
+            <li><span class="api-name">EnablePropagation</span><br><span class="api-desc">每个连接可以和多个路由表建立传播关系,从该连接学习到的路由会应用到具有传播关系的路由表。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>Route</h3>
+          <ul>
+            <li><span class="api-name">ListStaticRoutes</span><br><span class="api-desc">查询静态路由列表。</span></li>
+            <li><span class="api-name">ListEffectiveRoutes</span><br><span class="api-desc">查询有效的路由列表,支持分页查询能力</span></li>
+            <li><span class="api-name">CreateStaticRoute</span><br><span class="api-desc">创建静态路由</span></li>
+            <li><span class="api-name">UpdateStaticRoute</span><br><span class="api-desc">更新静态路由</span></li>
+            <li><span class="api-name">ShowStaticRoute</span><br><span class="api-desc">查询静态路由详情</span></li>
+            <li><span class="api-name">DeleteStaticRoute</span><br><span class="api-desc">删除静态路由</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>Tags</h3>
+          <ul>
+            <li><span class="api-name">ListProjectTags</span><br><span class="api-desc">查询租户在指定项目中指定资源类型下的所有标签</span></li>
+            <li><span class="api-name">BatchCreateResourceTags</span><br><span class="api-desc">为指定实例批量添加标签</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>VPCAttachment</h3>
+          <ul>
+            <li><span class="api-name">ListVpcAttachments</span><br><span class="api-desc">查询企业路由器实例下的VPC连接列表。</span></li>
+            <li><span class="api-name">ShowVpcAttachment</span><br><span class="api-desc">查询VPC连接详情</span></li>
+            <li><span class="api-name">UpdateVpcAttachment</span><br><span class="api-desc">修改VPC连接基本信息。</span></li>
+            <li><span class="api-name">CreateVpcAttachment</span><br><span class="api-desc">给ER实例创建VPC连接。</span></li>
+            <li><span class="api-name">DeleteVpcAttachment</span><br><span class="api-desc">删除VPC连接。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>流日志</h3>
+          <ul>
+            <li><span class="api-name">ShowFlowLog</span><br><span class="api-desc">查询流日志详情</span></li>
+            <li><span class="api-name">UpdateFlowLog</span><br><span class="api-desc">更新流日志</span></li>
+            <li><span class="api-name">DeleteFlowLog</span><br><span class="api-desc">删除流日志</span></li>
+            <li><span class="api-name">ListFlowLogs</span><br><span class="api-desc">查询提交请求的租户的所有流日志列表,并根据过滤条件进行过滤</span></li>
+            <li><span class="api-name">CreateFlowLog</span><br><span class="api-desc">创建流日志。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>资源标签</h3>
+          <ul>
+            <li><span class="api-name">ShowResourceTag</span><br><span class="api-desc">查询单个资源上的标签。</span></li>
+            <li><span class="api-name">CreateResourceTag</span><br><span class="api-desc">用于给云服务的多个资源添加标签,每个资源最多可添加10个标签,每次最多支持批量操作20个资源。</span></li>
+            <li><span class="api-name">DeleteResourceTag</span><br><span class="api-desc">用于批量移除云服务多个资源的标签,每个资源最多支持移除10个标签,每次最多支持批量操作20个资源。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>路由表</h3>
+          <ul>
+            <li><span class="api-name">ListRouteTables</span><br><span class="api-desc">查询提交请求的帐户的所有路由表列表,并根据过滤条件进行过滤</span></li>
+            <li><span class="api-name">DisassociateRouteTable</span><br><span class="api-desc">子网解关联路由表</span></li>
+            <li><span class="api-name">CreateRouteTable</span><br><span class="api-desc">创建路由表</span></li>
+            <li><span class="api-name">DeleteRouteTable</span><br><span class="api-desc">删除路由表</span></li>
+            <li><span class="api-name">AssociateRouteTable</span><br><span class="api-desc">路由表关联子网。子网关联路由表A后,再关联B,不需要先跟路由表A解关联再关联路由表B</span></li>
+            <li><span class="api-name">ShowRouteTable</span><br><span class="api-desc">查询路由表详情</span></li>
+            <li><span class="api-name">UpdateRouteTable</span><br><span class="api-desc">更新路由表,包括可以更新路由表的名称,描述,以及新增、更新、删除路由条目</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>配额</h3>
+          <ul>
+            <li><span class="api-name">ShowQuotas</span><br><span class="api-desc">查询当前项目下资源配额情况。</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

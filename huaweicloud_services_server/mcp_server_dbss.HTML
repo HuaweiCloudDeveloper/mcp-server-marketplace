@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ecs --transport stdio --port 8836
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ecs --transport http  --port 8836
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ecs --transport sse --port 8836
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8000/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+<h3>TMS标签</h3>
+<ul>
+<li><span class="api-name">CountResourceInstanceByTag</span><br><span class="api-desc">根据标签查询资源实例数量</span></li>
+<li><span class="api-name">ListProjectResourceTags</span><br><span class="api-desc">查询项目标签</span></li>
+<li><span class="api-name">ListResourceInstanceByTag</span><br><span class="api-desc">根据标签查询资源实例列表</span></li>
+<li><span class="api-name">BatchAddResourceTag</span><br><span class="api-desc">批量添加资源标签</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>审计Agent</h3>
+<ul>
+<li><span class="api-name">DownloadAuditAgent</span><br><span class="api-desc">下载审计Agent</span></li>
+<li><span class="api-name">ListAuditAgent</span><br><span class="api-desc">查询数据库Agent列表</span></li>
+<li><span class="api-name">AddAuditAgent</span><br><span class="api-desc">添加审计数据库Agent</span></li>
+<li><span class="api-name">DeleteAuditAgent</span><br><span class="api-desc">删除数据库Agent</span></li>
+<li><span class="api-name">SwitchAgent</span><br><span class="api-desc">用于开启和关闭Agent审计的功能,当开启后,开始抓取用户的访问信息。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>审计实例</h3>
+<ul>
+<li><span class="api-name">ListAuditInstanceJobs</span><br><span class="api-desc">查询实例创建任务信息</span></li>
+<li><span class="api-name">UpdateAuditSecurityGroup</span><br><span class="api-desc">修改实例安全组</span></li>
+<li><span class="api-name">RebootAuditInstance</span><br><span class="api-desc">重启审计实例</span></li>
+<li><span class="api-name">CreateInstancesPeriodOrder</span><br><span class="api-desc">包年包月计费模式创建审计实例</span></li>
+<li><span class="api-name">StopAuditInstance</span><br><span class="api-desc">关闭审计实例</span></li>
+<li><span class="api-name">ListAuditInstances</span><br><span class="api-desc">查询审计实例列表</span></li>
+<li><span class="api-name">UpdateAuditInstance</span><br><span class="api-desc">更新审计实例信息</span></li>
+<li><span class="api-name">StartAuditInstance</span><br><span class="api-desc">开启审计实例</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>审计数据库</h3>
+<ul>
+<li><span class="api-name">DeleteAuditDatabase</span><br><span class="api-desc">删除数据库</span></li>
+<li><span class="api-name">AddRdsDatabase</span><br><span class="api-desc">添加RDS数据库</span></li>
+<li><span class="api-name">ListRdsDatabases</span><br><span class="api-desc">查询RDS数据库列表</span></li>
+<li><span class="api-name">ListAuditDatabases</span><br><span class="api-desc">查询数据库列表</span></li>
+<li><span class="api-name">SwitchAuditDatabase</span><br><span class="api-desc">开启关闭数据库</span></li>
+<li><span class="api-name">AddAuditDatabase</span><br><span class="api-desc">添加自建数据库</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>审计规则</h3>
+<ul>
+<li><span class="api-name">SwitchRiskRule</span><br><span class="api-desc">开启关闭风险规则</span></li>
+<li><span class="api-name">ListSqlInjectionRules</span><br><span class="api-desc">查询SQL注入规则策略</span></li>
+<li><span class="api-name">ShowAuditRuleRisk</span><br><span class="api-desc">查询指定风险规则策略</span></li>
+<li><span class="api-name">ListAuditRuleScopes</span><br><span class="api-desc">查询审计范围策略列表</span></li>
+<li><span class="api-name">ListAuditRuleRisks</span><br><span class="api-desc">查询风险规则策略</span></li>
+<li><span class="api-name">ListAuditSensitiveMasks</span><br><span class="api-desc">查询隐私数据脱敏规则</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>待下线接口</h3>
+<ul>
+<li><span class="api-name">AddRdsNoAgentDatabase</span><br><span class="api-desc">添加RDS数据库。V1版本已不再维护,待下线。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>数据分析</h3>
+<ul>
+<li><span class="api-name">ListAuditSummaryInfos</span><br><span class="api-desc">查询审计汇总信息</span></li>
+<li><span class="api-name">ListAuditAlarmLog</span><br><span class="api-desc">查询审计告警信息</span></li>
+<li><span class="api-name">ListAuditSqls</span><br><span class="api-desc">查询审计SQL语句</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>标签管理</h3>
+<ul>
+<li><span class="api-name">BatchDeleteResourceTag</span><br><span class="api-desc">为指定集群批量删除标签。</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>管理侧查询</h3>
+<ul>
+<li><span class="api-name">ListAvailabilityZoneInfos</span><br><span class="api-desc">查询可用区信息</span></li>
+<li><span class="api-name">ShowAuditQuota</span><br><span class="api-desc">查询账户配额信息</span></li>
+<li><span class="api-name">ListEcsSpecification</span><br><span class="api-desc">查询ECS服务器规格信息</span></li>
+<li><span class="api-name">ListAuditOperateLogs</span><br><span class="api-desc">查询用户操作日志信息</span></li>
+</ul>
+</div>
+
+<div class="api-category">
+<h3>边缘实例</h3>
+<ul>
+<li><span class="api-name">DeleteInstances</span><br><span class="api-desc">批量删除边缘实例。</span></li>
+</ul>
+</div>
+
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

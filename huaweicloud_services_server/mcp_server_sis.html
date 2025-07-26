@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云SIS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>SIS MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务SIS交互的能力，支持基于自然语言对SIS资源进行全链路管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/sis-mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_sis
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-sis --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-sis --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-sis --transport sse --port 8888
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>快速开始</h2>
+          <p>支持以下客户端与MCP服务交互：</p>
+          <ul>
+            <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+            <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+            <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+            <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a> + <a href="https://cline.bot/" target="_blank">Cline</a></li>
+          </ul>
+
+          <h3>客户端通信配置示例</h3>
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "stdio-sis": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run", 
+        "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_sis/src/mcp_server_sis/run.py"
+      ],
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+
+          <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "http-sis": {
+      "type": "http",
+      "url": "http://127.0.0.1:8888/mcp",
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+
+          <h4>3. sse 模式 - SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "sse-sis": {
+      "type": "sse",
+      "url": "http://localhost:8888/sse",
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server 做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>热词管理接口</h3>
+          <ul>
+            <li><span class="api-name">DeleteVocabulary</span><br><span class="api-desc">通过热词表id删除热词表。</span></li>
+            <li><span class="api-name">UpdateVocabulary</span><br><span class="api-desc">更新一个热词表,更新成功返回id。</span></li>
+            <li><span class="api-name">ShowVocabulary</span><br><span class="api-desc">通过热词表id查询热词表的信息和内容。</span></li>
+            <li><span class="api-name">CreateVocabulary</span><br><span class="api-desc">新建一个热词表,创建成功返回id。</span></li>
+            <li><span class="api-name">ShowVocabularies</span><br><span class="api-desc">查询用户所有热词表列表。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>语音合成接口</h3>
+          <ul>
+            <li><span class="api-name">RunTts</span><br><span class="api-desc">语音合成,是一种将文本转换成逼真语音的服务。用户通过实时访问和调用API获取语音合成结果,将用户输入的文字合成为音频。通过音色选择、自定义音量、语速,为企业和个人提供个性化的发音服务。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>语音识别接口</h3>
+          <ul>
+            <li><span class="api-name">RecognizeShortAudio</span><br><span class="api-desc">一句话识别接口,用于短语音的同步识别。一次性上传整个音频,响应中即返回识别结果。</span></li>
+            <li><span class="api-name">CollectTranscriberJob</span><br><span class="api-desc">该接口用于获取录音文件识别结果及识别状态。</span></li>
+            <li><span class="api-name">PushTranscriberJobs</span><br><span class="api-desc">录音文件识别。</span></li>
+            <li><span class="api-name">RecognizeFlashAsr</span><br><span class="api-desc">极速版ASR(Restful API 接口, 适用于音频(文件大小<=100M,语音时长<=30分钟)文件的同步识别。</span></li>
+          </ul>
+        </div>
+
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

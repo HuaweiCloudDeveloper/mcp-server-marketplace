@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: auto;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd /your-path/mcp-server-main
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-apig --transport stdio --port 8002
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-apig --transport http  --port 8002
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-apig --transport sse --port 8002
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-apig": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_apig/src/mcp_server_apig/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-apig": {
+              "type": "http",
+              "url": "http://127.0.0.1:8002/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-apig": {
+              "type": "sse",
+              "url": "http://localhost:8002/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>专享版-ACL策略管理</h3><ul><li><span class="api-name">DeleteAclV2</span><br><span class="api-desc">删除指定的ACL策略, 如果存在api与该ACL策略的绑定关系,则无法删除</span></li><li><span class="api-name">ShowDetailsOfAclPolicyV2</span><br><span class="api-desc">查询指定ACL策略的详情。</span></li><li><span class="api-name">ListAclStrategiesV2</span><br><span class="api-desc">查询所有的ACL策略列表。</span></li><li><span class="api-name">UpdateAclStrategyV2</span><br><span class="api-desc">修改指定的ACL策略,其中可修改的属性为:acl_name、acl_type、acl_value,其它属性不可修改。</span></li><li><span class="api-name">CreateAclStrategyV2</span><br><span class="api-desc">增加一个ACL策略,策略类型通过字段acl_type来确定(permit或者deny),限制的对象的类型可以为IP或者DOMAIN,这里的DOMAIN对应的acl_value的值为租户名称,而非“www.exampleDomain.com”之类的网络域名。</span></li><li><span class="api-name">BatchDeleteAclV2</span><br><span class="api-desc">批量删除指定的多个ACL策略。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-API分组管理</h3><ul><li><span class="api-name">CheckApiGroupsV2</span><br><span class="api-desc">校验API分组名称是否存在。</span></li><li><span class="api-name">ListApiGroupsV2</span><br><span class="api-desc">查询API分组列表。</span></li><li><span class="api-name">DeleteApiGroupV2</span><br><span class="api-desc">删除指定的API分组。</span></li><li><span class="api-name">CreateApiGroupV2</span><br><span class="api-desc">API分组是API的管理单元,一个API分组等同于一个服务入口,创建API分组时,返回一个子域名作为访问入口。建议一个API分组下的API具有一定的相关性。</span></li><li><span class="api-name">ShowDetailsOfApiGroupV2</span><br><span class="api-desc">查询指定分组的详细信息。</span></li><li><span class="api-name">UpdateApiGroupV2</span><br><span class="api-desc">修改API分组属性。其中name和remark可修改,其他属性不可修改。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-API管理</h3><ul><li><span class="api-name">ListApiVersionDetailV2</span><br><span class="api-desc">查询某个指定的版本详情。</span></li><li><span class="api-name">CreateApiV2</span><br><span class="api-desc">添加一个API,API即一个服务接口,具体的服务能力。</span></li><li><span class="api-name">ListApiRuntimeDefinitionV2</span><br><span class="api-desc">查看指定的API在指定的环境上的运行时定义,默认查询RELEASE环境上的运行时定义。</span></li><li><span class="api-name">ListApisV2</span><br><span class="api-desc">查看API列表,返回API详细信息、发布信息等,但不能查看到后端服务信息和API请求参数信息</span></li><li><span class="api-name">ChangeApiVersionV2</span><br><span class="api-desc">API每次发布时,会基于当前的API定义生成一个版本。版本记录了API发布时的各种定义及状态。</span></li><li><span class="api-name">DeleteApiByVersionIdV2</span><br><span class="api-desc">对某个生效中的API版本进行下线操作,下线后,API在该版本生效的环境中将不再能够被调用。</span></li><li><span class="api-name">CreateOrDeletePublishRecordForApiV2</span><br><span class="api-desc">对API进行发布或下线。</span></li><li><span class="api-name">ListApiVersionsV2</span><br><span class="api-desc">查询某个API的历史版本。每个API在一个环境上最多存在10个历史版本。</span></li><li><span class="api-name">BatchPublishOrOfflineApiV2</span><br><span class="api-desc">将多个API发布到一个指定的环境,或将多个API从指定的环境下线。</span></li><li><span class="api-name">CheckApisV2</span><br><span class="api-desc">校验API定义。校验API的路径或名称是否已存在</span></li><li><span class="api-name">ShowDetailsOfApiV2</span><br><span class="api-desc">查看指定的API的详细信息。</span></li><li><span class="api-name">UpdateApiV2</span><br><span class="api-desc">修改指定API的信息,包括后端服务信息。</span></li><li><span class="api-name">DeleteApiV2</span><br><span class="api-desc">删除指定的API。</span></li><li><span class="api-name">DebugApiV2</span><br><span class="api-desc">调试一个API在指定运行环境下的定义,接口调用者需要具有操作该API的权限。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-API绑定ACL策略</h3><ul><li><span class="api-name">BatchDeleteApiAclBindingV2</span><br><span class="api-desc">批量解除API与ACL策略的绑定</span></li><li><span class="api-name">CreateApiAclBindingV2</span><br><span class="api-desc">将API与ACL策略进行绑定。</span></li><li><span class="api-name">ListApisBindedToAclPolicyV2</span><br><span class="api-desc">查看ACL策略绑定的API列表</span></li><li><span class="api-name">ListApisUnbindedToAclPolicyV2</span><br><span class="api-desc">查看ACL策略未绑定的API列表,需要API已发布</span></li><li><span class="api-name">ListAclPolicyBindedToApiV2</span><br><span class="api-desc">查看API绑定的ACL策略列表</span></li><li><span class="api-name">DeleteApiAclBindingV2</span><br><span class="api-desc">解除某条API与ACL策略的绑定关系</span></li></ul> </div>
+<div class="api-category"><h3>专享版-API绑定流控策略</h3><ul><li><span class="api-name">BatchDisassociateThrottlingPolicyV2</span><br><span class="api-desc">批量解除API与流控策略的绑定关系</span></li><li><span class="api-name">DisassociateRequestThrottlingPolicyV2</span><br><span class="api-desc">解除API与流控策略的绑定关系。</span></li><li><span class="api-name">ListApisBindedToRequestThrottlingPolicyV2</span><br><span class="api-desc">查询某个流控策略上已经绑定的API列表。</span></li><li><span class="api-name">ListRequestThrottlingPoliciesBindedToApiV2</span><br><span class="api-desc">查询某个API绑定的流控策略列表。每个环境上应该最多只有一个流控策略。</span></li><li><span class="api-name">AssociateRequestThrottlingPolicyV2</span><br><span class="api-desc">将流控策略应用于API,则所有对该API的访问将会受到该流控策略的限制。</span></li><li><span class="api-name">ListApisUnbindedToRequestThrottlingPolicyV2</span><br><span class="api-desc">查询所有未绑定到该流控策略上的自有API列表。需要API已经发布,未发布的API不予展示。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-APP授权管理</h3><ul><li><span class="api-name">ListApisBindedToAppV2</span><br><span class="api-desc">查询APP已经绑定的API列表。</span></li><li><span class="api-name">ListApisUnbindedToAppV2</span><br><span class="api-desc">查询指定环境上某个APP未绑定的API列表,包括自有API和从云商店购买的API。</span></li><li><span class="api-name">CreateAuthorizingAppsV2</span><br><span class="api-desc">APP创建成功后,还不能访问API,如果想要访问某个环境上的API,需要将该API在该环境上授权给APP。授权成功后,APP即可访问该环境上的这个API。</span></li><li><span class="api-name">CancelingAuthorizationV2</span><br><span class="api-desc">解除API对APP的授权关系。解除授权后,APP将不再能够调用该API。</span></li><li><span class="api-name">ListAppsBindedToApiV2</span><br><span class="api-desc">查询API绑定的APP列表。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-OpenAPI接口</h3><ul><li><span class="api-name">ExportApiDefinitionsV2</span><br><span class="api-desc">导出分组下API的定义信息。导出文件内容符合swagger标准规范,API网关自定义扩展字段请参考《API网关用户指南》的“导入导出API:扩展定义”章节。</span></li><li><span class="api-name">ImportApiDefinitionsV2</span><br><span class="api-desc">导入API。导入文件内容需要符合swagger标准规范,API网关自定义扩展字段请参考《API网关用户指南》的“导入导出API:扩展定义”章节。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-SSL证书管理</h3><ul><li><span class="api-name">BatchDisassociateDomainsV2</span><br><span class="api-desc">SSL证书解绑域名。在使用自定义入方向端口的特性时,相同的域名会同时解绑证书。</span></li><li><span class="api-name">ShowDetailsOfCertificateV2</span><br><span class="api-desc">查看证书详情。</span></li><li><span class="api-name">DeleteCertificateV2</span><br><span class="api-desc">删除ssl证书接口,删除时只有没有关联域名的证书才能被删除。</span></li><li><span class="api-name">BatchDisassociateCertsV2</span><br><span class="api-desc">域名解绑SSL证书。目前暂时仅支持单个解绑,请求体当中的certificate_ids里面有且只能有一个证书ID。在使用自定义入方向端口的特性时,相同的域名会同时解绑证书。</span></li><li><span class="api-name">BatchAssociateCertsV2</span><br><span class="api-desc">域名绑定SSL证书。目前暂时仅支持单个绑定,请求体当中的certificate_ids里面有且只能有一个证书ID。使用实例自定义入方向端口的特性时,相同的域名会同时绑定证书,注意开启/关闭客户端校验会对相同域名的不同端口同时生效。</span></li><li><span class="api-name">ListCertificatesV2</span><br><span class="api-desc">获取SSL证书列表。</span></li><li><span class="api-name">UpdateCertificateV2</span><br><span class="api-desc">修改SSL证书。</span></li><li><span class="api-name">CreateCertificateV2</span><br><span class="api-desc">创建SSL证书。</span></li><li><span class="api-name">ListAttachedDomainsV2</span><br><span class="api-desc">获取SSL证书已绑定域名列表。</span></li><li><span class="api-name">BatchAssociateDomainsV2</span><br><span class="api-desc">SSL证书绑定域名。使用实例自定义入方向端口的特性时,相同的域名会同时绑定证书,注意开启/关闭客户端校验会对相同域名的不同端口同时生效。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-VPC通道管理</h3><ul><li><span class="api-name">DeleteVpcChannelV2</span><br><span class="api-desc">删除指定的VPC通道</span></li><li><span class="api-name">UpdateHealthCheck</span><br><span class="api-desc">修改VPC通道健康检查。</span></li><li><span class="api-name">CreateMemberGroup</span><br><span class="api-desc">在APIG中创建VPC通道后端服务器组,VPC通道后端实例可以选择是否关联后端实例服务器组,以便管理后端服务器节点。</span></li><li><span class="api-name">BatchDisableMembers</span><br><span class="api-desc">批量修改后端服务器状态不可用。</span></li><li><span class="api-name">ShowDetailsOfMemberGroup</span><br><span class="api-desc">查看指定的VPC通道后端服务器组详情</span></li><li><span class="api-name">UpdateVpcChannelV2</span><br><span class="api-desc">更新指定VPC通道的参数</span></li><li><span class="api-name">ListMemberGroups</span><br><span class="api-desc">查询VPC通道后端云服务组列表</span></li><li><span class="api-name">BatchEnableMembers</span><br><span class="api-desc">批量修改后端服务器状态可用。</span></li><li><span class="api-name">CreateVpcChannelV2</span><br><span class="api-desc">在API网关中创建连接私有VPC资源的通道,并在创建API时将后端节点配置为使用这些VPC通道,以便API网关直接访问私有VPC资源。</span></li><li><span class="api-name">UpdateBackendInstancesV2</span><br><span class="api-desc">更新指定的VPC通道的后端实例。更新时,使用传入的请求参数对对应云服务组的后端实例进行全量覆盖修改。如果未指定修改的云服务器组,则进行全量覆盖。</span></li><li><span class="api-name">UpdateMemberGroup</span><br><span class="api-desc">更新指定VPC通道后端服务器组。当负载通道为nacos微服务类型时,不支持修改服务器组权重。</span></li><li><span class="api-name">ShowDetailsOfVpcChannelV2</span><br><span class="api-desc">查看指定的VPC通道详情</span></li><li><span class="api-name">AddingBackendInstancesV2</span><br><span class="api-desc">为指定的VPC通道添加后端实例</span></li><li><span class="api-name">DeleteMemberGroup</span><br><span class="api-desc">删除指定的VPC通道后端服务器组</span></li><li><span class="api-name">ListVpcChannelsV2</span><br><span class="api-desc">查看VPC通道列表</span></li><li><span class="api-name">DeleteBackendInstanceV2</span><br><span class="api-desc">删除指定VPC通道中的后端实例</span></li><li><span class="api-name">ListBackendInstancesV2</span><br><span class="api-desc">查看指定VPC通道的后端实例列表。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-凭据管理</h3><ul><li><span class="api-name">DeleteAppCodeV2</span><br><span class="api-desc">删除App Code,App Code删除后,将无法再通过简易认证访问对应的API。</span></li><li><span class="api-name">CreateAppCodeV2</span><br><span class="api-desc">App Code为APP应用下的子模块,创建App Code之后,可以实现简易的APP认证。</span></li><li><span class="api-name">ListAppsV2</span><br><span class="api-desc">查询APP列表。</span></li><li><span class="api-name">UpdateAppAcl</span><br><span class="api-desc">设置凭据的访问控制。</span></li><li><span class="api-name">DeleteAppV2</span><br><span class="api-desc">删除指定的APP。</span></li><li><span class="api-name">CreateAnAppV2</span><br><span class="api-desc">APP即应用,是一个可以访问API的身份标识。将API授权给APP后,APP即可调用API。</span></li><li><span class="api-name">ResettingAppSecretV2</span><br><span class="api-desc">重置指定APP的密钥。</span></li><li><span class="api-name">ShowDetailsOfAppCodeV2</span><br><span class="api-desc">App Code为APP应用下的子模块,创建App Code之后,可以实现简易的APP认证。</span></li><li><span class="api-name">UpdateAppV2</span><br><span class="api-desc">修改指定APP的信息。其中可修改的属性为:name、remark,当支持用户自定义key和secret的开关开启时,app_key和app_secret也支持修改,其它属性不可修改。</span></li><li><span class="api-name">DeleteAppAcl</span><br><span class="api-desc">删除凭据的访问控制信息。</span></li><li><span class="api-name">ShowDetailsOfAppV2</span><br><span class="api-desc">查看指定APP的详细信息。</span></li><li><span class="api-name">ShowAppBoundAppQuota</span><br><span class="api-desc">查看指定凭据关联的凭据配额。</span></li><li><span class="api-name">CreateAppCodeAutoV2</span><br><span class="api-desc">创建App Code时,可以不指定具体值,由后台自动生成随机字符串填充。</span></li><li><span class="api-name">CheckAppV2</span><br><span class="api-desc">校验app是否存在,非APP所有者可以调用该接口校验APP是否真实存在。这个接口只展示app的基本信息id 、name、</span></li><li><span class="api-name">ListAppCodesV2</span><br><span class="api-desc">查询App Code列表。</span></li><li><span class="api-name">ShowDetailsOfAppAcl</span><br><span class="api-desc">查看APP的访问控制详情。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-凭据配额管理</h3><ul><li><span class="api-name">ShowAppQuota</span><br><span class="api-desc">获取凭据配额详情</span></li><li><span class="api-name">ListAppQuotaBindableApps</span><br><span class="api-desc">查询凭据配额可绑定的凭据列表。支持按凭据名称模糊搜索</span></li><li><span class="api-name">ListAppQuotas</span><br><span class="api-desc">获取凭据配额列表。支持根据名称模糊查询</span></li><li><span class="api-name">UpdateAppQuota</span><br><span class="api-desc">修改凭据配额</span></li><li><span class="api-name">ListAppQuotaBoundApps</span><br><span class="api-desc">查询凭据配额已绑定的凭据列表。支持按凭据名称模糊匹配</span></li><li><span class="api-name">CreateAppQuota</span><br><span class="api-desc">创建凭据配额</span></li><li><span class="api-name">DisassociateAppQuotaWithApp</span><br><span class="api-desc">解除凭据配额和凭据的绑定</span></li><li><span class="api-name">AssociateAppsForAppQuota</span><br><span class="api-desc">凭据配额绑定凭据列表</span></li><li><span class="api-name">DeleteAppQuota</span><br><span class="api-desc">删除凭据配额。删除凭据配额时,同时删除凭据配额和凭据的关联关系</span></li></ul> </div>
+<div class="api-category"><h3>专享版-分组自定义响应管理</h3><ul><li><span class="api-name">UpdateGatewayResponseTypeV2</span><br><span class="api-desc">修改分组下指定错误类型的自定义响应。</span></li><li><span class="api-name">ListGatewayResponsesV2</span><br><span class="api-desc">查询分组自定义响应列表</span></li><li><span class="api-name">DeleteGatewayResponseV2</span><br><span class="api-desc">删除分组自定义响应</span></li><li><span class="api-name">ShowDetailsOfGatewayResponseTypeV2</span><br><span class="api-desc">查看分组下指定错误类型的自定义响应</span></li><li><span class="api-name">DeleteGatewayResponseTypeV2</span><br><span class="api-desc">删除分组指定错误类型的自定义响应配置,还原为使用默认值的配置。</span></li><li><span class="api-name">CreateGatewayResponseV2</span><br><span class="api-desc">新增分组下自定义响应</span></li><li><span class="api-name">ShowDetailsOfGatewayResponseV2</span><br><span class="api-desc">查询分组自定义响应详情</span></li><li><span class="api-name">UpdateGatewayResponseV2</span><br><span class="api-desc">修改分组自定义响应</span></li></ul> </div>
+<div class="api-category"><h3>专享版-域名管理</h3><ul><li><span class="api-name">UpdateSlDomainSettingV2</span><br><span class="api-desc">禁用或启用API分组绑定的调试域名</span></li><li><span class="api-name">UpdateDomainV2</span><br><span class="api-desc">修改绑定的域名所对应的配置信息。使用实例自定义入方向端口的特性时,注意开启/关闭客户端校验会对相同域名的不同端口同时生效。</span></li><li><span class="api-name">ShowDetailsOfDomainNameCertificateV2</span><br><span class="api-desc">查看域名下绑定的证书详情。</span></li><li><span class="api-name">DisassociateDomainV2</span><br><span class="api-desc">如果API分组不再需要绑定某个自定义域名,则可以为此API分组解绑此域名。</span></li><li><span class="api-name">AssociateCertificateV2</span><br><span class="api-desc">如果创建API时,“定义API请求”使用HTTPS请求协议,那么在独立域名中需要添加SSL证书。</span></li><li><span class="api-name">DisassociateCertificateV2</span><br><span class="api-desc">如果域名证书不再需要或者已过期,则可以删除证书内容。在使用自定义入方向端口的特性时,相同的域名会同时解绑证书。</span></li><li><span class="api-name">AssociateDomainV2</span><br><span class="api-desc">用户自定义的域名,需要增加A记录才能生效,具体方法请参见《云解析服务用户指南》的“添加A类型记录集”章节。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-实例标签管理</h3><ul><li><span class="api-name">BatchCreateOrDeleteInstanceTags</span><br><span class="api-desc">批量添加或删除单个实例的标签。</span></li><li><span class="api-name">ListProjectInstanceTags</span><br><span class="api-desc">查询项目下所有实例标签。</span></li><li><span class="api-name">ListInstanceTags</span><br><span class="api-desc">查询单个实例的标签。</span></li><li><span class="api-name">ListInstancesByTags</span><br><span class="api-desc">通过标签查询实例列表</span></li><li><span class="api-name">ShowInstancesNumByTags</span><br><span class="api-desc">查询包含指定标签的实例数量。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-实例特性管理</h3><ul><li><span class="api-name">ListInstanceFeatures</span><br><span class="api-desc">查询实例支持的特性列表。</span></li><li><span class="api-name">ListFeaturesV2</span><br><span class="api-desc">查看实例特性列表。注意:实例不支持以下特性的需要联系技术支持升级实例版本。</span></li><li><span class="api-name">CreateFeatureV2</span><br><span class="api-desc">为实例配置需要的特性。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-实例管理</h3><ul><li><span class="api-name">CreatePrepayResize</span><br><span class="api-desc">创建包周期规格变更订单。</span></li><li><span class="api-name">UpdateIngressEipV2</span><br><span class="api-desc">更新实例入公网带宽,仅当实例为ELB类型时支持</span></li><li><span class="api-name">AddEngressEipV2</span><br><span class="api-desc">实例开启公网出口</span></li><li><span class="api-name">DeleteInstancesV2</span><br><span class="api-desc">删除专享版实例</span></li><li><span class="api-name">CreateInstanceV2</span><br><span class="api-desc">创建按需专享版实例</span></li><li><span class="api-name">ListInstancesV2</span><br><span class="api-desc">查询专享版实例列表</span></li><li><span class="api-name">CreatePostPayResizeOrder</span><br><span class="api-desc">创建按需规格变更订单。</span></li><li><span class="api-name">ShowDetailsOfInstanceProgressV2</span><br><span class="api-desc">查看专享版实例创建进度</span></li><li><span class="api-name">ShowRestrictionOfInstanceV2</span><br><span class="api-desc">查看实例约束信息</span></li><li><span class="api-name">ListAvailableZonesV2</span><br><span class="api-desc">查看可用区信息</span></li><li><span class="api-name">CreateOrder</span><br><span class="api-desc">创建包周期专享版实例。</span></li><li><span class="api-name">RemoveIngressEipV2</span><br><span class="api-desc">关闭实例公网入口,仅当实例为ELB类型时支持</span></li><li><span class="api-name">AddEipV2</span><br><span class="api-desc">实例更新或绑定EIP(仅当实例为LVS类型时支持)</span></li><li><span class="api-name">RemoveEipV2</span><br><span class="api-desc">实例解绑EIP</span></li><li><span class="api-name">ShowDetailsOfInstanceV2</span><br><span class="api-desc">查看专享版实例详情</span></li><li><span class="api-name">RemoveEngressEipV2</span><br><span class="api-desc">关闭实例公网出口</span></li><li><span class="api-name">UpdateInstanceV2</span><br><span class="api-desc">更新专享版实例</span></li><li><span class="api-name">AddIngressEipV2</span><br><span class="api-desc">开启实例开启公网入口,仅当实例为ELB类型时支持</span></li><li><span class="api-name">UpdateEngressEipV2</span><br><span class="api-desc">更新实例出公网带宽</span></li></ul> </div>
+<div class="api-category"><h3>专享版-实例终端节点管理</h3><ul><li><span class="api-name">AcceptOrRejectEndpointConnections</span><br><span class="api-desc">接受或拒绝实例节点连接。</span></li><li><span class="api-name">AddEndpointPermissions</span><br><span class="api-desc">批量添加实例终端节点连接白名单。</span></li><li><span class="api-name">ListEndpointConnections</span><br><span class="api-desc">查询实例终端节点连接列表。</span></li><li><span class="api-name">ListEndpointPermissions</span><br><span class="api-desc">查询当前实例终端节点服务的白名单列表。</span></li><li><span class="api-name">DeleteEndpointPermissions</span><br><span class="api-desc">批量删除实例终端节点连接白名单。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-实例自定义入方向端口管理</h3><ul><li><span class="api-name">ListCustomIngressPorts</span><br><span class="api-desc">查询实例的自定义入方向端口列表。</span></li><li><span class="api-name">AddCustomIngressPort</span><br><span class="api-desc">新增实例的自定义入方向端口,在同个实例中,一个端口仅能支持一种协议。</span></li><li><span class="api-name">DeleteCustomIngressPort</span><br><span class="api-desc">删除实例指定的自定义入方向端口,不包含默认端口80和443。</span></li><li><span class="api-name">ListCustomIngressPortDomains</span><br><span class="api-desc">查询实例指定的自定义入方向端口绑定的域名信息。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-异步任务管理</h3><ul><li><span class="api-name">ShowAsyncTaskResult</span><br><span class="api-desc">获取异步任务结果。</span></li><li><span class="api-name">ExportApiDefinitionsAsync</span><br><span class="api-desc">导出分组下API的定义信息。导出文件内容符合swagger标准规范,API网关自定义扩展字段请参考《API网关用户指南》的“导入导出API:扩展定义”章节。</span></li><li><span class="api-name">ImportApiDefinitionsAsync</span><br><span class="api-desc">导入API。导入文件内容需要符合swagger标准规范,API网关自定义扩展字段请参考《API网关用户指南》的“导入导出API:扩展定义”章节。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-微服务中心管理</h3><ul><li><span class="api-name">ImportMicroservice</span><br><span class="api-desc">导入微服务。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-插件管理</h3><ul><li><span class="api-name">CreatePlugin</span><br><span class="api-desc">创建插件信息。</span></li><li><span class="api-name">DetachApiFromPlugin</span><br><span class="api-desc">解除绑定在插件上的API。</span></li><li><span class="api-name">ListPlugins</span><br><span class="api-desc">查询一组符合条件的API网关插件详情。</span></li><li><span class="api-name">ShowPlugin</span><br><span class="api-desc">查询插件详情。</span></li><li><span class="api-name">DetachPluginFromApi</span><br><span class="api-desc">解除绑定在API上的插件。</span></li><li><span class="api-name">UpdatePlugin</span><br><span class="api-desc">修改插件信息。</span></li><li><span class="api-name">ListApiAttachedPlugins</span><br><span class="api-desc">查询指定API下绑定的插件信息。</span></li><li><span class="api-name">DeletePlugin</span><br><span class="api-desc">删除插件。</span></li><li><span class="api-name">ListApiAttachablePlugins</span><br><span class="api-desc">查询可绑定当前API的插件信息。</span></li><li><span class="api-name">ListPluginAttachableApis</span><br><span class="api-desc">查询可绑定当前插件的API信息。</span></li><li><span class="api-name">ListPluginAttachedApis</span><br><span class="api-desc">查询指定插件下绑定的API信息。</span></li><li><span class="api-name">AttachPluginToApi</span><br><span class="api-desc">绑定插件到API上。</span></li><li><span class="api-name">AttachApiToPlugin</span><br><span class="api-desc">绑定插件到API上。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-标签管理</h3><ul><li><span class="api-name">ListTagsV2</span><br><span class="api-desc">查询标签列表</span></li></ul> </div>
+<div class="api-category"><h3>专享版-概要查询</h3><ul><li><span class="api-name">ListApiGroupsQuantitiesV2</span><br><span class="api-desc">查询租户名下的API分组概况。</span></li><li><span class="api-name">ListApiQuantitiesV2</span><br><span class="api-desc">查询租户名下的API概况:已发布到RELEASE环境的API个数,未发布到RELEASE环境的API个数。</span></li><li><span class="api-name">ListAppQuantitiesV2</span><br><span class="api-desc">查询租户名下的APP概况:已进行API访问授权的APP个数,未进行API访问授权的APP个数。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-流控策略管理</h3><ul><li><span class="api-name">ListRequestThrottlingPolicyV2</span><br><span class="api-desc">查询所有流控策略的信息。</span></li><li><span class="api-name">UpdateRequestThrottlingPolicyV2</span><br><span class="api-desc">修改指定流控策略的详细信息。</span></li><li><span class="api-name">ShowDetailsOfRequestThrottlingPolicyV2</span><br><span class="api-desc">查看指定流控策略的详细信息。</span></li><li><span class="api-name">CreateRequestThrottlingPolicyV2</span><br><span class="api-desc">当API上线后,系统会默认给每个API提供一个流控策略,API提供者可以根据自身API的服务能力及负载情况变更这个流控策略。</span></li><li><span class="api-name">DeleteRequestThrottlingPolicyV2</span><br><span class="api-desc">删除指定的流控策略,以及该流控策略与API的所有绑定关系。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-环境变量管理</h3><ul><li><span class="api-name">CreateEnvironmentVariableV2</span><br><span class="api-desc">将API发布到不同的环境后,对于不同的环境,可能会有不同的环境变量,比如,API的服务部署地址,请求的版本号等。</span></li><li><span class="api-name">ShowDetailsOfEnvironmentVariableV2</span><br><span class="api-desc">查看指定的环境变量的详情。</span></li><li><span class="api-name">DeleteEnvironmentVariableV2</span><br><span class="api-desc">删除指定的环境变量。</span></li><li><span class="api-name">UpdateEnvironmentVariableV2</span><br><span class="api-desc">修改环境变量。环境变量引用位置为api的后端服务地址时,修改对应环境变量会将使用该变量的所有api重新发布。</span></li><li><span class="api-name">ListEnvironmentVariablesV2</span><br><span class="api-desc">查询分组下的所有环境变量的列表。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-环境管理</h3><ul><li><span class="api-name">UpdateEnvironmentV2</span><br><span class="api-desc">修改指定环境的信息。其中可修改的属性为:name、remark,其它属性不可修改。</span></li><li><span class="api-name">CreateEnvironmentV2</span><br><span class="api-desc">在实际的生产中,API提供者可能有多个环境,如开发环境、测试环境、生产环境等,用户可以自由将API发布到某个环境,供调用者调用。</span></li><li><span class="api-name">DeleteEnvironmentV2</span><br><span class="api-desc">删除指定的环境。</span></li><li><span class="api-name">ListEnvironmentsV2</span><br><span class="api-desc">查询符合条件的环境列表。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-监控信息查询</h3><ul><li><span class="api-name">ListLatelyGroupStatisticsV2</span><br><span class="api-desc">根据API分组的编号查询该分组下所有API被调用的总次数,统计周期为1分钟。查询范围一小时以内,一分钟一个样本,其样本值为一分钟内的累计值。</span></li><li><span class="api-name">ListMetricData</span><br><span class="api-desc">查询指定时间范围指定指标的指定粒度的监控数据,可以通过参数指定需要查询的数据维度。</span></li><li><span class="api-name">ListLatelyApiStatisticsV2</span><br><span class="api-desc">根据API的id和最近的一段时间查询API被调用的次数,统计周期为1分钟。查询范围一小时以内,一分钟一个样本,其样本值为一分钟内的累计值。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-签名密钥管理</h3><ul><li><span class="api-name">UpdateSignatureKeyV2</span><br><span class="api-desc">修改指定签名密钥的详细信息。</span></li><li><span class="api-name">CreateSignatureKeyV2</span><br><span class="api-desc">为了保护API的安全性,建议租户为API的访问提供一套保护机制,即租户开放的API,需要对请求来源进行认证,不符合认证的请求直接拒绝访问。</span></li><li><span class="api-name">DeleteSignatureKeyV2</span><br><span class="api-desc">删除指定的签名密钥,删除签名密钥时,其配置的绑定关系会一并删除,相应的签名密钥会失效。</span></li><li><span class="api-name">ListSignatureKeysV2</span><br><span class="api-desc">查询所有签名密钥的信息。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-签名密钥绑定关系管理</h3><ul><li><span class="api-name">AssociateSignatureKeyV2</span><br><span class="api-desc">签名密钥创建后,需要绑定到API才能生效。</span></li><li><span class="api-name">ListSignatureKeysBindedToApiV2</span><br><span class="api-desc">查询某个API绑定的签名密钥列表。每个API在每个环境上应该最多只会绑定一个签名密钥。</span></li><li><span class="api-name">DisassociateSignatureKeyV2</span><br><span class="api-desc">解除API与签名密钥的绑定关系。</span></li><li><span class="api-name">ListApisBindedToSignatureKeyV2</span><br><span class="api-desc">查询某个签名密钥上已经绑定的API列表。</span></li><li><span class="api-name">ListApisNotBoundWithSignatureKeyV2</span><br><span class="api-desc">查询所有未绑定到该签名密钥上的API列表。需要API已经发布,未发布的API不予展示。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-编排规则管理</h3><ul><li><span class="api-name">ShowDetailsOfOrchestration</span><br><span class="api-desc">查询编排规则详情</span></li><li><span class="api-name">DeleteOrchestration</span><br><span class="api-desc">删除编排规则</span></li><li><span class="api-name">ListOrchestrationAttachedApis</span><br><span class="api-desc">查询指定插件下绑定的API信息</span></li><li><span class="api-name">UpdateOrchestration</span><br><span class="api-desc">更新编排规则</span></li><li><span class="api-name">ListOrchestrations</span><br><span class="api-desc">查看编排规则列表</span></li><li><span class="api-name">CreateOrchestration</span><br><span class="api-desc">创建编排规则</span></li></ul> </div>
+<div class="api-category"><h3>专享版-自定义认证管理</h3><ul><li><span class="api-name">CreateCustomAuthorizerV2</span><br><span class="api-desc">创建自定义认证</span></li><li><span class="api-name">UpdateCustomAuthorizerV2</span><br><span class="api-desc">修改自定义认证</span></li><li><span class="api-name">ShowDetailsOfCustomAuthorizersV2</span><br><span class="api-desc">查看自定义认证详情</span></li><li><span class="api-name">DeleteCustomAuthorizerV2</span><br><span class="api-desc">删除自定义认证</span></li><li><span class="api-name">ListCustomAuthorizersV2</span><br><span class="api-desc">查询自定义认证列表</span></li></ul> </div>
+<div class="api-category"><h3>专享版-设置特殊流控</h3><ul><li><span class="api-name">ListSpecialThrottlingConfigurationsV2</span><br><span class="api-desc">查看给流控策略设置的特殊配置。</span></li><li><span class="api-name">DeleteSpecialThrottlingConfigurationV2</span><br><span class="api-desc">删除某个流控策略的某个特殊配置。</span></li><li><span class="api-name">CreateSpecialThrottlingConfigurationV2</span><br><span class="api-desc">流控策略可以限制一段时间内可以访问API的最大次数,也可以限制一段时间内单个租户和单个APP可以访问API的最大次数。</span></li><li><span class="api-name">UpdateSpecialThrottlingConfigurationV2</span><br><span class="api-desc">修改某个流控策略下的某个特殊设置。</span></li></ul> </div>
+<div class="api-category"><h3>专享版-配置管理</h3><ul><li><span class="api-name">ListInstanceConfigsV2</span><br><span class="api-desc">查询租户实例配置列表</span></li><li><span class="api-name">ListProjectCofigsV2</span><br><span class="api-desc">查询某个实例的租户配置列表,用户可以通过此接口查看各类型资源配置及使用情况。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-API分组管理</h3><ul><li><span class="api-name">DeleteApiGroup</span><br><span class="api-desc">删除指定的API分组。</span></li><li><span class="api-name">ListApiGroups</span><br><span class="api-desc">查询API分组列表。</span></li><li><span class="api-name">CreateApiGroup</span><br><span class="api-desc">API分组是API的管理单元,一个API分组等同于一个服务入口,创建API分组时,返回一个子域名作为访问入口。建议一个API分组下的API具有一定的相关性。</span></li><li><span class="api-name">UpdateAPIGroup</span><br><span class="api-desc">修改API分组属性。其中name和remark可修改,其他属性不可修改。</span></li><li><span class="api-name">ShowDetailsOfApiGroup</span><br><span class="api-desc">查询指定分组的详细信息。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-API管理</h3><ul><li><span class="api-name">UpdateApi</span><br><span class="api-desc">修改指定API的信息,包括后端服务信息。</span></li><li><span class="api-name">ShowDetailsOfApi</span><br><span class="api-desc">查看指定的API的详细信息。</span></li><li><span class="api-name">DeleteApi</span><br><span class="api-desc">删除指定的API 删除API时,会删除该API所有相关的资源信息或绑定关系,如API的发布记录,绑定的后端服务,对APP的授权信息等。</span></li><li><span class="api-name">ListApis</span><br><span class="api-desc">查看API列表,返回API详细信息、发布信息等,但不能查看到后端服务信息。</span></li><li><span class="api-name">CreateApi</span><br><span class="api-desc">添加一个API,API即一个服务接口,具体的服务能力。API分为两部分,第一部分为面向API使用者的API接口,定义了使用者如何调用这个API。第二部分面向API提供者,由API提供者定义这个API的真实的后端情况,定义了API网关如何去访问真实的后端服务。API的真实后端服务目前支持三种类型:传统的HTTP/HTTPS形式的web后端、函数工作流、MOCK。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-API绑定流控策略</h3><ul><li><span class="api-name">ListRequestThrottlingPoliciesThatBoundToAnApi</span><br><span class="api-desc">查询某个API绑定的流控策略列表。每个环境上应该最多只有一个流控策略。</span></li><li><span class="api-name">ListApisThatNotBoundWithRequestThrottlingPolicy</span><br><span class="api-desc">查询所有未绑定到该流控策略上的自有API列表。需要API已经发布,未发布的API不予展示。</span></li><li><span class="api-name">DisassociateRequestThrottlingPolicy</span><br><span class="api-desc">解除API与流控策略的绑定关系。</span></li><li><span class="api-name">ListApisThatBoundWithRequestThrottlingPolicy</span><br><span class="api-desc">查询某个流控策略上已经绑定的API列表。</span></li><li><span class="api-name">AssociateRequestThrottlingPolicy</span><br><span class="api-desc">将流控策略应用于API,则所有对该API的访问将会受到该流控策略的限制。当一定时间内的访问次数超过流控策略设置的API最大访问次数限制后,后续的访问将会被拒绝,从而能够较好的保护后端API免受异常流量的冲击,保障服务的稳定运行。为指定的共享版-API绑定流控策略,绑定时,需要指定在哪个环境上生效。同一个API发布到不同的环境可以绑定不同的流控策略;一个API在发布到特定环境后只能绑定一个默认的流控策略。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-APP授权管理</h3><ul><li><span class="api-name">CreateAuthorizingApps</span><br><span class="api-desc">APP创建成功后,还不能访问API,如果想要访问某个环境上的API,需要将该API在该环境上授权给APP。授权成功后,APP即可访问该环境上的这个API。</span></li><li><span class="api-name">CancelingAuthorization</span><br><span class="api-desc">解除API对APP的授权关系。解除授权后,APP将不再能够调用该API。</span></li><li><span class="api-name">ListApisThatNotBoundWithAnApp</span><br><span class="api-desc">查询指定环境上某个APP未绑定的API列表,包括自有API和从云市场购买的API。</span></li><li><span class="api-name">ListAPIsThatBoundWithAnApp</span><br><span class="api-desc">查询APP已经绑定的API列表。</span></li><li><span class="api-name">ListAppsBoundToAnApi</span><br><span class="api-desc">查询API绑定的APP列表。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-APP管理</h3><ul><li><span class="api-name">UpdateAnApp</span><br><span class="api-desc">修改指定APP的信息。其中可修改的属性为:name、remark,当支持用户自定义key和secret的开关开启时,app_key和app_secret也支持修改,其它属性不可修改。</span></li><li><span class="api-name">CheckAnApp</span><br><span class="api-desc">校验app是否存在,非APP所有者可以调用该接口校验APP是否真实存在。这个接口只展示app的基本信息id 、name、 remark,其他信息不显示。</span></li><li><span class="api-name">ShowAppDetails</span><br><span class="api-desc">查看指定APP的详细信息。</span></li><li><span class="api-name">CreateAnApp</span><br><span class="api-desc">APP即应用,是一个可以访问API的身份标识。将API授权给APP后,APP即可调用API。</span></li><li><span class="api-name">DeleteAnApp</span><br><span class="api-desc">删除指定的APP。</span></li><li><span class="api-name">ListApps</span><br><span class="api-desc">查询APP列表。</span></li><li><span class="api-name">ResettingTheAppSecret</span><br><span class="api-desc">重置指定APP的密钥。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-域名管理</h3><ul><li><span class="api-name">AssociateDomain</span><br><span class="api-desc">用户自定义的域名,需要CNAME到API分组的子域名上才能生效,具体方法请参见[增加CNAME类型记录集](https://support.huaweicloud.com/usermanual-dns/dns_usermanual_0010.html)。</span></li><li><span class="api-name">ShowDetailsOfDomainNameCertificate</span><br><span class="api-desc">查看域名下绑定的证书详情。</span></li><li><span class="api-name">AssociateCertificate</span><br><span class="api-desc">如果创建API时,“定义API请求”使用HTTPS请求协议,那么在独立域名中需要添加SSL证书。</span></li><li><span class="api-name">DisassociateCertificate</span><br><span class="api-desc">如果域名证书不再需要或者已过期,则可以删除证书内容。</span></li><li><span class="api-name">DisassociateDomain</span><br><span class="api-desc">如果API分组不再需要绑定某个自定义域名,则可以为此API分组解绑此域名。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-概要查询</h3><ul><li><span class="api-name">ListAppQuantities</span><br><span class="api-desc">查询租户名下的APP概况:已进行API访问授权的APP个数,未进行API访问授权的APP个数。</span></li><li><span class="api-name">ListAPIsOfAPIGroup</span><br><span class="api-desc">查询租户名下的API分组概况:上架的API分组个数,未上架的API分组个数。</span></li><li><span class="api-name">ListApiQuantities</span><br><span class="api-desc">查询租户名下的API概况:已发布到RELEASE环境的API个数,未发布到RELEASE环境的API个数。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-流控策略管理</h3><ul><li><span class="api-name">DeleteRequestThrottlingPolicy</span><br><span class="api-desc">删除指定的流控策略,以及该流控策略与API的所有绑定关系。</span></li><li><span class="api-name">ListTheRequestThrottlingPolicy</span><br><span class="api-desc">查询所有流控策略的信息。</span></li><li><span class="api-name">ShowDetailsOfARequestThrottlingPolicy</span><br><span class="api-desc">查看指定流控策略的详细信息。</span></li><li><span class="api-name">UpdateRequestThrottlingPolicy</span><br><span class="api-desc">修改指定流控策略的详细信息。</span></li><li><span class="api-name">CreateRequestThrottlingPolicy</span><br><span class="api-desc">当API上线后,系统会默认给每个API提供一个流控策略,API提供者可以根据自身API的服务能力及负载情况变更这个流控策略。 流控策略即限制API在一定长度的时间内,能够允许被访问的最大次数。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-环境变量管理</h3><ul><li><span class="api-name">ListEnvironmentVariables</span><br><span class="api-desc">查询分组下的所有环境变量的列表。</span></li><li><span class="api-name">DeleteEnvironmentVariable</span><br><span class="api-desc">删除指定的环境变量。</span></li><li><span class="api-name">CreateEnvironmentVariable</span><br><span class="api-desc">将API发布到不同的环境后,对于不同的环境,可能会有不同的环境变量,比如,API的服务部署地址,请求的版本号等。</span></li><li><span class="api-name">ShowEnvironmentVariableDetails</span><br><span class="api-desc">查看指定的环境变量的详情。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-环境管理</h3><ul><li><span class="api-name">DeleteEnvironment</span><br><span class="api-desc">删除指定的环境。</span></li><li><span class="api-name">UpdateEnvironment</span><br><span class="api-desc">修改指定环境的信息。其中可修改的属性为:name、remark,其它属性不可修改。</span></li><li><span class="api-name">CreateEnvironment</span><br><span class="api-desc">在实际的生产中,API提供者可能有多个环境,如开发环境、测试环境、生产环境等,用户可以自由将API发布到某个环境,供调用者调用。对于不同的环境,API的版本、请求地址甚至于包括请求消息等均有可能不同。如:某个API,v1.0的版本为稳定版本,发布到了生产环境供生产使用,同时,该API正处于迭代中,v1.1的版本是开发人员交付测试人员进行测试的版本,发布在测试环境上,而v1.2的版本目前开发团队正处于开发过程中,可以发布到开发环境进行自测等。</span></li><li><span class="api-name">ListEnvironments</span><br><span class="api-desc">查询符合条件的环境列表。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-签名密钥管理</h3><ul><li><span class="api-name">CreateSignatureKey</span><br><span class="api-desc">为了保护API的安全性,建议租户为API的访问提供一套保护机制,即租户开放的API,需要对请求来源进行认证,不符合认证的请求直接拒绝访问。 其中,签名密钥就是API安全保护机制的一种。 租户创建一个签名密钥,并将签名密钥与API进行绑定,则API网关在请求这个API时,就会使用绑定的签名密钥对请求参数进行数据加密,生成签名。当租户的后端服务收到请求时,可以校验这个签名,如果签名校验不通过,则该请求不是API网关发出的请求,租户可以拒绝这个请求,从而保证API的安全性,避免API被未知来源的请求攻击。</span></li><li><span class="api-name">UpdateSignatureKey</span><br><span class="api-desc">修改指定签名密钥的详细信息。</span></li><li><span class="api-name">DeleteSignatureKey</span><br><span class="api-desc">删除指定的签名密钥,删除签名密钥时,其配置的绑定关系会一并删除,相应的签名密钥会失效。</span></li><li><span class="api-name">ListSignatureKeys</span><br><span class="api-desc">查询所有签名密钥的信息。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-签名密钥绑定关系管理</h3><ul><li><span class="api-name">ListSignatureKeysBoundtoAnAPI</span><br><span class="api-desc">查询某个API绑定的签名密钥列表。每个API在每个环境上应该最多只会绑定一个签名密钥。</span></li><li><span class="api-name">DisassociateSignatureKey</span><br><span class="api-desc">解除API与签名密钥的绑定关系。</span></li><li><span class="api-name">ListApisBoundWithSignatureKey</span><br><span class="api-desc">查询某个签名密钥上已经绑定的API列表。</span></li><li><span class="api-name">AssociateSignatureKey</span><br><span class="api-desc">签名密钥创建后,需要绑定到API才能生效。将签名密钥绑定到API后,则API网关请求后端服务时就会使用这个签名密钥进行加密签名,后端服务可以校验这个签名来验证请求来源。 将指定的签名密钥绑定到一个或多个已发布的API上。 同一个API发布到不同的环境可以绑定不同的签名密钥;一个API在发布到特定环境后只能绑定一个签名密钥。</span></li><li><span class="api-name">ListApisNotBoundWithSignatureKey</span><br><span class="api-desc">查询所有未绑定到该签名密钥上的API列表。需要API已经发布,未发布的API不予展示。</span></li></ul> </div>
+<div class="api-category"><h3>共享版-设置特殊流控</h3><ul><li><span class="api-name">UpdateSpecialThrottlingConfiguration</span><br><span class="api-desc">修改某个流控策略下的某个特殊设置。</span></li><li><span class="api-name">ListSpecialThrottlingConfigurations</span><br><span class="api-desc">查看给流控策略设置的特殊配置。</span></li><li><span class="api-name">CreateSpecialThrottlingConfiguration</span><br><span class="api-desc">流控策略可以限制一段时间内可以访问API的最大次数,也可以限制一段时间内单个租户和单个APP可以访问API的最大次数。 如果想要对某个特定的APP进行特殊设置,例如设置所有APP每分钟的访问次数为500次,但想设置APP1每分钟的访问次数为800次,可以通过在流控策略中设置特殊APP来实现该功能。 为流控策略添加一个特殊设置的对象,可以是APP,也可以是租户。</span></li><li><span class="api-name">DeleteSpecialThrottlingConfiguration</span><br><span class="api-desc">删除某个流控策略的某个特殊配置。</span></li></ul> </div>
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>SFSTurbo MCP Server 是一款模型上下文协议（Model Context Protocol）服务器，为 MCP 客户端（如 Claude Desktop、Cline、Cursor）提供与华为云服务 SFSTurbo 交互的能力。SFSTurbo资源的全链条管理可以基于自然语言进行。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+         <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+         <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+         <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_sfsturbo
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_sfsturbo --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_sfsturbo --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_sfsturbo --transport sse --port 8888
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-vpc-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "http-vpc-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8888/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-vpc-example": {
+              "type": "sse",
+              "url": "http://localhost:8888/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>任务管理</h3>
+          <ul>
+            <li><span class="api-name">ShowJobDetail</span><br><span class="api-desc">查询job的执行状态。 可用于查询SFS Turbo异步API的执行状态。例如:可使用调用创建并绑定ldap配置接口时返回的jobId,通过该接口查询job的执行状态。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>共享标签</h3>
+          <ul>
+            <li><span class="api-name">ListSharedTags</span><br><span class="api-desc">查询租户所有共享的标签集合。</span></li>
+            <li><span class="api-name">ShowSharedTags</span><br><span class="api-desc">查询指定共享的所有标签信息。</span></li>
+            <li><span class="api-name">CreateSharedTag</span><br><span class="api-desc">指定共享添加一个标签。</span></li>
+            <li><span class="api-name">BatchAddSharedTags</span><br><span class="api-desc">指定共享批量添加标签。</span></li>
+            <li><span class="api-name">DeleteSharedTag</span><br><span class="api-desc">指定共享删除一个标签。当共享中不存在指定要删除的key时,接口调用将会返回404错误。</span></li>
+            <li><span class="api-name">ListSharesByTag</span><br><span class="api-desc">通过标签查询文件系统列表</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>名称管理</h3>
+          <ul>
+            <li><span class="api-name">ChangeShareName</span><br><span class="api-desc">修改文件系统名称</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>存储联动管理</h3>
+          <ul>
+            <li><span class="api-name">ListHpcCacheTasks</span><br><span class="api-desc">查询数据导入导出任务列表</span></li>
+            <li><span class="api-name">UpdateObsTargetAttributes</span><br><span class="api-desc">更新后端存储属性</span></li>
+            <li><span class="api-name">DeleteHpcCacheTask</span><br><span class="api-desc">删除数据导入导出任务</span></li>
+            <li><span class="api-name">DeleteBackendTarget</span><br><span class="api-desc">删除后端存储</span></li>
+            <li><span class="api-name">CreateHpcCacheTask</span><br><span class="api-desc">创建数据导入导出任务</span></li>
+            <li><span class="api-name">ShowBackendTargetInfo</span><br><span class="api-desc">获取后端存储详细信息</span></li>
+            <li><span class="api-name">UpdateHpcShare</span><br><span class="api-desc">更新文件系统冷数据淘汰时间</span></li>
+            <li><span class="api-name">UpdateObsTargetPolicy</span><br><span class="api-desc">更新后端存储自动同步策略</span></li>
+            <li><span class="api-name">ListBackendTargets</span><br><span class="api-desc">查询后端存储列表</span></li>
+            <li><span class="api-name">ShowHpcCacheTask</span><br><span class="api-desc">查询数据导入导出任务详情</span></li>
+            <li><span class="api-name">CreateBackendTarget</span><br><span class="api-desc">为SFS Turbo 文件系统绑定后端存储</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>文件系统管理</h3>
+          <ul>
+            <li><span class="api-name">ShowFsTask</span><br><span class="api-desc">获取文件系统异步任务详情。仅支持查询目录资源使用情况的任务,API请求路径的feature取值为dir-usage,以下简称为DU任务。</span></li>
+            <li><span class="api-name">CreateFsTask</span><br><span class="api-desc">创建文件系统异步任务,仅支持异步查询目录资源使用情况,API请求路径的feature取值为dir-usage,以下简称为DU任务。</span></li>
+            <li><span class="api-name">SetHpcCacheBackend</span><br><span class="api-desc">配置hpc缓存型后端信息</span></li>
+            <li><span class="api-name">ListFsTasks</span><br><span class="api-desc">获取文件系统异步任务列表。仅支持查询目录资源使用情况的任务,API请求路径的feature取值为dir-usage,以下简称为DU任务。</span></li>
+            <li><span class="api-name">DeleteFsTask</span><br><span class="api-desc">如果异步任务正在执行,则取消并删除任务;否则,删除任务。仅支持删除目录资源使用情况的任务,API请求路径的feature取值为dir-usage,以下简称为DU任务。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>权限管理</h3>
+          <ul>
+            <li><span class="api-name">CreateLdapConfig</span><br><span class="api-desc">创建并绑定ldap配置。LDAP(Lightweight Directory Access Protocol),中文名称轻量级目录访问协议,是对目录服务器(Directory Server)进行访问、控制的一种标准协议。LDAP服务器可以集中式地管理用户和群组的归属关系,通过绑定LDAP服务器,当一个用户访问您的文件系统的文件时,SFS Turbo将会访问您的LDAP服务器以进行用户身份验证,并且获取用户和群组的归属关系,从而进行Linux标准的文件UGO权限的检查。要使用此功能,首先您需要搭建好LDAP服务器(当前SFS Turbo仅支持LDAP v3协议),常见提供LDAP协议访问的目录服务器实现有OpenLdap(Linux),Active Directory(Windows)等,不同目录服务器的实现细节有所差别,绑定时需要指定对应的Schema(Schema配置错误将会导致SFS Turbo无法正确获取用户以及群组信息,可能导致无权限访问文件系统内文件),当前SFS Turbo支持的Schema有:</span></li>
+            <li><span class="api-name">ShowLdapConfig</span><br><span class="api-desc">查询Ldap的配置。LDAP(Lightweight Directory Access Protocol),中文名称轻量级目录访问协议,是对目录服务器(Directory Server)进行访问、控制的一种标准协议。LDAP服务器可以集中式地管理用户和群组的归属关系,通过绑定LDAP服务器,当一个用户访问您的文件系统的文件时,SFS Turbo将会访问您的LDAP服务器以进行用户身份验证,并且获取用户和群组的归属关系,从而进行Linux标准的文件UGO权限的检查。要使用此功能,首先您需要搭建好LDAP服务器(当前SFS Turbo仅支持LDAP v3协议),常见提供LDAP协议访问的目录服务器实现有OpenLdap(Linux),Active Directory(Windows)等,不同目录服务器的实现细节有所差别,绑定时需要指定对应的Schema(Schema配置错误将会导致SFS Turbo无法正确获取用户以及群组信息,可能导致无权限访问文件系统内文件),当前SFS Turbo支持的Schema有:</span></li>
+            <li><span class="api-name">UpdatePermRule</span><br><span class="api-desc">修改权限规则</span></li>
+            <li><span class="api-name">CreatePermRule</span><br><span class="api-desc">创建权限规则</span></li>
+            <li><span class="api-name">DeletePermRule</span><br><span class="api-desc">删除权限规则</span></li>
+            <li><span class="api-name">ShowPermRule</span><br><span class="api-desc">查询文件系统的某一个权限规则</span></li>
+            <li><span class="api-name">UpdateLdapConfig</span><br><span class="api-desc">修改ldap配置。LDAP(Lightweight Directory Access Protocol),中文名称轻量级目录访问协议,是对目录服务器(Directory Server)进行访问、控制的一种标准协议。LDAP服务器可以集中式地管理用户和群组的归属关系,通过绑定LDAP服务器,当一个用户访问您的文件系统的文件时,SFS Turbo将会访问您的LDAP服务器以进行用户身份验证,并且获取用户和群组的归属关系,从而进行Linux标准的文件UGO权限的检查。要使用此功能,首先您需要搭建好LDAP服务器(当前SFS Turbo仅支持LDAP v3协议),常见提供LDAP协议访问的目录服务器实现有OpenLdap(Linux),Active Directory(Windows)等,不同目录服务器的实现细节有所差别,绑定时需要指定对应的Schema(Schema配置错误将会导致SFS Turbo无法正确获取用户以及群组信息,可能导致无权限访问文件系统内文件),当前SFS Turbo支持的Schema有:</span></li>
+            <li><span class="api-name">ListPermRules</span><br><span class="api-desc">查询文件系统的权限规则列表</span></li>
+            <li><span class="api-name">DeleteLdapConfig</span><br><span class="api-desc">删除ldap配置。LDAP(Lightweight Directory Access Protocol),中文名称轻量级目录访问协议,是对目录服务器(Directory Server)进行访问、控制的一种标准协议。LDAP服务器可以集中式地管理用户和群组的归属关系,通过绑定LDAP服务器,当一个用户访问您的文件系统的文件时,SFS Turbo将会访问您的LDAP服务器以进行用户身份验证,并且获取用户和群组的归属关系,从而进行Linux标准的文件UGO权限的检查。要使用此功能,首先您需要搭建好LDAP服务器(当前SFS Turbo仅支持LDAP v3协议),常见提供LDAP协议访问的目录服务器实现有OpenLdap(Linux),Active Directory(Windows)等,不同目录服务器的实现细节有所差别,绑定时需要指定对应的Schema(Schema配置错误将会导致SFS Turbo无法正确获取用户以及群组信息,可能导致无权限访问文件系统内文件),当前SFS Turbo支持的Schema有:</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>生命周期管理</h3>
+          <ul>
+            <li><span class="api-name">ExpandShare</span><br><span class="api-desc">扩容文件系统。</span></li>
+            <li><span class="api-name">DeleteShare</span><br><span class="api-desc">删除文件系统。</span></li>
+            <li><span class="api-name">CreateShare</span><br><span class="api-desc">创建文件系统。</span></li>
+            <li><span class="api-name">ShowShare</span><br><span class="api-desc">查询SFS Turbo文件系统详细信息。</span></li>
+            <li><span class="api-name">ListShares</span><br><span class="api-desc">获取文件系统列表</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>目录管理</h3>
+          <ul>
+            <li><span class="api-name">UpdateFsDirQuota</span><br><span class="api-desc">更新目标文件夹quota</span></li>
+            <li><span class="api-name">CreateFsDir</span><br><span class="api-desc">创建目录</span></li>
+            <li><span class="api-name">ShowFsDirUsage</span><br><span class="api-desc">查询目录资源使用情况(包括子目录的资源)。后端有5min的缓存时间,查询的数据可能有延迟。</span></li>
+            <li><span class="api-name">CreateFsDirQuota</span><br><span class="api-desc">创建目标文件夹quota。</span></li>
+            <li><span class="api-name">DeleteFsDir</span><br><span class="api-desc">删除文件系统目录</span></li>
+            <li><span class="api-name">ShowFsDir</span><br><span class="api-desc">查询目录是否存在</span></li>
+            <li><span class="api-name">ShowFsDirQuota</span><br><span class="api-desc">查询目标文件夹quota。查询的used_capacity、used_inode数据可能有延迟。</span></li>
+            <li><span class="api-name">DeleteFsDirQuota</span><br><span class="api-desc">删除目标文件夹quota。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>连接管理</h3>
+          <ul>
+            <li><span class="api-name">ChangeSecurityGroup</span><br><span class="api-desc">修改SFS Turbo文件系统绑定的安全组。修改安全组为异步任务,可以通过“查询单个文件系统”返回的子状态字段“sub_status”来判断是否修改安全组状态,子状态为“232”即为修改安全组成功。</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

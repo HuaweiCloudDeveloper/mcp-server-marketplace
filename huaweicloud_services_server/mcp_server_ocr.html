@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云OCR上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>OCR MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务OCR交互的能力，支持基于自然语言对OCR资源进行全链路管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/ocr-mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ocr
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ocr --transport stdio --port 8902
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ocr --transport http  --port 8902
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ocr --transport sse --port 8902
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>快速开始</h2>
+          <p>支持以下客户端与MCP服务交互：</p>
+          <ul>
+            <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+            <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+            <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+            <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a> + <a href="https://cline.bot/" target="_blank">Cline</a></li>
+          </ul>
+
+          <h3>客户端通信配置示例</h3>
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "stdio-ocr": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run", 
+        "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_ocr/src/mcp_server_ocr/run.py"
+      ],
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+
+          <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "http-ocr": {
+      "type": "http",
+      "url": "http://127.0.0.1:8902/mcp",
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+
+          <h4>3. sse 模式</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "sse-ocr": {
+      "type": "sse",
+      "url": "http://localhost:8902/sse",
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server 做出贡献。无论您是想添加新工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/huawei-cloud-mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <!-- 按类别展示 -->
+        <div class="api-category">
+          <h3>VIN码识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeVin</span><br><span class="api-desc">识别图片中的车架号信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>不动产证识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeRealEstateCertificate</span><br><span class="api-desc">识别不动产证中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>保险单识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeInsurancePolicy</span><br><span class="api-desc">识别保险单图片上的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>出租车发票识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeTaxiInvoice</span><br><span class="api-desc">识别出租车发票中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>印章识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeSeal</span><br><span class="api-desc">检测和识别合同文件或常用票据中的印章</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>发票验真</h3>
+          <ul>
+            <li><span class="api-name">RecognizeInvoiceVerification</span><br><span class="api-desc">支持10种增值税发票的信息核验</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>名片识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeBusinessCard</span><br><span class="api-desc">识别名片图片上的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>哥伦比亚身份证识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeColombiaIdCard</span><br><span class="api-desc">识别哥伦比亚身份证中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>增值税发票识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeVatInvoice</span><br><span class="api-desc">识别增值税发票的类别</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>定额发票识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeQuotaInvoice</span><br><span class="api-desc">识别定额发票中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>户口本识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeHouseholdRegister</span><br><span class="api-desc">识别户口本中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>手写文字识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeHandwriting</span><br><span class="api-desc">识别文档中的手写文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>承兑汇票识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeAcceptanceBill</span><br><span class="api-desc">识别承兑汇票中的关键信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>护照识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizePassport</span><br><span class="api-desc">识别用户上传的护照首页图片中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>智能分类识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeAutoClassification</span><br><span class="api-desc">检测定位图片上指定要识别的票证</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>智能文档解析</h3>
+          <ul>
+            <li><span class="api-name">RecognizeSmartDocumentRecognizer</span><br><span class="api-desc">对证件、票据、表单等任意版式文档进行键值对提取、文字识别、以及表格识别等任务，实现进阶高效的自动化结构化返回</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>机动车销售发票识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeMvsInvoice</span><br><span class="api-desc">识别机动车销售发票、二手车销售发票图片中的文字</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>泰国车牌识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeThailandLicensePlate</span><br><span class="api-desc">识别泰国车牌图片中的车牌信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>泰文身份证识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeThailandIdcard</span><br><span class="api-desc">识别泰国身份证中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>火车票识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeTrainTicket</span><br><span class="api-desc">识别火车票中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>电子面单识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeWaybillElectronic</span><br><span class="api-desc">识别用户上传的电子面单图片中的文字内容</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>网络图片识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeWebImage</span><br><span class="api-desc">识别网络图片中的文字内容</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>自定义模板OCR</h3>
+          <ul>
+            <li><span class="api-name">RecognizeCustomTemplate</span><br><span class="api-desc">自定义模板OCR</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>营业执照识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeBusinessLicense</span><br><span class="api-desc">识别营业执照首页图片中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>行驶证识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeVehicleLicense</span><br><span class="api-desc">识别行驶证图片中主页和副页的文字内容</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>财务报表识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeFinancialStatement</span><br><span class="api-desc">识别用户上传的表格图片中的文字内容</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>身份证识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeIdCard</span><br><span class="api-desc">识别身份证图片中的文字内容</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>车牌识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeLicensePlate</span><br><span class="api-desc">识别输入图片中的车牌信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>车辆合格证识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeVehicleCertificate</span><br><span class="api-desc">识别车辆合格证中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>车辆通行费发票识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeTollInvoice</span><br><span class="api-desc">识别车辆通行费发票中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>通用文字识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeGeneralText</span><br><span class="api-desc">识别图片上的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>通用表格识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeGeneralTable</span><br><span class="api-desc">识别通用表格图片中的文字内容</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>道路运输从业资格证识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeQualificationCertificate</span><br><span class="api-desc">识别道路运输从业资格证上的关键文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>道路运输证识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeTransportationLicense</span><br><span class="api-desc">识别道路运输证首页中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>银行卡识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeBankcard</span><br><span class="api-desc">识别银行卡上的关键文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>银行回单识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeBankReceipt</span><br><span class="api-desc">支持对银行回单版式进行文字识别及键值对提取</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>飞机行程单识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeFlightItinerary</span><br><span class="api-desc">识别飞机行程单中的文字信息</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>驾驶证识别</h3>
+          <ul>
+            <li><span class="api-name">RecognizeDriverLicense</span><br><span class="api-desc">识别驾驶证图片中主页与副页的文字内容</span></li>
+          </ul>
+        </div>
+
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

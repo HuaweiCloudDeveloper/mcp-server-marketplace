@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_dli
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-dli --transport stdio --port 8844
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-dli --transport http  --port 8844
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-dli --transport sse --port 8844
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-dli": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_dli/src/mcp_server_dli/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-dli": {
+              "type": "http",
+              "url": "http://127.0.0.1:8844/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-dli": {
+              "type": "sse",
+              "url": "http://localhost:8844/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>Flink作业-作业相关API</h3><ul><li><span class="api-name">ShowFlinkJobExecutionGraph</span><br><span class="api-desc">查询Flink作业执行计划。</span></li><li><span class="api-name">ListFlinkJobs</span><br><span class="api-desc">查询当前用户的作业列表,可以根据作业ID作为ID,查询大于ID或小于ID的限定条数的作业,默认查询全部状态的作业,也可以设定运行中或其他状态条件。</span></li><li><span class="api-name">BatchRunFlinkJobs</span><br><span class="api-desc">触发批量运行Flink作业。</span></li><li><span class="api-name">CreateFlinkJarJob</span><br><span class="api-desc">用户自定义作业目前支持jar格式,运行在独享集群中。</span></li><li><span class="api-name">BatchDeleteFlinkJobs</span><br><span class="api-desc">批量删除任何状态的作业。</span></li><li><span class="api-name">BatchStopFlinkJobs</span><br><span class="api-desc">批量停止正在运行的Flink作业。</span></li><li><span class="api-name">CreateFlinkSqlJobGraph</span><br><span class="api-desc">生成flink SQL作业的静态流图</span></li><li><span class="api-name">UpdateFlinkSqlJob</span><br><span class="api-desc">Stream SQL的语法扩展了Apache Flink SQL。</span></li><li><span class="api-name">ShowFlinkJob</span><br><span class="api-desc">查看一个Flink作业的详情信息。</span></li><li><span class="api-name">ImportFlinkJobs</span><br><span class="api-desc">通过POST方式,导入flink作业,请求体为JSON格式。</span></li><li><span class="api-name">CreateFlinkSqlJob</span><br><span class="api-desc">通过POST方式,提交流式SQL作业,请求体为JSON格式。</span></li><li><span class="api-name">UpdateFlinkJarJob</span><br><span class="api-desc">更新用户自定义作业,目前支持jar格式,运行在独享集群中。</span></li><li><span class="api-name">ExportFlinkJobs</span><br><span class="api-desc">通过POST方式,导出flink作业,请求体为JSON格式。</span></li><li><span class="api-name">DeleteFlinkJob</span><br><span class="api-desc">删除任何状态的作业。</span></li></ul> </div>
+<div class="api-category"><h3>Flink作业-模板相关API</h3><ul><li><span class="api-name">CreateFlinkSqlJobTemplate</span><br><span class="api-desc">在DLI服务中新建一个Flink作业模板,最多100个。</span></li><li><span class="api-name">ListFlinkSqlJobTemplates</span><br><span class="api-desc">查询Flink作业模板列表。当前只支持查询用户自定义模板。</span></li><li><span class="api-name">UpdateFlinkSqlJobTemplate</span><br><span class="api-desc">对DLI服务中已有的Flink作业模板进行更新。</span></li><li><span class="api-name">DeleteFlinkSqlJobTemplate</span><br><span class="api-desc">删除一个Flink作业模板,即使当前模板正在被作业使用,也允许删除。</span></li></ul> </div>
+<div class="api-category"><h3>Flink作业-管理相关API</h3><ul><li><span class="api-name">ImportFlinkJobSavepoint</span><br><span class="api-desc">导入Flink作业保存点。</span></li><li><span class="api-name">ExecuteFlinkJobSavepoint</span><br><span class="api-desc">触发Flink作业保存点。</span></li></ul> </div>
+<div class="api-category"><h3>SQL作业-作业相关API</h3><ul><li><span class="api-name">CancelSqlJob</span><br><span class="api-desc">该API用于取消已经提交的作业,若作业已经执行结束或失败则无法取消。</span></li><li><span class="api-name">ExportSqlJobResult</span><br><span class="api-desc">该API用于将SQL语句的查询结果导出到OBS对象存储中,只支持导出“QUERY”类型作业的查询结果。</span></li><li><span class="api-name">ShowSqlJobProgress</span><br><span class="api-desc">该API用于获取作业执行进度信息,如果作业正在执行,可以获取到子作业的信息,如果作业刚开始或者已经结束,不可以获取到子作业信息。</span></li><li><span class="api-name">CheckSql</span><br><span class="api-desc">该API用于检查SQL语法。</span></li><li><span class="api-name">ShowSqlJobDetail</span><br><span class="api-desc">该API用于查询作业的详细信息,如作业的databasename、tablename、file size和export mode等信息。</span></li><li><span class="api-name">ShowSqlJobStatus</span><br><span class="api-desc">该API用于在作业提交后查询作业状态。</span></li><li><span class="api-name">PreviewSqlJobResult</span><br><span class="api-desc">该API用于在执行SQL查询语句的作业完成后,查看该作业执行的结果。目前仅支持查看“QUERY”类型作业的执行结果。</span></li><li><span class="api-name">ListSqlJobs</span><br><span class="api-desc">该API用于查询当前工程下面的所有作业的信息。</span></li><li><span class="api-name">CreateSqlJob</span><br><span class="api-desc">该API用于通过执行SQL语句的方式向队列提交作业。</span></li></ul> </div>
+<div class="api-category"><h3>SQL作业-拦截规则相关API</h3><ul><li><span class="api-name">UpdateSqlJobDefendRule</span><br><span class="api-desc">该API用于更新SQL拦截规则,拦截匹配规则的SQL。</span></li><li><span class="api-name">CreateSqlJobDefendRule</span><br><span class="api-desc">该API用于创建SQL拦截规则,拦截匹配规则的SQL。</span></li><li><span class="api-name">ShowSqlJobSystemDefendRule</span><br><span class="api-desc">该API用于获取系统预制SQL拦截规则。</span></li><li><span class="api-name">DeleteSqlJobDefendRule</span><br><span class="api-desc">该API用于删除SQL拦截规则。</span></li><li><span class="api-name">ListSqlJobSystemDefendRules</span><br><span class="api-desc">该API用于获取系统预制SQL拦截规则。</span></li><li><span class="api-name">ShowSqlJobDefendRule</span><br><span class="api-desc">该API用于获取单个SQL拦截规则。</span></li><li><span class="api-name">ListSqlJobDefendRules</span><br><span class="api-desc">该API用于批量获取SQL拦截规则。</span></li></ul> </div>
+<div class="api-category"><h3>SQL作业-模板相关API</h3><ul><li><span class="api-name">BatchDeleteSqlJobTemplates</span><br><span class="api-desc">该API用于批量删除SQL模板。</span></li><li><span class="api-name">UpdateSqlJobTemplate</span><br><span class="api-desc">该API用于更新SQL模板。</span></li><li><span class="api-name">CreateSqlJobTemplate</span><br><span class="api-desc">该API用于存储指定的SQL语句,后续可以重复使用。</span></li><li><span class="api-name">ListSqlJobTemplates</span><br><span class="api-desc">该API用查看用户保存的所有SQL模板。</span></li></ul> </div>
+<div class="api-category"><h3>Spark作业-作业相关API</h3><ul><li><span class="api-name">ShowSparkJob</span><br><span class="api-desc">该API用于根据批处理作业的id查询作业详情。</span></li><li><span class="api-name">CancelSparkJob</span><br><span class="api-desc">该API用于取消批处理作业。</span></li><li><span class="api-name">ListSparkJobs</span><br><span class="api-desc">该API用于查询Project下某队列批处理作业的列表。</span></li><li><span class="api-name">CreateSparkJob</span><br><span class="api-desc">该API用于在某个队列上创建作业。</span></li><li><span class="api-name">ShowSparkJobStatus</span><br><span class="api-desc">该API用于查询批处理作业的状态。</span></li></ul> </div>
+<div class="api-category"><h3>Spark作业-模板相关API</h3><ul><li><span class="api-name">ShowSparkJobTemplate</span><br><span class="api-desc">该API用于获取作业模板。</span></li><li><span class="api-name">UpdateSparkJobTemplate</span><br><span class="api-desc">该API用于修改作业模板。</span></li><li><span class="api-name">ListSparkJobTemplates</span><br><span class="api-desc">该API用于查询作业模板列表。</span></li><li><span class="api-name">CreateSparkJobTemplate</span><br><span class="api-desc">该API用于创建作业模板。</span></li></ul> </div>
+<div class="api-category"><h3>全局变量相关API</h3><ul><li><span class="api-name">UpdateGlobalVariable</span><br><span class="api-desc">修改全局变量。</span></li><li><span class="api-name">DeleteGlobalVariable</span><br><span class="api-desc">删除全局变量。</span></li><li><span class="api-name">ListGlobalVariables</span><br><span class="api-desc">查询全局变量列表。</span></li><li><span class="api-name">CreateGlobalVariable</span><br><span class="api-desc">创建全局变量。全局变量用于替换SQL作业中的敏感数据。</span></li></ul> </div>
+<div class="api-category"><h3>动态脱敏策略相关API</h3><ul><li><span class="api-name">ShowDataMaskStrategy</span><br><span class="api-desc">该API用于获取单个动态脱敏策略。</span></li><li><span class="api-name">DeleteDataMaskStrategy</span><br><span class="api-desc">该API用于删除动态脱敏策略。</span></li><li><span class="api-name">CreateDataMaskStrategyUserAuth</span><br><span class="api-desc">该API用于动态脱敏策略授权。</span></li><li><span class="api-name">ListDataMaskStrategies</span><br><span class="api-desc">该API用于批量获取动态脱敏策略。</span></li><li><span class="api-name">CreateDataMaskStrategy</span><br><span class="api-desc">该API用于动态脱敏策略,SQL执行的结果脱敏展示。</span></li><li><span class="api-name">ShowDataMaskStrategyUserAuth</span><br><span class="api-desc">该API用于获取脱敏策略权限。</span></li><li><span class="api-name">UpdateDataMaskStrategy</span><br><span class="api-desc">该API用于更新动态脱敏策略,SQL执行的结果脱敏展示。</span></li></ul> </div>
+<div class="api-category"><h3>增强型跨源连接相关API</h3><ul><li><span class="api-name">ListJobAuthInfos</span><br><span class="api-desc">该API用于查询跨源认证信息。</span></li><li><span class="api-name">CreateJobAuthInfo</span><br><span class="api-desc">该API用于创建跨源认证。</span></li><li><span class="api-name">ShowEnhancedConnectionPrivilege</span><br><span class="api-desc">该API用于查询增强型跨源连接授权的信息。</span></li><li><span class="api-name">ShowEnhancedConnection</span><br><span class="api-desc">该API用于查询该用户指定的已创建的增强型跨源连接。</span></li><li><span class="api-name">CreateRouteToEnhancedConnection</span><br><span class="api-desc">该API用于创建跨源需要的路由。</span></li><li><span class="api-name">DeleteJobAuthInfo</span><br><span class="api-desc">该API用于删除跨源认证信息。</span></li><li><span class="api-name">DeleteRouteFromEnhancedConnection</span><br><span class="api-desc">该API用于删除跨源需要的路由。</span></li><li><span class="api-name">UpdateJobAuthInfo</span><br><span class="api-desc">该API用于更新跨源认证信息。</span></li><li><span class="api-name">DeleteEnhancedConnection</span><br><span class="api-desc">该API用于删除已创建的增强型跨源连接。</span></li><li><span class="api-name">UpdateEnhancedConnection</span><br><span class="api-desc">该API用于在跨源中修改数据源主机信息,仅支持全量覆盖。</span></li><li><span class="api-name">ListEnhancedConnections</span><br><span class="api-desc">该API用于查询该用户已创建的增强型跨源连接列表。</span></li><li><span class="api-name">DisassociateQueueFromEnhancedConnection</span><br><span class="api-desc">该API用于在增强型跨源中解绑已绑定的队列。</span></li><li><span class="api-name">CreateEnhancedConnection</span><br><span class="api-desc">该API用于创建与其他服务的增强型跨源连接。</span></li><li><span class="api-name">AssociateQueueToEnhancedConnection</span><br><span class="api-desc">该API用于在已创建的增强型跨源中绑定队列。</span></li></ul> </div>
+<div class="api-category"><h3>已弃用-Flink作业-作业相关API</h3><ul><li><span class="api-name">RegisterBucket</span><br><span class="api-desc">用户主动授权OBS桶的操作权限给DLI服务, 用于保存用户作业的checkpoint、作业的运行日志等。</span></li><li><span class="api-name">ShowFlinkMetric</span><br><span class="api-desc">查询Flink作业监控信息, 支持同时查询多个Flink作业的监控信息。</span></li><li><span class="api-name">CreateIefSystemEvents</span><br><span class="api-desc">该API用于处理IEF系统事件上报</span></li><li><span class="api-name">UpdateFlinkJobStatusReport</span><br><span class="api-desc">该API用于处理边缘Flink作业状态上报信息</span></li><li><span class="api-name">RunIefJobActionCallBack</span><br><span class="api-desc">该API用于处理IEF Flink作业action回调信息</span></li><li><span class="api-name">CreateIefMessageChannel</span><br><span class="api-desc">该API用于创建IEF消息通道</span></li></ul> </div>
+<div class="api-category"><h3>已弃用-SQL作业相关API</h3><ul><li><span class="api-name">ListTables</span><br><span class="api-desc">该API用于查询指定数据库下符合过滤条件的或所有的表信息。</span></li><li><span class="api-name">ListPartitions</span><br><span class="api-desc"></span></li><li><span class="api-name">ListSqlSampleTemplates</span><br><span class="api-desc">该API用于查询所有SQL样例模板。</span></li><li><span class="api-name">DeleteDatabase</span><br><span class="api-desc">该API用于删除空数据库,若待删除的数据库中存在表,则需先删除其中的所有表。</span></li><li><span class="api-name">UpdateDatabaseOwner</span><br><span class="api-desc">用于修改数据库的owner。</span></li><li><span class="api-name">DeleteTable</span><br><span class="api-desc">该API用于删除指定的表。</span></li><li><span class="api-name">CreateDatabase</span><br><span class="api-desc">该API用于新增数据库。</span></li><li><span class="api-name">PreviewTable</span><br><span class="api-desc">该API用于用于预览表中前10行的内容。</span></li><li><span class="api-name">ImportTable</span><br><span class="api-desc">该API用于将数据从文件导入DLI或OBS表,目前仅支持将OBS上的数据导入DLI或OBS中。</span></li><li><span class="api-name">ExportTable</span><br><span class="api-desc">该API用于将SQL语句的查询结果导出到OBS对象存储中,只支持导出“QUERY”类型作业的查询结果。</span></li><li><span class="api-name">ListDatabases</span><br><span class="api-desc">该API用于查询出所有的数据库信息。</span></li><li><span class="api-name">UpdateTableOwner</span><br><span class="api-desc">用于修改表的owner。</span></li><li><span class="api-name">ShowTable</span><br><span class="api-desc">该API用于描述指定表的元数据信息。</span></li><li><span class="api-name">CreateTable</span><br><span class="api-desc">该API用于创建新的表。</span></li></ul> </div>
+<div class="api-category"><h3>已弃用-Spark作业-作业相关API</h3><ul><li><span class="api-name">ShowSparkJobLog</span><br><span class="api-desc">该API用于查询批处理作业的后台日志。</span></li></ul> </div>
+<div class="api-category"><h3>已弃用-分组资源相关API</h3><ul><li><span class="api-name">UploadPythonFileJobResources</span><br><span class="api-desc">该API用于在project下的上传pyfile类型模块。</span></li><li><span class="api-name">UploadFileJobResources</span><br><span class="api-desc">该API用于在project下上传file类型模块。</span></li><li><span class="api-name">UploadJobResources</span><br><span class="api-desc">该API用于上传分组资源到某个project下。</span></li><li><span class="api-name">UpdateJobResourceOwner</span><br><span class="api-desc">用于修改程序包的owner。</span></li><li><span class="api-name">UploadJarJobResources</span><br><span class="api-desc">该API用于在project下上传jar类型分组资源。</span></li><li><span class="api-name">ShowJobResource</span><br><span class="api-desc">该API用于查看某个project某个分组下的具体资源信息。</span></li><li><span class="api-name">ListJobResources</span><br><span class="api-desc">该API用于查看某个project下的所有资源,其中包含Group。</span></li><li><span class="api-name">DeleteJobResource</span><br><span class="api-desc">该API用于删除某个project某个分组下的资源包</span></li></ul> </div>
+<div class="api-category"><h3>已弃用-委托与权限相关API</h3><ul><li><span class="api-name">ListQueueUsers</span><br><span class="api-desc">该API用于查询可以使用的指定队列的所有用户名称。</span></li><li><span class="api-name">ListDatabaseUsers</span><br><span class="api-desc">该API用于查询可以使用的指定队列的所有用户名称。</span></li><li><span class="api-name">RunDataAuthorizationAction</span><br><span class="api-desc">该API用于将数据库或数据表的数据权限赋给指定的其他用户。</span></li><li><span class="api-name">ListTablePrivileges</span><br><span class="api-desc">该API用于查询指定用户在表上的权限。</span></li><li><span class="api-name">ListTableUsers</span><br><span class="api-desc">该API用于查看有权访问指定表或表的列的所有用户。</span></li><li><span class="api-name">CreateDliAgency</span><br><span class="api-desc">创建DLI委托</span></li><li><span class="api-name">RegisterAuthorizedQueue</span><br><span class="api-desc">该API用于与其他用户共享指定的队列,可以给用户赋使用指定的队列的权限或者收回使用权限。</span></li><li><span class="api-name">ShowDliAgency</span><br><span class="api-desc">获取dli委托信息</span></li></ul> </div>
+<div class="api-category"><h3>已弃用-跨源连接相关API</h3><ul><li><span class="api-name">ShowDatasourceConnection</span><br><span class="api-desc">该API用于查询该用户指定的已创建的经典型跨源连接。</span></li><li><span class="api-name">UpdateAuthInfo</span><br><span class="api-desc">该API用于更新跨源认证信息。</span></li><li><span class="api-name">ListAuthInfo</span><br><span class="api-desc">该API用于查询跨源认证信息。</span></li><li><span class="api-name">ListDatasourceConnections</span><br><span class="api-desc">该API用于查询该用户已创建的经典型跨源连接列表。</span></li><li><span class="api-name">CreateEnhancedConnectionRoutes</span><br><span class="api-desc">该API用于创建跨源需要的路由。</span></li><li><span class="api-name">DeleteAuthInfo</span><br><span class="api-desc">该API用于删除跨源认证信息。</span></li><li><span class="api-name">CreateDatasourceConnection</span><br><span class="api-desc">该API用于创建与其他服务的经典型跨源连接。</span></li><li><span class="api-name">DeleteEnhancedConnectionRoutes</span><br><span class="api-desc">该API用于删除跨源需要的路由。</span></li><li><span class="api-name">CreateAuthInfo</span><br><span class="api-desc">该API用于创建跨源认证。</span></li><li><span class="api-name">DeleteDatasourceConnection</span><br><span class="api-desc">该API用于删除已创建的经典型跨源连接。</span></li></ul> </div>
+<div class="api-category"><h3>已弃用-队列相关API</h3><ul><li><span class="api-name">BatchDeleteQueuePlans</span><br><span class="api-desc">该API用于批量删除队列定时扩缩容计划。</span></li><li><span class="api-name">ListQueuePlans</span><br><span class="api-desc">查看队列定时扩缩容计划接口,列出指定队列定时规格变更计划。</span></li><li><span class="api-name">UpdateQueueCidr</span><br><span class="api-desc">该功能用于修改包年包月队列网段。</span></li><li><span class="api-name">DeleteQueuePlan</span><br><span class="api-desc">该API用于删除指定ID的队列定时扩缩容计划。</span></li><li><span class="api-name">UpdateQueuePlan</span><br><span class="api-desc">该API用于修改指定ID的队列定时扩缩容计划。</span></li><li><span class="api-name">CreateQueuePlan</span><br><span class="api-desc">创建队列定时扩缩容计划接口,对指定的队列创建定时规格变更计划。</span></li></ul> </div>
+<div class="api-category"><h3>弹性资源池相关API</h3><ul><li><span class="api-name">CreatePeriodElasticResourcePoolSpecChangeOrder</span><br><span class="api-desc">包周期弹性资源池规格变更下单接口</span></li><li><span class="api-name">ListElasticResourcePoolScaleRecords</span><br><span class="api-desc">查询当前弹性资源池扩缩容历史记录</span></li><li><span class="api-name">ListElasticResourcePools</span><br><span class="api-desc">查询所有弹性资源池</span></li><li><span class="api-name">AssociateQueueToElasticResourcePool</span><br><span class="api-desc">关联队列到弹性资源池</span></li><li><span class="api-name">DeleteElasticResourcePool</span><br><span class="api-desc">删除弹性资源池</span></li><li><span class="api-name">UpdateElasticResourcePoolQueue</span><br><span class="api-desc">设置弹性资源池指定队列的扩缩容策略信息。</span></li><li><span class="api-name">CreatePeriodElasticResourcePoolOrder</span><br><span class="api-desc">创建包周期弹性资源池</span></li><li><span class="api-name">CreateElasticResourcePool</span><br><span class="api-desc">创建弹性资源池</span></li><li><span class="api-name">UpdateElasticResourcePool</span><br><span class="api-desc">修改弹性资源池信息</span></li><li><span class="api-name">ListElasticResourcePoolQueues</span><br><span class="api-desc">查询弹性资源池所属队列</span></li></ul> </div>
+<div class="api-category"><h3>数据目录相关API</h3><ul><li><span class="api-name">ShowCatalog</span><br><span class="api-desc">该API用于描述DLI catalog详情</span></li><li><span class="api-name">ListCatalogs</span><br><span class="api-desc">该API获取指定项目下所有catalog信息</span></li><li><span class="api-name">RunCatalogAction</span><br><span class="api-desc">该API创建DLI绑定/解绑到lakeformation等服务的元数据目录(CATALOG)相关信息。</span></li></ul> </div>
+<div class="api-category"><h3>权限相关API</h3><ul><li><span class="api-name">RunAuthorizationAction</span><br><span class="api-desc">该API用于将DLI资源权限赋给、回收、更新指定的其他用户或项目。</span></li><li><span class="api-name">ListAuthorizationPrivileges</span><br><span class="api-desc">获取对象赋权用户的权限信息</span></li></ul> </div>
+<div class="api-category"><h3>资源标签相关API</h3><ul><li><span class="api-name">ListResourcesTags</span><br><span class="api-desc">查询指定资源类型的标签信息。</span></li><li><span class="api-name">BatchCreateResourceTags</span><br><span class="api-desc">批量添加资源标签。</span></li><li><span class="api-name">CountResourcesByTags</span><br><span class="api-desc">查询资源实例数量。</span></li><li><span class="api-name">ListResourcesByTags</span><br><span class="api-desc">查询资源实例列表。</span></li><li><span class="api-name">BatchDeleteResourceTags</span><br><span class="api-desc">批量删除资源标签。</span></li><li><span class="api-name">ShowResourceTags</span><br><span class="api-desc">查询指定资源实例的标签信息。</span></li></ul> </div>
+<div class="api-category"><h3>配额相关API</h3><ul><li><span class="api-name">ShowQuota</span><br><span class="api-desc">该API用于获取用户配额信息列表。</span></li></ul> </div>
+<div class="api-category"><h3>队列相关API</h3><ul><li><span class="api-name">CreateQueueProperty</span><br><span class="api-desc">该接口用于增加队列属性, 一次可增加多个属性。</span></li><li><span class="api-name">ShowConnectivityTask</span><br><span class="api-desc">该API用于在连通性测试提交后查询连通性结果。</span></li><li><span class="api-name">DeleteQueue</span><br><span class="api-desc">该API用于删除指定队列。</span></li><li><span class="api-name">ListQueues</span><br><span class="api-desc">该API用于列出该project下所有的队列。</span></li><li><span class="api-name">UpdateQueueProperty</span><br><span class="api-desc">更新队列属性</span></li><li><span class="api-name">CreateQueue</span><br><span class="api-desc">该API用于创建队列,该队列将会绑定用户指定的计算资源。</span></li><li><span class="api-name">ShowQueue</span><br><span class="api-desc">该API用于列出该project下指定的队列详情。</span></li><li><span class="api-name">ListQueueProperties</span><br><span class="api-desc">获取队列配置的属性</span></li><li><span class="api-name">RunQueueAction</span><br><span class="api-desc">该功能用于重新启动队列、扩容队列、缩容队列。</span></li><li><span class="api-name">CreateConnectivityTask</span><br><span class="api-desc">创建地址连通性请求API接口,往指定集群发送地址连通性测试请求,并将测试地址插入表内</span></li><li><span class="api-name">DeleteQueueProperty</span><br><span class="api-desc">该接口用于删除队列的属性,一次可删除多个属性值。</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

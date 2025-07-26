@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+	  width:800px;
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ram
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ram --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ram --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ram --transport sse --port 8888
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ram": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_ram/src/mcp_server_ram/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ram": {
+              "type": "http",
+              "url": "http://127.0.0.1:8888/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ram": {
+              "type": "sse",
+              "url": "http://localhost:8888/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+          <div class="api-category"><h3>AssociatedPermission</h3><ul><li><span class="api-name">DisassociateResourceSharePermission</span><br><span class="api-desc">移除资源共享实例绑定的共享资源权限。权限更改立即生效。只有当目前资源共享实例中没有绑定相关资源类型时,您才能从资源共享实例中移除共享资源权限。</span></li><li><span class="api-name">AssociateResourceSharePermission</span><br><span class="api-desc">为资源共享实例中包含的资源类型绑定或替换共享资源权限。 对于资源共享实例中的每一种资源类型,您可以设置唯一权限。仅当资源共享实例中当前没有该资源类型的资源时,您才能绑定新的共享资源权限。</span></li><li><span class="api-name">ListResourceSharePermissions</span><br><span class="api-desc">检索资源共享实例关联的共享资源权限。</span></li></ul> </div>
+<div class="api-category"><h3>Misc</h3><ul><li><span class="api-name">ListQuota</span><br><span class="api-desc">查询当前账号的资源共享配额信息。</span></li><li><span class="api-name">ListResourceTypes</span><br><span class="api-desc">查询已对接云服务的资源类型和区域等信息。</span></li></ul> </div>
+<div class="api-category"><h3>OrganizationSharing</h3><ul><li><span class="api-name">DisableOrganizationShare</span><br><span class="api-desc">关闭与组织共享资源。</span></li><li><span class="api-name">ShowOrganizationShare</span><br><span class="api-desc">检索是否启用与组织共享资源。</span></li><li><span class="api-name">EnableOrganizationShare</span><br><span class="api-desc">启用与组织共享资源。</span></li></ul> </div>
+<div class="api-category"><h3>Permission</h3><ul><li><span class="api-name">ListPermissionVersions</span><br><span class="api-desc">获取权限的所有版本。</span></li><li><span class="api-name">ListPermissions</span><br><span class="api-desc">检索指定资源类型的共享资源权限列表。</span></li><li><span class="api-name">ShowPermission</span><br><span class="api-desc">检索指定资源类型的共享资源指定版本的权限内容,如果不指定权限版本,则返回默认版本的权限内容。</span></li></ul> </div>
+<div class="api-category"><h3>Principal</h3><ul><li><span class="api-name">SearchSharedPrincipals</span><br><span class="api-desc">检索共享资源的使用者。</span></li></ul> </div>
+<div class="api-category"><h3>Resource</h3><ul><li><span class="api-name">SearchSharedResources</span><br><span class="api-desc">检索您共享的或共享给您的资源。</span></li></ul> </div>
+<div class="api-category"><h3>ResourceShare</h3><ul><li><span class="api-name">CreateResourceShare</span><br><span class="api-desc">创建一个资源共享实例。您可以指定需要共享的资源列表,资源使用者列表,以及授予资源使用者的权限列表。</span></li><li><span class="api-name">SearchResourceShares</span><br><span class="api-desc">检索您创建的或者共享给您的资源共享实例详情。</span></li><li><span class="api-name">DeleteResourceShare</span><br><span class="api-desc">删除指定的资源共享实例。此操作不会删除实体资源,仅停止向其他账号共享资源。</span></li><li><span class="api-name">UpdateResourceShare</span><br><span class="api-desc">修改资源共享实例的特定属性。</span></li></ul> </div>
+<div class="api-category"><h3>ResourceShareAssociation</h3><ul><li><span class="api-name">AssociateResourceShare</span><br><span class="api-desc">向资源共享实例绑定指定的资源使用者列表或共享资源列表。对于新增的共享资源,有权访问此资源共享实例的资源使用者获得该共享资源的访问权限。对于新增的资源使用者,获得对此资源共享实例中共享资源的访问权限。</span></li><li><span class="api-name">DisassociateResourceShare</span><br><span class="api-desc">将指定的资源使用者或共享资源从指定的资源共享实例中移除。资源使用者也可以从指定的资源共享实例中主动退出。</span></li><li><span class="api-name">SearchResourceShareAssociations</span><br><span class="api-desc">检索您拥有的资源共享实例中绑定的共享资源和资源使用者。</span></li></ul> </div>
+<div class="api-category"><h3>ResourceShareInvitation</h3><ul><li><span class="api-name">AcceptResourceShareInvitation</span><br><span class="api-desc">接受来自其他账号的资源共享邀请。</span></li><li><span class="api-name">RejectResourceShareInvitation</span><br><span class="api-desc">拒绝来自其他账号的资源共享邀请。</span></li><li><span class="api-name">SearchResourceShareInvitation</span><br><span class="api-desc">通过条件检索资源共享邀请。</span></li></ul> </div>
+<div class="api-category"><h3>Tag</h3><ul><li><span class="api-name">BatchCreateResourceShareTags</span><br><span class="api-desc">资源共享实例增加标签。</span></li><li><span class="api-name">SearchResourceShareCountByTags</span><br><span class="api-desc">根据标签信息查询资源共享实例数量。</span></li><li><span class="api-name">BatchDeleteResourceShareTags</span><br><span class="api-desc">删除资源共享实例指定的标签。</span></li><li><span class="api-name">ListResourceShareTags</span><br><span class="api-desc">查询资源共享实例已使用标签的列表。</span></li><li><span class="api-name">ListResourceSharesByTags</span><br><span class="api-desc">根据标签信息查询资源共享实例列表。</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>华为云ECS上的MCP服务</title>
+<style>
+body{font-family:"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.6;color:#333;background-color:#f8f9fa}.main-content{max-width:1200px;margin:0 auto;padding:40px 20px}.container{background-color:#fff;border-radius:8px;box-shadow:0 2px 15px rgba(0,0,0,.05);padding:40px;display:flex;flex-direction:row;gap:40px}.sidebar{width:auto; max-width:300px;background-color:#f8f9fa;border-left:1px solid #eaeaea;padding-left:20px}.content-sections{flex:1}section{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid #f0f0f0}section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}h1,h2,h3,h4{color:#2c3e50;font-weight:600;margin-top:0;margin-bottom:20px}h2{font-size:1.8rem;padding-bottom:10px;border-bottom:2px solid #f0f0f0}h3{font-size:1.4rem;margin:25px 0 15px}ol,p,ul{margin-bottom:15px;font-size:1.35rem;color:#555;line-height:1.7}ol,ul{padding-left:25px}li{margin-bottom:10px}pre{background-color:#f8f9fa;border:1px solid #eaeaea;border-radius:6px;padding:16px;overflow-x:auto;margin:20px 0;font-size:1.25rem}code{font-family:SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;font-size:1.25rem;background-color:#f8f9fa;padding:2px 6px;border-radius:4px}.api-category{margin-bottom:20px}.api-name{font-weight:600;color:#2c3e50;font-size:1.25rem}.api-desc{font-size:1.25rem;color:#7f8c8d;line-height:1.5}a{color:#1a73e8;text-decoration:none;font-weight:500}a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="main-content">
+<div class="container">
+<div class="content-sections">
+<section>
+<h2>简介</h2>
+<p>VPN MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务VPN交互的能力，支持基于自然语言对VPN资源进行全链路管理。</p>
+</section>
+<section>
+<h2>前提条件</h2>
+<ul>
+<li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+<li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+<li><strong>Python环境</strong>：Python 3.12+</li>
+<li><strong>UV工具</strong>：跨平台安装工具</li>
+</ul>
+<h3>安装UV</h3>
+<p><strong>Linux/macOS</strong>：</p>
+<pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+<p><strong>Windows</strong>：</p>
+<pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+</section>
+<section>
+<h2>使用方法</h2>
+<h3>启动服务</h3>
+<pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd /your-path/mcp-server-main
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_vpcep --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_vpcep --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_vpcep --transport sse --port 8888
+</code></pre>
+</section>
+<section>
+<h2>快速开始</h2>
+<p>支持以下客户端与MCP服务交互：</p>
+<ul>
+<li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+<li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+<li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+<li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+</ul>
+<h3>客户端通信配置示例</h3>
+<h4>1. stdio 模式</h4>
+<pre><code class="language-json">{
+"mcpServers": {
+"stdio-ecs-example": {
+"type": "stdio",
+"command": "uv",
+"args": [
+"--directory",
+"/path/to/yours/mcp-server/src",
+"run",
+"server.py"
+],
+"env": {
+"HUAWEI_CLOUD_AK": "Your Access Key AK",
+"HUAWEI_CLOUD_SK": "Your Access Key SK"
+}
+}
+}
+}</code></pre>
+2. http 模式
+<pre><code class="language-json">{
+"mcpServers": {
+"http-ecs-example": {
+"type": "http",
+"url": "http://127.0.0.1:8888/mcp",
+"env": {
+"HUAWEI_CLOUD_AK": "Your Access Key AK",
+"HUAWEI_CLOUD_SK": "Your Access Key SK"
+}
+}
+}
+}</code></pre>
+<h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+<pre><code class="language-json">{
+"mcpServers": {
+"sse-ecs-example": {
+"type": "sse",
+"url": "http://localhost:8888/sse",
+"env": {
+"HUAWEI_CLOUD_AK": "Your Access Key AK",
+"HUAWEI_CLOUD_SK": "Your Access Key SK"
+}
+}
+}
+}</code></pre>
+</section>
+<section>
+<h2>贡献</h2>
+<p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+<ul>
+<li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+<li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+</ul>
+<h3>许可证</h3>
+<p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+</section>
+</div>
+<div class="sidebar">
+<h2 style="margin-top:0">API工具列表</h2>
+<div class="api-category">
+<h3>ClientCaCertificate</h3>
+<ul>
+<li><span class="api-name">CheckClientCaCertificate</span><br><span class="api-desc">创建服务端时,可以先调用客户端CA的预校验API,检查CA的合法性</span></li>
+<li><span class="api-name">UpdateClientCa</span><br><span class="api-desc">修改客户端CA证书</span></li>
+<li><span class="api-name">ImportClientCa</span><br><span class="api-desc">导入客户端 CA 证书</span></li>
+<li><span class="api-name">DeleteClientCa</span><br><span class="api-desc">删除客户端CA证书</span></li>
+<li><span class="api-name">ShowClientCa</span><br><span class="api-desc">查询客户端CA证书</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>ConnectionMonitor</h3>
+<ul>
+<li><span class="api-name">ListConnectionMonitors</span><br><span class="api-desc">查询VPN连接监控列表</span></li>
+<li><span class="api-name">ShowConnectionMonitor</span><br><span class="api-desc">根据VPN连接监控的ID,查询指定的VPN连接监控</span></li>
+<li><span class="api-name">DeleteConnectionMonitor</span><br><span class="api-desc">根据VPN连接监控的ID,删除指定的VPN连接监控</span></li>
+<li><span class="api-name">CreateConnectionMonitor</span><br><span class="api-desc">创建VPN连接监控</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>CustomerGateway</h3>
+<ul>
+<li><span class="api-name">ShowCgw</span><br><span class="api-desc">根据对端网关ID,查询指定的对端网关</span></li>
+<li><span class="api-name">DeleteCgw</span><br><span class="api-desc">根据对端网关ID,删除指定的对端网关</span></li>
+<li><span class="api-name">CreateCgw</span><br><span class="api-desc">创建租户用于与VPN网关相连的对端网关</span></li>
+<li><span class="api-name">UpdateCgw</span><br><span class="api-desc">根据对端网关ID,更新指定的对端网关</span></li>
+<li><span class="api-name">ListCgws</span><br><span class="api-desc">查询对端网关列表</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>P2cVpnGateway</h3>
+<ul>
+<li><span class="api-name">DeleteP2cVgwConnection</span><br><span class="api-desc">断开P2C VPN网关连接</span></li>
+<li><span class="api-name">ListP2cVgwAvailabilityZones</span><br><span class="api-desc">查询P2C VPN网关可用区</span></li>
+<li><span class="api-name">ListP2cVgwConnections</span><br><span class="api-desc">List p2c vpn gateway connections</span></li>
+<li><span class="api-name">ListP2cVgws</span><br><span class="api-desc">查询P2C VPN网关列表</span></li>
+<li><span class="api-name">ShowP2cVgw</span><br><span class="api-desc">根据P2C VPN网关ID,查询指定的VPN网关</span></li>
+<li><span class="api-name">UpdateP2cVgw</span><br><span class="api-desc">根据P2C VPN网关ID,更新指定的P2C VPN网关</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>Tags</h3>
+<ul>
+<li><span class="api-name">ShowResourceTags</span><br><span class="api-desc">查询指定实例的标签信息</span></li>
+<li><span class="api-name">BatchCreateResourceTags</span><br><span class="api-desc">为指定实例批量添加标签</span></li>
+<li><span class="api-name">ListResourcesByTags</span><br><span class="api-desc">根据标签查询资源实例列表</span></li>
+<li><span class="api-name">ListProjectTags</span><br><span class="api-desc">查询租户在指定项目中指定资源类型下的所有标签</span></li>
+<li><span class="api-name">BatchDeleteResourceTags</span><br><span class="api-desc">为指定实例批量删除标签</span></li>
+<li><span class="api-name">CountResourcesByTags</span><br><span class="api-desc">根据标签查询资源实例数量</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>VpnAccessPolicy</h3>
+<ul>
+<li><span class="api-name">UpdateVpnAccessPolicy</span><br><span class="api-desc">修改VPN访问策略</span></li>
+<li><span class="api-name">DeleteVpnAccessPolicy</span><br><span class="api-desc">删除VPN访问策略</span></li>
+<li><span class="api-name">ListVpnAccessPolicies</span><br><span class="api-desc">查询VPN访问策略列表</span></li>
+<li><span class="api-name">CreateVpnAccessPolicy</span><br><span class="api-desc">创建VPN访问策略</span></li>
+<li><span class="api-name">ShowVpnAccessPolicy</span><br><span class="api-desc">查询VPN访问策略</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>VpnConnection</h3>
+<ul>
+<li><span class="api-name">ShowVpnConnection</span><br><span class="api-desc">根据连接ID,查询指定的VPN连接的参数</span></li>
+<li><span class="api-name">UpdateVpnConnection</span><br><span class="api-desc">根据连接ID,更新指定的VPN连接的参数</span></li>
+<li><span class="api-name">ResetVpnConnection</span><br><span class="api-desc">根据连接ID,重置指定VPN连接</span></li>
+<li><span class="api-name">CreateVpnConnection</span><br><span class="api-desc">创建VPN连接,连接VPN网关与对端网关</span></li>
+<li><span class="api-name">ShowVpnConnectionLog</span><br><span class="api-desc">根据连接ID,查询指定的VPN连接日志</span></li>
+<li><span class="api-name">ListVpnConnections</span><br><span class="api-desc">查询VPN连接列表</span></li>
+<li><span class="api-name">DeleteVpnConnection</span><br><span class="api-desc">根据连接ID,删除指定的VPN连接</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>VpnConnectionsLogConfig</h3>
+<ul>
+<li><span class="api-name">ShowVpnConnectionsLogConfig</span><br><span class="api-desc">查询VPN连接日志配置</span></li>
+<li><span class="api-name">DeleteVpnConnectionsLogConfig</span><br><span class="api-desc">删除VPN连接日志配置</span></li>
+<li><span class="api-name">UpdateVpnConnectionsLogConfig</span><br><span class="api-desc">更新VPN连接日志配置</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>VpnGateway</h3>
+<ul>
+<li><span class="api-name">ShowVgw</span><br><span class="api-desc">根据VPN网关ID,查询指定的VPN网关</span></li>
+<li><span class="api-name">ListExtendedAvailabilityZones</span><br><span class="api-desc">查询VPN网关可用区</span></li>
+<li><span class="api-name">ShowVpnGatewayRoutingTable</span><br><span class="api-desc">查询VPN网关路由表</span></li>
+<li><span class="api-name">UpdatePostpaidVgwSpecification</span><br><span class="api-desc">对单个网关规格进行修改,可以升配或降配</span></li>
+<li><span class="api-name">ListAvailabilityZones</span><br><span class="api-desc">查询VPN网关可用区</span></li>
+<li><span class="api-name">CreateVgw</span><br><span class="api-desc">创建一个VPN网关</span></li>
+<li><span class="api-name">UpdateVgw</span><br><span class="api-desc">根据VPN网关ID,更新指定的VPN网关</span></li>
+<li><span class="api-name">ListVgws</span><br><span class="api-desc">查询VPN网关列表</span></li>
+<li><span class="api-name">DeleteVgw</span><br><span class="api-desc">根据VPN网关ID,删除指定的VPN网关</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>VpnGatewayCertificate</h3>
+<ul>
+<li><span class="api-name">ShowVpnGatewayCertificate</span><br><span class="api-desc">根据VPN网关ID,查询所指定的VPN网关证书</span></li>
+<li><span class="api-name">UpdateVgwCertificate</span><br><span class="api-desc">更新租户VPN网关所使用的证书,包括签名证书、签名私钥、加密证书、加密私钥和CA证书链。当前只支持国密证书</span></li>
+<li><span class="api-name">CreateVgwCertificate</span><br><span class="api-desc">导入租户VPN网关所使用的证书,包括签名证书、签名私钥、加密证书、加密私钥和CA证书链。当前只支持国密证书</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>VpnQuota</h3>
+<ul>
+<li><span class="api-name">ShowQuotasInfo</span><br><span class="api-desc">查询指定租户的配额</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>VpnServer</h3>
+<ul>
+<li><span class="api-name">ListVpnServersByVgw</span><br><span class="api-desc">查询一个网关下的服务端信息</span></li>
+<li><span class="api-name">UpdateVpnServer</span><br><span class="api-desc">更新指定VPN 服务端</span></li>
+<li><span class="api-name">ExportClientConfig</span><br><span class="api-desc">导出客户端配置信息</span></li>
+<li><span class="api-name">CreateVpnServer</span><br><span class="api-desc">创建一个VPN 服务端</span></li>
+<li><span class="api-name">ListVpnServersByProject</span><br><span class="api-desc">查询租户下的所有服务端信息</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>VpnUser</h3>
+<ul>
+<li><span class="api-name">ListVpnUsers</span><br><span class="api-desc">查询VPN用户列表</span></li>
+<li><span class="api-name">UpdateVpnUser</span><br><span class="api-desc">修改VPN用户</span></li>
+<li><span class="api-name">CreateVpnUser</span><br><span class="api-desc">创建VPN用户</span></li>
+<li><span class="api-name">BatchCreateVpnUsers</span><br><span class="api-desc">批量创建P2C VPN用户</span></li>
+<li><span class="api-name">UpdateVpnUserPassword</span><br><span class="api-desc">修改VPN用户密码</span></li>
+<li><span class="api-name">ShowVpnUser</span><br><span class="api-desc">查询VPN用户</span></li>
+<li><span class="api-name">DeleteVpnUser</span><br><span class="api-desc">删除VPN用户</span></li>
+<li><span class="api-name">ResetVpnUserPassword</span><br><span class="api-desc">重置VPN用户密码</span></li>
+<li><span class="api-name">BatchDeleteVpnUsers</span><br><span class="api-desc">批量删除P2C VPN用户</span></li>
+</ul>
+</div>
+<div class="api-category">
+<h3>VpnUserGroup</h3>
+<ul>
+<li><span class="api-name">AddVpnUsersToGroup</span><br><span class="api-desc">添加VPN用户到组</span></li>
+<li><span class="api-name">CreateVpnUserGroup</span><br><span class="api-desc">创建VPN用户组</span></li>
+<li><span class="api-name">ListVpnUserGroups</span><br><span class="api-desc">查询VPN用户组列表</span></li>
+<li><span class="api-name">DeleteVpnUserGroup</span><br><span class="api-desc">删除VPN用户组</span></li>
+<li><span class="api-name">UpdateVpnUserGroup</span><br><span class="api-desc">修改VPN用户组</span></li>
+<li><span class="api-name">ListVpnUsersInGroup</span><br><span class="api-desc">查询组内VPN用户</span></li>
+<li><span class="api-name">RemoveVpnUsersFromGroup</span><br><span class="api-desc">删除组内VPN用户</span></li>
+<li><span class="api-name">ShowVpnUserGroup</span><br><span class="api-desc">查询VPN用户组</span></li>
+</ul>
+</div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+</div>
+</div>
+</div>
+</body>
+</html>

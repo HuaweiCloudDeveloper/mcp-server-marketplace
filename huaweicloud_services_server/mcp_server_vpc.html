@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, .05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    ol, p, ul {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ol, ul {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>VPC MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务VPC交互的能力。支持基于自然语言对VPC资源进行全链路管理。</p>
+        </section>
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_vpc --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_vpc --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_vpc --transport sse --port 8888
+          </code></pre>
+        </section>
+        <section>
+          <h2>快速开始</h2>
+          <p>支持以下客户端与MCP服务交互：</p>
+          <ul>
+            <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+            <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+            <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+            <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+          </ul>
+          <h3>客户端通信配置示例</h3>
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          2. http 模式
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8888/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8888/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+      <div class="sidebar">
+        <h2 style="margin-top:0">API工具列表</h2>
+        <div class="api-category">
+          <h3>IP地址组</h3>
+          <ul>
+            <li><span class="api-name">ShowAddressGroup</span><br><span class="api-desc">查询地址组详情。</span></li>
+            <li><span class="api-name">CreateAddressGroup</span><br><span class="api-desc">创建地址组</span></li>
+            <li><span class="api-name">ListAddressGroup</span><br><span class="api-desc">查询地址组列表,根据过滤条件进行过滤。</span></li>
+            <li><span class="api-name">DeleteIpAddressGroupForce</span><br><span class="api-desc">强制删除地址组,删除的地址组与安全组规则关联时,会删除地址组与关联的安全组规则。</span></li>
+            <li><span class="api-name">DeleteAddressGroup</span><br><span class="api-desc">删除地址组,非强制删除,删除前请确保未被其他资源引用</span></li>
+            <li><span class="api-name">UpdateAddressGroup</span><br><span class="api-desc">更新地址组。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>OpenStack - API版本信息</h3>
+          <ul>
+            <li><span class="api-name">ListApiVersion</span><br><span class="api-desc">返回当前API所有可用的版本(仅针对OpenStack原生接口)。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>OpenStack - 子网</h3>
+          <ul>
+            <li><span class="api-name">NeutronShowSubnet</span><br><span class="api-desc">查询子网详情</span></li>
+            <li><span class="api-name">NeutronCreateSubnet</span><br><span class="api-desc">创建子网。</span></li>
+            <li><span class="api-name">NeutronUpdateSubnet</span><br><span class="api-desc">更新子网</span></li>
+            <li><span class="api-name">NeutronListSubnets</span><br><span class="api-desc">查询提交请求租户的所有子网,单次查询最多返回2000条数据,超过2000后会返回分页标记。分页查询请参考分页查询 。</span></li>
+            <li><span class="api-name">NeutronDeleteSubnet</span><br><span class="api-desc">删除子网</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>OpenStack - 安全组</h3>
+          <ul>
+            <li><span class="api-name">NeutronCreateSecurityGroupRule</span><br><span class="api-desc">创建安全组规则</span></li>
+            <li><span class="api-name">NeutronShowSecurityGroup</span><br><span class="api-desc">查询安全组详情</span></li>
+            <li><span class="api-name">NeutronCreateSecurityGroup</span><br><span class="api-desc">创建安全组</span></li>
+            <li><span class="api-name">NeutronShowSecurityGroupRule</span><br><span class="api-desc">查询安全组规则详情。</span></li>
+            <li><span class="api-name">NeutronListSecurityGroupRules</span><br><span class="api-desc">查询提交请求的租户有权限查看的所有安全组规则。单次查询最多返回2000条数据,超过2000后会返回分页标记。分页查询请参考分页查询</span></li>
+            <li><span class="api-name">NeutronUpdateSecurityGroup</span><br><span class="api-desc">更新安全组</span></li>
+            <li><span class="api-name">NeutronListSecurityGroups</span><br><span class="api-desc">查询提交请求租户的所有安全组,单次查询最多返回2000条数据,超过2000后会返回分页标记。分页查询请参考分页查询 。</span></li>
+            <li><span class="api-name">NeutronDeleteSecurityGroup</span><br><span class="api-desc">删除安全组</span></li>
+            <li><span class="api-name">NeutronDeleteSecurityGroupRule</span><br><span class="api-desc">删除安全组规则</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>OpenStack - 端口</h3>
+          <ul>
+            <li><span class="api-name">NeutronDeletePort</span><br><span class="api-desc">删除端口。</span></li>
+            <li><span class="api-name">NeutronUpdatePort</span><br><span class="api-desc">更新端口</span></li>
+            <li><span class="api-name">NeutronShowPort</span><br><span class="api-desc">查询端口详情。</span></li>
+            <li><span class="api-name">NeutronListPorts</span><br><span class="api-desc">查询提交请求的租户的所有端口,单次查询最多返回2000条数据,超过2000后会返回分页标记。分页查询请参考分页查询。</span></li>
+            <li><span class="api-name">NeutronCreatePort</span><br><span class="api-desc">创建端口。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>OpenStack - 网络</h3>
+          <ul>
+            <li><span class="api-name">NeutronShowNetwork</span><br><span class="api-desc">查询指定的网络详情</span></li>
+            <li><span class="api-name">NeutronDeleteNetwork</span><br><span class="api-desc">删除网络</span></li>
+            <li><span class="api-name">NeutronCreateNetwork</span><br><span class="api-desc">创建网络</span></li>
+            <li><span class="api-name">NeutronListNetworks</span><br><span class="api-desc">查询提交请求的租户的所有网络,单次查询最多返回2000条数据,超过2000后会返回分页标记。分页查询请参考分页查询。</span></li>
+            <li><span class="api-name">NeutronUpdateNetwork</span><br><span class="api-desc">更新网络</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>OpenStack - 网络ACL</h3>
+          <ul>
+            <li><span class="api-name">NeutronListFirewallRules</span><br><span class="api-desc">查询提交请求的租户有权限操作的所有网络ACL规则信息。单次查询最多返回2000条数据,超过2000后会返回分页标记。</span></li>
+            <li><span class="api-name">NeutronShowFirewallPolicy</span><br><span class="api-desc">查询特定网络ACL策略详情。</span></li>
+            <li><span class="api-name">NeutronDeleteFirewallPolicy</span><br><span class="api-desc">删除网络ACL策略。</span></li>
+            <li><span class="api-name">NeutronUpdateFirewallGroup</span><br><span class="api-desc">更新网络ACL组。</span></li>
+            <li><span class="api-name">NeutronDeleteFirewallRule</span><br><span class="api-desc">删除网络ACL规则。</span></li>
+            <li><span class="api-name">NeutronShowFirewallGroup</span><br><span class="api-desc">查询特定网络ACL组详情。</span></li>
+            <li><span class="api-name">NeutronCreateFirewallGroup</span><br><span class="api-desc">创建网络ACL组</span></li>
+            <li><span class="api-name">NeutronRemoveFirewallRule</span><br><span class="api-desc">从某一网络ACL策略中移除一条网络ACL规则。</span></li>
+            <li><span class="api-name">NeutronAddFirewallRule</span><br><span class="api-desc">插入一条网络ACL规则到某一网络ACL策略中。</span></li>
+            <li><span class="api-name">NeutronUpdateFirewallPolicy</span><br><span class="api-desc">更新网络ACL策略。</span></li>
+            <li><span class="api-name">NeutronListFirewallGroups</span><br><span class="api-desc">查询提交请求的租户有权限操作的所有网络ACL组信息。单次查询最多返回2000条数据,超过2000后会返回分页标记。</span></li>
+            <li><span class="api-name">NeutronCreateFirewallRule</span><br><span class="api-desc">创建网络ACL规则。</span></li>
+            <li><span class="api-name">NeutronCreateFirewallPolicy</span><br><span class="api-desc">创建网络ACL策略。</span></li>
+            <li><span class="api-name">NeutronListFirewallPolicies</span><br><span class="api-desc">查询提交请求的租户有权限操作的所有网络ACL策略信息。单次查询最多返回2000条数据,超过2000后会返回分页标记。</span></li>
+            <li><span class="api-name">NeutronUpdateFirewallRule</span><br><span class="api-desc">更新网络ACL规则。</span></li>
+            <li><span class="api-name">NeutronDeleteFirewallGroup</span><br><span class="api-desc">删除网络ACL组</span></li>
+            <li><span class="api-name">NeutronShowFirewallRule</span><br><span class="api-desc">查询特定网络ACL规则。</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>OpenStack - 路由器</h3>
+          <ul>
+            <li><span class="api-name">NeutronRemoveRouterInterface</span><br><span class="api-desc">删除路由器接口。</span></li>
+            <li><span class="api-name">NeutronCreateRouter</span><br><span class="api-desc">创建路由器。</span></li>
+            <li><span class="api-name">NeutronShowRouter</span><br><span class="api-desc">查询路由器详情。</span></li>
+            <li><span class="api-name">NeutronUpdateRouter</span><br><span class="api-desc">更新路由器。</span></li>
+            <li><span class="api-name">NeutronListRouters</span><br><span class="api-desc">查询提交请求的租户有权限操作的所有路由器信息,单次查询最多返回2000条数据,超过2000后会返回分页标记。</span></li>
+            <li><span class="api-name">NeutronAddRouterInterface</span><br><span class="api-desc">添加路由器接口。</span></li>
+            <li><span class="api-name">NeutronDeleteRouter</span><br><span class="api-desc">删除路由器</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>VPC</h3>
+          <ul>
+            <li><span class="api-name">DeleteVpc</span><br><span class="api-desc">删除虚拟私有云。</span></li>
+            <li><span class="api-name">UpdateVpc</span><br><span class="api-desc">更新虚拟私有云。</span></li>
+            <li><span class="api-name">CreateVpc</span><br><span class="api-desc">创建虚拟私有云。</span></li>
+            <li><span class="api-name">ListVpcs</span><br><span class="api-desc">查询vpc列表</span></li>
+            <li><span class="api-name">ShowVpc</span><br><span class="api-desc">查询vpc详情</span></li>
+            <li><span class="api-name">AddVpcExtendCidr</span><br><span class="api-desc">添加VPC的扩展网段</span></li>
+            <li><span class="api-name">RemoveVpcExtendCidr</span><br><span class="api-desc">移除VPC扩展网段</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>VPC资源标签管理</h3>
+          <ul>
+            <li><span class="api-name">BatchDeleteVpcTags</span><br><span class="api-desc">为指定的VPC资源实例批量删除标签。</span></li>
+            <li><span class="api-name">ListVpcsByTags</span><br><span class="api-desc">使用标签过滤实例。</span></li>
+            <li><span class="api-name">ListVpcTags</span><br><span class="api-desc">查询租户在指定区域和实例类型的所有标签集合</span></li>
+            <li><span class="api-name">BatchCreateVpcTags</span><br><span class="api-desc">为指定的VPC资源实例批量添加标签。</span></li>
+            <li><span class="api-name">CreateVpcResourceTag</span><br><span class="api-desc">给指定VPC资源实例增加标签信息</span></li>
+            <li><span class="api-name">DeleteVpcTag</span><br><span class="api-desc">删除指定VPC资源实例的标签信息</span></li>
+            <li><span class="api-name">ShowVpcTags</span><br><span class="api-desc">查询指定VPC实例的标签信息</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>VPC路由</h3>
+          <ul>
+            <li><span class="api-name">DeleteVpcRoute</span><br><span class="api-desc">删除路由</span></li>
+            <li><span class="api-name">ShowVpcRoute</span><br><span class="api-desc">查询路由详情</span></li>
+            <li><span class="api-name">ListVpcRoutes</span><br><span class="api-desc">查询提交请求的租户的所有路由列表,并根据过滤条件进行过滤。</span></li>
+            <li><span class="api-name">CreateVpcRoute</span><br><span class="api-desc">创建路由</span></li>
+          </ul>
+        </div>
+        <div class="api-category">
+          <h3>子网</h3>
+          <ul>
+            <li><span class="api-name">ShowSubnet</span><br><span class="api-desc">查询子网详情。</span></li>
+            <li><span class="api-name">UpdateSubnet</span><br><span class="api-desc">更新子网。</span></li>
+            <li><span class="api-name">CreateSubnet</span><br><span class="api-desc">创建子网。</span></li>
+            <li><span class="api-name">DeleteSubnet</span><br><span class="api-desc">删除子网</span></li>
+            <li><span class="api-name">ListSubnets</span><br><span class="api-desc">查询子网列表</span></li>
+          </ul>
+        </div>
+		<div class="api-category">
+		  <h3>子网资源标签管理</h3>
+		  <ul>
+			<li><span class="api-name">BatchDeleteSubnetTags</span><br><span class="api-desc">为指定的子网资源实例批量删除标签</span></li>
+			<li><span class="api-name">ShowSubnetTags</span><br><span class="api-desc">查询指定子网实例的标签信息。</span></li>
+			<li><span class="api-name">ListSubnetTags</span><br><span class="api-desc">查询租户在指定区域和实例类型的所有标签集合</span></li>
+			<li><span class="api-name">ListSubnetsByTags</span><br><span class="api-desc">使用标签过滤实例</span></li>
+			<li><span class="api-name">DeleteSubnetTag</span><br><span class="api-desc">删除指定子网资源实例的标签信息。</span></li>
+			<li><span class="api-name">BatchCreateSubnetTags</span><br><span class="api-desc">为指定的子网资源实例批量添加标签。</span></li>
+			<li><span class="api-name">CreateSubnetTag</span><br><span class="api-desc">给指定子网资源实例增加标签信息。</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>安全组</h3>
+		  <ul>
+			<li><span class="api-name">ListSecurityGroups</span><br><span class="api-desc">查询某租户下的安全组列表</span></li>
+			<li><span class="api-name">CreateSecurityGroup</span><br><span class="api-desc">创建安全组</span></li>
+			<li><span class="api-name">DeleteSecurityGroup</span><br><span class="api-desc">删除安全组</span></li>
+			<li><span class="api-name">ShowSecurityGroup</span><br><span class="api-desc">查询单个安全组详情</span></li>
+			<li><span class="api-name">UpdateSecurityGroup</span><br><span class="api-desc">更新安全组</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>安全组规则</h3>
+		  <ul>
+			<li><span class="api-name">ListSecurityGroupRules</span><br><span class="api-desc">查询安全组规则列表</span></li>
+			<li><span class="api-name">DeleteSecurityGroupRule</span><br><span class="api-desc">删除安全组规则</span></li>
+			<li><span class="api-name">ShowSecurityGroupRule</span><br><span class="api-desc">查询单个安全组规则</span></li>
+			<li><span class="api-name">BatchCreateSecurityGroupRules</span><br><span class="api-desc">在特定安全组下批量创建安全组规则</span></li>
+			<li><span class="api-name">CreateSecurityGroupRule</span><br><span class="api-desc">创建安全组规则</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>安全组资源标签管理</h3>
+		  <ul>
+			<li><span class="api-name">ListSecurityGroupTags</span><br><span class="api-desc">查询租户在指定区域和实例类型的所有标签集合</span></li>
+			<li><span class="api-name">DeleteSecurityGroupTag</span><br><span class="api-desc">删除指定安全组资源实例的标签信息。</span></li>
+			<li><span class="api-name">BatchCreateSecurityGroupTags</span><br><span class="api-desc">为指定的安全组资源实例批量添加标签。</span></li>
+			<li><span class="api-name">CreateSecurityGroupTag</span><br><span class="api-desc">给指定安全组资源实例增加标签信息。</span></li>
+			<li><span class="api-name">ShowSecurityGroupTags</span><br><span class="api-desc">查询指定安全组实例的标签信息。</span></li>
+			<li><span class="api-name">ListSecurityGroupsByTags</span><br><span class="api-desc">使用标签过滤实例</span></li>
+			<li><span class="api-name">BatchDeleteSecurityGroupTags</span><br><span class="api-desc">为指定的安全组资源实例批量删除标签</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>对等连接</h3>
+		  <ul>
+			<li><span class="api-name">ShowVpcPeering</span><br><span class="api-desc">查询对等连接详情。</span></li>
+			<li><span class="api-name">DeleteVpcPeering</span><br><span class="api-desc">删除对等连接。</span></li>
+			<li><span class="api-name">AcceptVpcPeering</span><br><span class="api-desc">租户A名下的VPC申请和租户B的VPC建立对等连接,需要等待租户B接受该请求。此接口用于租户接受其他租户发起的对等连接请求。</span></li>
+			<li><span class="api-name">ListVpcPeerings</span><br><span class="api-desc">查询提交请求的租户的所有对等连接。根据过滤条件进行过滤。</span></li>
+			<li><span class="api-name">CreateVpcPeering</span><br><span class="api-desc">创建对等连接。</span></li>
+			<li><span class="api-name">UpdateVpcPeering</span><br><span class="api-desc">更新对等连接。</span></li>
+			<li><span class="api-name">RejectVpcPeering</span><br><span class="api-desc">租户A名下的VPC申请和租户B的VPC建立对等连接,需要等待租户B接受该请求。此接口用于租户拒绝其他租户发起的对等连接请求。</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>查询网络IP使用情况</h3>
+		  <ul>
+			<li><span class="api-name">ShowNetworkIpAvailabilities</span><br><span class="api-desc">显示一个指定网络中的IPv4地址使用情况。</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>流日志</h3>
+		  <ul>
+			<li><span class="api-name">UpdateFlowLog</span><br><span class="api-desc">更新流日志</span></li>
+			<li><span class="api-name">CreateFlowLog</span><br><span class="api-desc">创建流日志。</span></li>
+			<li><span class="api-name">ShowFlowLog</span><br><span class="api-desc">查询流日志详情</span></li>
+			<li><span class="api-name">ListFlowLogs</span><br><span class="api-desc">查询提交请求的租户的所有流日志列表,并根据过滤条件进行过滤</span></li>
+			<li><span class="api-name">DeleteFlowLog</span><br><span class="api-desc">删除流日志</span></li>
+		  </ul>
+		</div>
+		<div class="api-category">
+		  <h3>流量镜像会话</h3>
+		  <ul>
+			<li><span class="api-name">AddSourcesToTrafficMirrorSession</span><br><span class="api-desc">流量镜像会话添加镜像源</span></li>
+			<li><span class="api-name">CreateTrafficMirrorSession</span><br><span class="api-desc">创建流量镜像会话</span></li>
+			<li><span class="api-name">ShowTrafficMirrorSession</span><br><span class="api-desc">查询流量镜像会话详情</span></li>
+			<li><span class="api-name">UpdateTrafficMirrorSession</span><br><span class="api-desc">更新流量镜像会话</span></li>
+			<li><span class="api-name">DeleteTrafficMirrorSession</span><br><span class="api-desc">删除流量镜像会话</span></li>
+			<li><span class="api-name">RemoveSourcesFromTrafficMirrorSession</span><br><span class="api-desc">流量镜像会话移除镜像源</span></li>
+			<li><span class="api-name">ListTrafficMirrorSessions</span><br><span class="api-desc">查询流量镜像会话列表</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>流量镜像筛选条件</h3>
+		  <ul>
+			<li><span class="api-name">ListTrafficMirrorFilters</span><br><span class="api-desc">查询流量镜像筛选条件列表</span></li>
+			<li><span class="api-name">UpdateTrafficMirrorFilter</span><br><span class="api-desc">更新流量镜像筛选条件</span></li>
+			<li><span class="api-name">CreateTrafficMirrorFilter</span><br><span class="api-desc">创建流量镜像筛选条件</span></li>
+			<li><span class="api-name">ShowTrafficMirrorFilter</span><br><span class="api-desc">查询流量镜像筛选条件详情</span></li>
+			<li><span class="api-name">DeleteTrafficMirrorFilter</span><br><span class="api-desc">删除流量镜像筛选条件</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>流量镜像筛选规则</h3>
+		  <ul>
+			<li><span class="api-name">UpdateTrafficMirrorFilterRule</span><br><span class="api-desc">更新流量镜像筛选规则</span></li>
+			<li><span class="api-name">ShowTrafficMirrorFilterRule</span><br><span class="api-desc">查询流量镜像筛选规则详情</span></li>
+			<li><span class="api-name">CreateTrafficMirrorFilterRule</span><br><span class="api-desc">创建流量镜像筛选规则</span></li>
+			<li><span class="api-name">DeleteTrafficMirrorFilterRule</span><br><span class="api-desc">删除流量镜像筛选规则</span></li>
+			<li><span class="api-name">ListTrafficMirrorFilterRules</span><br><span class="api-desc">查询流量镜像筛选规则列表</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>私有IP</h3>
+		  <ul>
+			<li><span class="api-name">DeletePrivateip</span><br><span class="api-desc">删除私有IP。</span></li>
+			<li><span class="api-name">CreatePrivateip</span><br><span class="api-desc">申请私有IP。</span></li>
+			<li><span class="api-name">ListPrivateips</span><br><span class="api-desc">查询指定子网下的私有IP列表。</span></li>
+			<li><span class="api-name">ShowPrivateip</span><br><span class="api-desc">指定ID查询私有IP。</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>端口</h3>
+		  <ul>
+			<li><span class="api-name">UpdatePort</span><br><span class="api-desc">更新端口。</span></li>
+			<li><span class="api-name">CreatePort</span><br><span class="api-desc">创建端口。</span></li>
+			<li><span class="api-name">ShowPort</span><br><span class="api-desc">查询单个端口详情。</span></li>
+			<li><span class="api-name">AddSecurityGroups</span><br><span class="api-desc">端口插入安全组</span></li>
+			<li><span class="api-name">DeletePort</span><br><span class="api-desc">删除端口。</span></li>
+			<li><span class="api-name">RemoveSecurityGroups</span><br><span class="api-desc">端口移除安全组</span></li>
+			<li><span class="api-name">ListPorts</span><br><span class="api-desc">查询提交请求的租户的所有端口,单次查询最多返回2000条数据。</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>端口资源标签管理</h3>
+		  <ul>
+			<li><span class="api-name">CountPortsByTags</span><br><span class="api-desc">使用标签过滤查询端口实例数量。</span></li>
+			<li><span class="api-name">BatchCreatePortTags</span><br><span class="api-desc">为指定的端口批量添加标签。</span></li>
+			<li><span class="api-name">ListPortsByTags</span><br><span class="api-desc">使用标签过滤查询端口。</span></li>
+			<li><span class="api-name">DeletePortTag</span><br><span class="api-desc">删除指定端口的标签信息</span></li>
+			<li><span class="api-name">CreatePortTag</span><br><span class="api-desc">给指定端口资源实例增加标签信息</span></li>
+			<li><span class="api-name">ListPortTags</span><br><span class="api-desc">查询租户在指定Project中实例类型的所有资源标签集合。</span></li>
+			<li><span class="api-name">BatchDeletePortTags</span><br><span class="api-desc">为指定的端口资源实例批量删除标签。</span></li>
+			<li><span class="api-name">ShowPortTags</span><br><span class="api-desc">查询指定端口的标签信息。</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>网络ACL</h3>
+		  <ul>
+			<li><span class="api-name">ShowFirewall</span><br><span class="api-desc">查询网络ACL详情</span></li>
+			<li><span class="api-name">DeleteFirewall</span><br><span class="api-desc">删除网络ACL</span></li>
+			<li><span class="api-name">UpdateFirewallRules</span><br><span class="api-desc">网络ACL更新规则</span></li>
+			<li><span class="api-name">AssociateSubnetFirewall</span><br><span class="api-desc">网络ACL绑定子网</span></li>
+			<li><span class="api-name">CreateFirewall</span><br><span class="api-desc">创建网络ACL</span></li>
+			<li><span class="api-name">AddFirewallRules</span><br><span class="api-desc">网络ACL插入规则</span></li>
+			<li><span class="api-name">UpdateFirewall</span><br><span class="api-desc">更新网络ACL</span></li>
+			<li><span class="api-name">DisassociateSubnetFirewall</span><br><span class="api-desc">网络ACL解绑子网</span></li>
+			<li><span class="api-name">RemoveFirewallRules</span><br><span class="api-desc">网络ACL移除规则</span></li>
+			<li><span class="api-name">ListFirewall</span><br><span class="api-desc">查询网络ACL列表</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>网络ACL资源标签管理</h3>
+		  <ul>
+			<li><span class="api-name">BatchCreateFirewallTags</span><br><span class="api-desc">为指定的网络ACL资源实例批量添加标签。</span></li>
+			<li><span class="api-name">DeleteFirewallTag</span><br><span class="api-desc">删除指定IP地址组资源实例的标签信息</span></li>
+			<li><span class="api-name">CreateFirewallTag</span><br><span class="api-desc">给指定IP地址组资源实例增加标签信息</span></li>
+			<li><span class="api-name">ListFirewallTags</span><br><span class="api-desc">查询租户在指定Project中实例类型的所有资源标签集合</span></li>
+			<li><span class="api-name">CountFirewallsByTags</span><br><span class="api-desc">使用标签过滤查询ACL实例数量。</span></li>
+			<li><span class="api-name">ShowFirewallTags</span><br><span class="api-desc">查询指定ACL实例的标签信息</span></li>
+			<li><span class="api-name">ListFirewallsByTags</span><br><span class="api-desc">使用标签过滤查询ACL实例。</span></li>
+			<li><span class="api-name">BatchDeleteFirewallTags</span><br><span class="api-desc">为指定的网络ACL资源实例批量删除标签。</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>路由表</h3>
+		  <ul>
+			<li><span class="api-name">ShowRouteTable</span><br><span class="api-desc">查询路由表详情</span></li>
+			<li><span class="api-name">UpdateRouteTable</span><br><span class="api-desc">更新路由表,包括可以更新路由表的名称,描述,以及新增、更新、删除路由条目</span></li>
+			<li><span class="api-name">ListRouteTables</span><br><span class="api-desc">查询提交请求的帐户的所有路由表列表,并根据过滤条件进行过滤</span></li>
+			<li><span class="api-name">AssociateRouteTable</span><br><span class="api-desc">路由表关联子网。子网关联路由表A后,再关联B,不需要先跟路由表A解关联再关联路由表B</span></li>
+			<li><span class="api-name">CreateRouteTable</span><br><span class="api-desc">创建路由表</span></li>
+			<li><span class="api-name">DisassociateRouteTable</span><br><span class="api-desc">子网解关联路由表</span></li>
+			<li><span class="api-name">DeleteRouteTable</span><br><span class="api-desc">删除路由表</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>辅助弹性网卡</h3>
+		  <ul>
+			<li><span class="api-name">DeleteSubNetworkInterface</span><br><span class="api-desc">删除辅助弹性网卡</span></li>
+			<li><span class="api-name">ListSubNetworkInterfaces</span><br><span class="api-desc">查询辅助弹性网卡列表,单次查询最多返回2000条数据</span></li>
+			<li><span class="api-name">CreateSubNetworkInterface</span><br><span class="api-desc">创建辅助弹性网卡</span></li>
+			<li><span class="api-name">ShowSubNetworkInterfacesQuantity</span><br><span class="api-desc">查询辅助弹性网卡数目</span></li>
+			<li><span class="api-name">BatchCreateSubNetworkInterface</span><br><span class="api-desc">批量创建辅助弹性网卡</span></li>
+			<li><span class="api-name">ShowSubNetworkInterface</span><br><span class="api-desc">查询辅助弹性网卡详情</span></li>
+			<li><span class="api-name">UpdateSubNetworkInterface</span><br><span class="api-desc">更新辅助弹性网卡</span></li>
+		  </ul>
+		</div>
+
+		<div class="api-category">
+		  <h3>配额</h3>
+		  <ul>
+			<li><span class="api-name">ShowQuota</span><br><span class="api-desc">查询单租户在VPC服务下的网络资源配额,包括vpc配额、子网配额、安全组配额、安全组规则配额、弹性公网IP配额,vpn配额等。</span></li>
+		  </ul>
+		</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

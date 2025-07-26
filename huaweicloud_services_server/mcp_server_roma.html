@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云ECS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>ROMA MCP Server 是一个基于 Model Context Protocol（模型上下文协议） 的服务器，支持 MCP 客户端（如 Claude Desktop、Cline、Cursor 等）与华为云服务 ROMA 进行交互。基于自然语言，可通过该服务器实现 ROMA 资源的全链路管理（包括创建、配置、调用和监控等操作）。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ecs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-ecs --transport stdio --port 8888
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-ecs --transport http  --port 8888
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-ecs --transport sse --port 8888
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-ecs-example": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "--directory",
+                "/path/to/yours/mcp-server/src",
+                "run",
+                "server.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "http-ecs-example": {
+              "type": "http",
+              "url": "http://127.0.0.1:8000/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-ecs-example": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+</section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+<!-- 右侧工具栏 -->
+<div class="sidebar">
+  <h2 style="margin-top:0;">API工具列表</h2>
+
+  <!-- ACL策略管理 -->
+  <div class="api-category">
+    <h3>ACL策略管理</h3>
+    <ul>
+      <li><span class="api-name">UpdateAclStrategyV2</span><br><span class="api-desc">修改指定的ACL策略属性</span></li>
+      <li><span class="api-name">DeleteAclV2</span><br><span class="api-desc">删除指定的ACL策略</span></li>
+      <li><span class="api-name">CreateAclStrategyV2</span><br><span class="api-desc">创建新的ACL策略</span></li>
+      <li><span class="api-name">BatchDeleteAclV2</span><br><span class="api-desc">批量删除ACL策略</span></li>
+      <li><span class="api-name">ShowDetailsOfAclPolicyV2</span><br><span class="api-desc">查询ACL策略详情</span></li>
+      <li><span class="api-name">ListAclStrategiesV2</span><br><span class="api-desc">查询所有ACL策略列表</span></li>
+    </ul>
+  </div>
+
+  <!-- API分组管理 -->
+  <div class="api-category">
+    <h3>API分组管理</h3>
+    <ul>
+      <li><span class="api-name">ShowDetailsOfApiGroupV2</span><br><span class="api-desc">查询分组详细信息</span></li>
+      <li><span class="api-name">DeleteApiGroupV2</span><br><span class="api-desc">删除指定的API分组</span></li>
+      <li><span class="api-name">CheckApiGroupsV2</span><br><span class="api-desc">校验分组名称是否存在</span></li>
+      <li><span class="api-name">UpdateApiGroupV2</span><br><span class="api-desc">修改API分组属性</span></li>
+      <li><span class="api-name">CreateApiGroupV2</span><br><span class="api-desc">创建新的API分组</span></li>
+      <li><span class="api-name">ListApiGroupsV2</span><br><span class="api-desc">查询API分组列表</span></li>
+    </ul>
+  </div>
+
+  <!-- API管理 -->
+  <div class="api-category">
+    <h3>API管理</h3>
+    <ul>
+      <li><span class="api-name">DeleteApiV2</span><br><span class="api-desc">删除指定的API</span></li>
+      <li><span class="api-name">ListApisV2</span><br><span class="api-desc">查看API列表及详情</span></li>
+      <li><span class="api-name">CreateOrDeletePublishRecordForApiV2</span><br><span class="api-desc">发布或下线API</span></li>
+      <li><span class="api-name">ListApiVersionDetailV2</span><br><span class="api-desc">查询API版本详情</span></li>
+      <li><span class="api-name">ChangeApiVersionV2</span><br><span class="api-desc">管理API版本定义</span></li>
+      <li><span class="api-name">ListApiVersionsV2</span><br><span class="api-desc">查询API历史版本</span></li>
+      <li><span class="api-name">DebugApiV2</span><br><span class="api-desc">调试API定义</span></li>
+      <li><span class="api-name">BatchPublishOrOfflineApiV2</span><br><span class="api-desc">批量发布或下线API</span></li>
+      <li><span class="api-name">ShowDetailsOfApiV2</span><br><span class="api-desc">查看API详细信息</span></li>
+      <li><span class="api-name">ListApiRuntimeDefinitionV2</span><br><span class="api-desc">查看API运行时定义</span></li>
+      <li><span class="api-name">UpdateApiV2</span><br><span class="api-desc">修改API信息</span></li>
+      <li><span class="api-name">CheckApisV2</span><br><span class="api-desc">校验API定义</span></li>
+      <li><span class="api-name">CreateApiV2</span><br><span class="api-desc">添加新的API</span></li>
+      <li><span class="api-name">DeleteApiByVersionIdV2</span><br><span class="api-desc">下线API版本</span></li>
+    </ul>
+  </div>
+
+  <!-- API绑定ACL策略 -->
+  <div class="api-category">
+    <h3>API绑定ACL策略</h3>
+    <ul>
+      <li><span class="api-name">CreateApiAclBindingV2</span><br><span class="api-desc">绑定API与ACL策略</span></li>
+      <li><span class="api-name">DeleteApiAclBindingV2</span><br><span class="api-desc">解除API与ACL绑定</span></li>
+      <li><span class="api-name">BatchDeleteApiAclBindingV2</span><br><span class="api-desc">批量解除ACL绑定</span></li>
+      <li><span class="api-name">ListApisUnbindedToAclPolicyV2</span><br><span class="api-desc">查询未绑定API列表</span></li>
+      <li><span class="api-name">ListApisBindedToAclPolicyV2</span><br><span class="api-desc">查询已绑定API列表</span></li>
+      <li><span class="api-name">ListAclPolicyBindedToApiV2</span><br><span class="api-desc">查询API绑定的ACL策略</span></li>
+    </ul>
+  </div>
+
+  <!-- API绑定流控策略 -->
+  <div class="api-category">
+    <h3>API绑定流控策略</h3>
+    <ul>
+      <li><span class="api-name">DisassociateRequestThrottlingPolicyV2</span><br><span class="api-desc">解除流控策略绑定</span></li>
+      <li><span class="api-name">ListRequestThrottlingPoliciesBindedToApiV2</span><br><span class="api-desc">查询API绑定的流控策略</span></li>
+      <li><span class="api-name">AssociateRequestThrottlingPolicyV2</span><br><span class="api-desc">应用流控策略到API</span></li>
+      <li><span class="api-name">ListApisUnbindedToRequestThrottlingPolicyV2</span><br><span class="api-desc">查询未绑定流控策略的API</span></li>
+      <li><span class="api-name">BatchDisassociateThrottlingPolicyV2</span><br><span class="api-desc">批量解除流控策略绑定</span></li>
+      <li><span class="api-name">ListApisBindedToRequestThrottlingPolicyV2</span><br><span class="api-desc">查询流控策略绑定的API</span></li>
+    </ul>
+  </div>
+
+  <!-- 应用管理 -->
+  <div class="api-category">
+    <h3>应用管理</h3>
+    <ul>
+      <li><span class="api-name">CheckRomaAppDetails</span><br><span class="api-desc">查询应用详情</span></li>
+      <li><span class="api-name">AddUserToApp</span><br><span class="api-desc">管理应用用户成员</span></li>
+      <li><span class="api-name">ListRomaApp</span><br><span class="api-desc">查询应用列表</span></li>
+      <li><span class="api-name">ResetRomaAppSecret</span><br><span class="api-desc">重置应用密钥</span></li>
+      <li><span class="api-name">DeleteRomaApp</span><br><span class="api-desc">删除单个应用</span></li>
+      <li><span class="api-name">CheckCanAuthUsersOfApp</span><br><span class="api-desc">查询候选用户成员</span></li>
+      <li><span class="api-name">CreateRomaApp</span><br><span class="api-desc">创建应用</span></li>
+      <li><span class="api-name">ValidateRomaApp</span><br><span class="api-desc">校验应用是否存在</span></li>
+      <li><span class="api-name">UpdateRomaApp</span><br><span class="api-desc">更新应用</span></li>
+      <li><span class="api-name">CheckRomaAppSecret</span><br><span class="api-desc">查询应用密钥</span></li>
+      <li><span class="api-name">CheckAuthUsersOfApp</span><br><span class="api-desc">查询用户成员列表</span></li>
+    </ul>
+  </div>
+
+  <!-- APP授权管理 -->
+  <div class="api-category">
+    <h3>APP授权管理</h3>
+    <ul>
+      <li><span class="api-name">ListDuplicateApisForAppV2</span><br><span class="api-desc">查询路径冲突API列表</span></li>
+      <li><span class="api-name">CancelingAuthorizationV2</span><br><span class="api-desc">解除API对APP的授权</span></li>
+      <li><span class="api-name">ListApisUnbindedToAppV2</span><br><span class="api-desc">查询未绑定API列表</span></li>
+      <li><span class="api-name">ListAppsBindedToApiV2</span><br><span class="api-desc">查询API绑定的APP列表</span></li>
+      <li><span class="api-name">CreateAuthorizingAppsV2</span><br><span class="api-desc">APP创建成功后,还不能访问API,如果想要访问某个环境上的API,需要将该API在该环境上授权给APP。授权成功后,APP即可访问该环境上的这个API。</span></li>
+      <li><span class="api-name">ListApisBindedToAppV2</span><br><span class="api-desc">查询APP已经绑定的API列表</span></li>
+    </ul>
+  </div>
+
+   <div class="api-category">
+    <h3>资产操作</h3>
+    <ul>
+    <li><span class="api-name">CheckAssetJobStatus</span><br><span class="api-desc">查询作业进度</span></li>
+    <li><span class="api-name">DeleteAsset</span><br><span class="api-desc">批量删除资产</span></li>
+    <li><span class="api-name">ImportAsset</span><br><span class="api-desc">创建导入资产作业任务，资产版本和具体哪些资产从资产内容里读取</span></li>
+    <li><span class="api-name">ExportAsset</span><br><span class="api-desc">批量导出资产</span></li>
+    <li><span class="api-name">DownloadAssetArchive</span><br><span class="api-desc">导出作业执行成功后，通过该接口获取导出作业产生的资产包，仅能下载一次</span></li>
+  </ul>
+</div>
+<div class="api-category">
+  <h3>字典管理</h3>
+  <ul>
+    <li><span class="api-name">UpdateDictionary</span><br><span class="api-desc">更新字典</span></li>
+    <li><span class="api-name">CreateDictionary</span><br><span class="api-desc">创建字典</span></li>
+    <li><span class="api-name">DeleteDictionary</span><br><span class="api-desc">删除单个字典，会同时删除该字典的所有子字典</span></li>
+    <li><span class="api-name">CheckDictionary</span><br><span class="api-desc">查询字典详情</span></li>
+    <li><span class="api-name">ValidateDictionary</span><br><span class="api-desc">校验指定条件的字典是否存在，支持字典名称和字典编码</span></li>
+    <li><span class="api-name">ListDictionary</span><br><span class="api-desc">查询字典列表</span></li>
+  </ul>
+</div>
+<div class="api-category">
+  <h3>实例管理</h3>
+  <ul>
+    <li><span class="api-name">CheckRomaInstanceListV2</span><br><span class="api-desc">获取符合条件的服务实例列表</span></li>
+  </ul>
+</div>
+<div class="api-category">
+  <h3>任务管理</h3>
+  <ul>
+    <li><span class="api-name">DeleteTask</span><br><span class="api-desc">删除单个任务</span></li>
+    <li><span class="api-name">ListTasks</span><br><span class="api-desc">获取任务列表</span></li>
+    <li><span class="api-name">UpdateTask</span><br><span class="api-desc">任务修改接口，用于修改任务配置</span></li>
+  </ul>
+</div>
+<div class="api-category">
+  <h3>MQS实例管理</h3>
+  <ul>
+    <li><span class="api-name">ShowMqsInstance</span><br><span class="api-desc">查询指定MQS实例详情</span></li>
+    <li><span class="api-name">ListMqsInstance</span><br><span class="api-desc">查询MQS实例列表</span></li>
+  </ul>
+</div>
+<div class="api-category">
+  <h3>OpenAPI接口</h3>
+  <ul>
+    <li><span class="api-name">ImportLiveDataApiDefinitionsV2</span><br><span class="api-desc">导入自定义后端API。导入文件内容需要符合swagger标准规范，自定义扩展字段请参考用户指南的“附录:后端API的Swagger扩展定义”章节</span></li>
+    <li><span class="api-name">ImportApiDefinitionsV2</span><br><span class="api-desc">导入API。导入文件内容需要符合swagger标准规范，自定义扩展字段请参考用户指南的“附录:前端API的Swagger扩展定义”章节</span></li>
+    <li><span class="api-name">ExportLiveDataApiDefinitionsV2</span><br><span class="api-desc">导出自定义后端API，导出文件内容符合swagger标准规范</span></li>
+    <li><span class="api-name">ExportApiDefinitionsV2</span><br><span class="api-desc">导出分组下API的定义信息，导出文件内容符合swagger标准规范</span></li>
+  </ul>
+</div>
+<div class="api-category">
+  <h3>公共管理</h3>
+  <ul>
+    <li><span class="api-name">CheckVersion</span><br><span class="api-desc">获取指定版本ID的API版本信息</span></li>
+  </ul>
+</div>
+<div class="api-category">
+  <h3>SSL证书管理</h3>
+  <ul>
+    <li><span class="api-name">BatchAssociateDomainsV2</span><br><span class="api-desc">SSL证书绑定域名</span></li>
+    <li><span class="api-name">UpdateCertificateV2</span><br><span class="api-desc">修改SSL证书</span></li>
+    <li><span class="api-name">CreateCertificateV2</span><br><span class="api-desc">创建SSL证书</span></li>
+    <li><span class="api-name">BatchAssociateCertsV2</span><br><span class="api-desc">域名绑定SSL证书。目前暂时仅支持单个绑定，请求体当中的certificate_ids里面有且只能有一个证书ID</span></li>
+    <li><span class="api-name">ListAttachedDomainsV2</span><br><span class="api-desc">获取SSL证书已绑定域名列表</span></li>
+    <li><span class="api-name">ListCertificatesV2</span><br><span class="api-desc">获取SSL证书列表</span></li>
+    <li><span class="api-name">BatchDisassociateDomainsV2</span><br><span class="api-desc">SSL证书解绑域名</span></li>
+    <li><span class="api-name">ShowDetailsOfCertificateV2</span><br><span class="api-desc">查看证书详情</span></li>
+    <li><span class="api-name">DeleteCertificateV2</span><br><span class="api-desc">删除ssl证书接口，删除时只有没有关联域名的证书才能被删除</span></li>
+    <li><span class="api-name">BatchDisassociateCertsV2</span><br><span class="api-desc">域名解绑SSL证书。目前暂时仅支持单个解绑，请求体当中的certificate_ids里面有且只能有一个证书ID</span></li>
+  </ul>
+</div>
+
+    <div class="api-category">
+  <h3>VPC通道管理</h3>
+  <ul>
+    <li><span class="api-name">DeleteBackendInstanceV2</span><br><span class="api-desc">删除指定VPC通道中的后端实例</span></li>
+    <li><span class="api-name">DeleteVpcChannelV2</span><br><span class="api-desc">删除指定的VPC通道</span></li>
+    <li><span class="api-name">CreateMemberGroup</span><br><span class="api-desc">在服务集成中创建VPC通道后端服务器组,VPC通道后端实例可以选择是否关联后端实例服务器组,以便管理后端服务器节点</span></li>
+    <li><span class="api-name">UpdateHealthCheck</span><br><span class="api-desc">修改VPC通道健康检查</span></li>
+    <li><span class="api-name">AddingBackendInstancesV2</span><br><span class="api-desc">为指定的VPC通道添加后端实例</span></li>
+    <li><span class="api-name">ShowDetailsOfVpcChannelV2</span><br><span class="api-desc">查看指定的VPC通道详情</span></li>
+    <li><span class="api-name">ListBackendInstancesV2</span><br><span class="api-desc">查看指定VPC通道的后端实例列表</span></li>
+    <li><span class="api-name">UpdateVpcChannelV2</span><br><span class="api-desc">更新指定VPC通道的参数</span></li>
+    <li><span class="api-name">ListMemberGroups</span><br><span class="api-desc">查询VPC通道后端云服务组列表</span></li>
+    <li><span class="api-name">BatchDisableMembers</span><br><span class="api-desc">批量修改后端服务器状态不可用</span></li>
+    <li><span class="api-name">CreateVpcChannelV2</span><br><span class="api-desc">在服务集成中创建连接私有VPC资源的通道,并在创建API时将后端节点配置为使用这些VPC通道,以便服务集成直接访问私有VPC资源</span></li>
+    <li><span class="api-name">BatchEnableMembers</span><br><span class="api-desc">批量修改后端服务器状态可用</span></li>
+    <li><span class="api-name">UpdateMemberGroup</span><br><span class="api-desc">更新指定VPC通道后端服务器组</span></li>
+    <li><span class="api-name">ShowDetailsOfMemberGroup</span><br><span class="api-desc">查看指定的VPC通道后端服务器组详情</span></li>
+    <li><span class="api-name">UpdateBackendInstancesV2</span><br><span class="api-desc">更新指定的VPC通道的后端实例。更新时,使用传入的请求参数对对应云服务组的后端实例进行全量覆盖修改。若未指定修改的云服务器组,则进行全量覆盖</span></li>
+    <li><span class="api-name">ListVpcChannelsV2</span><br><span class="api-desc">查看VPC通道列表</span></li>
+    <li><span class="api-name">DeleteMemberGroup</span><br><span class="api-desc">删除指定的VPC通道后端服务器组</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>VPC通道管理-项目级</h3>
+  <ul>
+    <li><span class="api-name">CreateProjectVpcChannel</span><br><span class="api-desc">创建相同的VPC通道关联到多个实例。同一个项目下VPC通道名称不可重复。注意:实例特性vpc_name_modifiable配置为off时才可使用</span></li>
+    <li><span class="api-name">ListProjectVpcChannelsV2</span><br><span class="api-desc">查询项目下所有实例的VPC通道列表</span></li>
+    <li><span class="api-name">CreateProjectVpcChannelSyncs</span><br><span class="api-desc">同步VPC通道到多个实例。注意:实例特性vpc_name_modifiable配置为off时才可使用</span></li>
+    <li><span class="api-name">UpdateProjectVpcChannel</span><br><span class="api-desc">项目下根据VPC通道名称批量修改多个多个实例下的VPC通道。若实例下不存在该VPC通道则创建。注意:实例特性vpc_name_modifiable配置为off时才可使用</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>主题操作</h3>
+  <ul>
+    <li><span class="api-name">ListTopics</span><br><span class="api-desc">分页查询Topic列表,Topic列表按照Topic创建时间进行降序排列。分页查询可以指定offset以及limit。如果不存在Topic,则返回空列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>主题管理</h3>
+  <ul>
+    <li><span class="api-name">ListMqsInstanceTopics</span><br><span class="api-desc">查询Topic列表</span></li>
+    <li><span class="api-name">CreateMqsInstanceTopic</span><br><span class="api-desc">创建Topic</span></li>
+    <li><span class="api-name">BatchDeleteMqsInstanceTopic</span><br><span class="api-desc">批量删除Topic</span></li>
+    <li><span class="api-name">ImportMqsInstanceTopic</span><br><span class="api-desc">导入Topic</span></li>
+    <li><span class="api-name">UpdateMqsInstanceTopic</span><br><span class="api-desc">修改Topic</span></li>
+    <li><span class="api-name">ExportMqsInstanceTopic</span><br><span class="api-desc">导出Topic</span></li>
+    <li><span class="api-name">DeleteMqsInstanceTopic</span><br><span class="api-desc">删除Topic</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>产品模板</h3>
+  <ul>
+    <li><span class="api-name">ListProductTemplates</span><br><span class="api-desc">查询产品模板</span></li>
+    <li><span class="api-name">UpdateProductTemplate</span><br><span class="api-desc">修改产品模板</span></li>
+    <li><span class="api-name">CreateProductTemplate</span><br><span class="api-desc">创建产品模板</span></li>
+    <li><span class="api-name">DeleteProductTemplate</span><br><span class="api-desc">删除产品模板</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>产品管理</h3>
+  <ul>
+    <li><span class="api-name">ShowProductAuthentication</span><br><span class="api-desc">查询产品鉴权信息</span></li>
+    <li><span class="api-name">CreateProductTopic</span><br><span class="api-desc">添加产品主题</span></li>
+    <li><span class="api-name">UpdateProduct</span><br><span class="api-desc">修改产品信息</span></li>
+    <li><span class="api-name">ListProductTopics</span><br><span class="api-desc">查询产品主题</span></li>
+    <li><span class="api-name">ShowProduct</span><br><span class="api-desc">查询产品详情</span></li>
+    <li><span class="api-name">ListProducts</span><br><span class="api-desc">查询产品</span></li>
+    <li><span class="api-name">ListDevicesInProduct</span><br><span class="api-desc">查询产品内设备数量</span></li>
+    <li><span class="api-name">DeleteProduct</span><br><span class="api-desc">删除产品</span></li>
+    <li><span class="api-name">ResetProductAuthentication</span><br><span class="api-desc">重置产品鉴权信息</span></li>
+    <li><span class="api-name">CreateProduct</span><br><span class="api-desc">创建产品</span></li>
+    <li><span class="api-name">UpdateProductTopic</span><br><span class="api-desc">更新产品主题</span></li>
+    <li><span class="api-name">UploadProduct</span><br><span class="api-desc">导入产品</span></li>
+    <li><span class="api-name">DownloadProducts</span><br><span class="api-desc">导出产品</span></li>
+    <li><span class="api-name">DeleteProductTopic</span><br><span class="api-desc">删除产品主题</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>任务监控管理</h3>
+  <ul>
+    <li><span class="api-name">ListMonitorLog</span><br><span class="api-desc">查询单个任务的所有日志信息</span></li>
+    <li><span class="api-name">ListMonitorInfos</span><br><span class="api-desc">查询所有任务的监控信息</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>任务管理</h3>
+  <ul>
+    <li><span class="api-name">ShowDispatches</span><br><span class="api-desc">查询调度计划</span></li>
+    <li><span class="api-name">InstallMultiTasks</span><br><span class="api-desc">初始化组合任务,分配任务ID,初始化映射等</span></li>
+    <li><span class="api-name">CreateCommonTask</span><br><span class="api-desc">创建普通任务(区别于组合任务)</span></li>
+    <li><span class="api-name">CreateDispatches</span><br><span class="api-desc">创建调度计划</span></li>
+    <li><span class="api-name">UpdateDispatches</span><br><span class="api-desc">通过任务ID和调度ID修改调度计划</span></li>
+    <li><span class="api-name">ResetMultiTaskOffset</span><br><span class="api-desc">重置组合任务进度</span></li>
+    <li><span class="api-name">CreateMultiTaskMappings</span><br><span class="api-desc">创建组合任务映射</span></li>
+    <li><span class="api-name">RunTask</span><br><span class="api-desc">手工触发一次任务调度</span></li>
+    <li><span class="api-name">BatchStartOrStopTasks</span><br><span class="api-desc">批量启动\停止任务</span></li>
+    <li><span class="api-name">UpdateMultiTasks</span><br><span class="api-desc">修改组合任务</span></li>
+    <li><span class="api-name">CountTasks</span><br><span class="api-desc">统计不同类型不同状态任务数量</span></li>
+    <li><span class="api-name">DeleteMultiTaskMapping</span><br><span class="api-desc">通过映射ID删除指定任务映射</span></li>
+    <li><span class="api-name">CreateMultiTasks</span><br><span class="api-desc">创建组合任务</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>域名管理</h3>
+  <ul>
+    <li><span class="api-name">UpdateDomainV2</span><br><span class="api-desc">修改绑定的域名所对应的配置信息</span></li>
+    <li><span class="api-name">DisassociateCertificateV2</span><br><span class="api-desc">如果域名证书不再需要或者已过期,则可以删除证书内容</span></li>
+    <li><span class="api-name">AssociateCertificateV2</span><br><span class="api-desc">如果创建API时,"定义API请求"使用HTTPS请求协议,那么在独立域名中需要添加SSL证书</span></li>
+    <li><span class="api-name">ShowDetailsOfDomainNameCertificateV2</span><br><span class="api-desc">查看域名下绑定的证书详情</span></li>
+    <li><span class="api-name">DisassociateDomainV2</span><br><span class="api-desc">如果API分组不再需要绑定某个自定义域名,则可以为此API分组解绑此域名</span></li>
+    <li><span class="api-name">AssociateDomainV2</span><br><span class="api-desc">用户自定义的域名,需要CNAME到API分组的子域名上才能生效</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>实例特性管理</h3>
+  <ul>
+    <li><span class="api-name">CreateFeatureV2</span><br><span class="api-desc">为实例配置需要的特性</span></li>
+    <li><span class="api-name">ListFeaturesV2</span><br><span class="api-desc">查看实例特性列表。注意:实例不支持以下特性的需要联系技术支持升级实例版本</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>实例管理</h3>
+  <ul>
+    <li><span class="api-name">ShowRestrictionOfInstanceV2</span><br><span class="api-desc">查看实例约束信息</span></li>
+    <li><span class="api-name">ShowDetailsOfInstanceV2</span><br><span class="api-desc">查看实例详情</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>客户端配置</h3>
+  <ul>
+    <li><span class="api-name">ShowAppBoundAppQuota</span><br><span class="api-desc">查看指定客户端应用关联的应用配额</span></li>
+    <li><span class="api-name">ShowDetailsOfAppAcl</span><br><span class="api-desc">查看APP的访问控制详情</span></li>
+    <li><span class="api-name">DeleteAppCodeV2</span><br><span class="api-desc">删除App Code,App Code删除后,将无法再通过简易认证访问对应的API</span></li>
+    <li><span class="api-name">CreateAppCodeAutoV2</span><br><span class="api-desc">创建App Code时,可以不指定具体值,由后台自动生成随机字符串填充</span></li>
+    <li><span class="api-name">ShowDetailsOfAppV2</span><br><span class="api-desc">查看指定APP的详细信息</span></li>
+    <li><span class="api-name">CreateAppCodeV2</span><br><span class="api-desc">App Code为APP应用下的子模块,创建App Code之后,可以实现简易的APP认证</span></li>
+    <li><span class="api-name">UpdateAppAcl</span><br><span class="api-desc">设置客户端配置的访问控制</span></li>
+    <li><span class="api-name">DeleteAppAcl</span><br><span class="api-desc">删除客户端配置的访问控制信息</span></li>
+    <li><span class="api-name">ListAppsV2</span><br><span class="api-desc">查询APP列表</span></li>
+    <li><span class="api-name">ListAppCodesV2</span><br><span class="api-desc">查询App Code列表</span></li>
+    <li><span class="api-name">ShowDetailsOfAppCodeV2</span><br><span class="api-desc">App Code为APP应用下的子模块,创建App Code之后,可以实现简易的APP认证</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>客户端配额</h3>
+  <ul>
+    <li><span class="api-name">UpdateAppQuota</span><br><span class="api-desc">修改客户端配额</span></li>
+    <li><span class="api-name">ListAppQuotas</span><br><span class="api-desc">获取客户端配额列表。支持根据名称模糊查询</span></li>
+    <li><span class="api-name">CreateAppQuota</span><br><span class="api-desc">创建客户端配额</span></li>
+    <li><span class="api-name">ListAppQuotaBindableApps</span><br><span class="api-desc">查询客户端配额可绑定的客户端应用列表。支持按客户端应用名称模糊搜索</span></li>
+    <li><span class="api-name">DisassociateAppQuotaWithApp</span><br><span class="api-desc">解除客户端配额和客户端应用的绑定</span></li>
+    <li><span class="api-name">ListAppQuotaBoundApps</span><br><span class="api-desc">查询客户端配额已绑定的客户端应用列表。支持按客户端应用名称模糊匹配</span></li>
+    <li><span class="api-name">AssociateAppsForAppQuota</span><br><span class="api-desc">客户端配额绑定客户端应用列表</span></li>
+    <li><span class="api-name">ShowAppQuota</span><br><span class="api-desc">获取客户端配额详情</span></li>
+    <li><span class="api-name">DeleteAppQuota</span><br><span class="api-desc">删除客户端配额。删除客户端配额时,同时删除客户端配额和客户端应用的关联关系</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>应用权限管理</h3>
+  <ul>
+    <li><span class="api-name">UpdateTopicAccessPolicy</span><br><span class="api-desc">更新Topic权限</span></li>
+    <li><span class="api-name">ShowMqsInstanceTopicAccessPolicy</span><br><span class="api-desc">查询Topic权限</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>应用配置管理</h3>
+  <ul>
+    <li><span class="api-name">UpdateAppConfigV2</span><br><span class="api-desc">修改应用配置</span></li>
+    <li><span class="api-name">DeleteAppConfigV2</span><br><span class="api-desc">删除应用配置</span></li>
+    <li><span class="api-name">CreateAppConfigV2</span><br><span class="api-desc">创建应用配置</span></li>
+    <li><span class="api-name">ShowDetailsOfAppConfigV2</span><br><span class="api-desc">查看应用配置详情</span></li>
+    <li><span class="api-name">ListAppConfigsV2</span><br><span class="api-desc">查询应用配置列表</span></li>
+  </ul>
+</div>
+
+  <div class="api-category">
+  <h3>插件管理</h3>
+  <ul>
+    <li><span class="api-name">DeletePlugin</span><br><span class="api-desc">删除插件</span></li>
+    <li><span class="api-name">UpdatePlugin</span><br><span class="api-desc">修改插件信息</span></li>
+    <li><span class="api-name">CreatePlugin</span><br><span class="api-desc">创建插件信息</span></li>
+    <li><span class="api-name">ListPluginAttachedApis</span><br><span class="api-desc">查询指定插件下绑定的API信息</span></li>
+    <li><span class="api-name">ListPlugins</span><br><span class="api-desc">查询一组符合条件的API网关插件详情</span></li>
+    <li><span class="api-name">AttachApiToPlugin</span><br><span class="api-desc">绑定插件到API上</span></li>
+    <li><span class="api-name">ListApiAttachablePlugins</span><br><span class="api-desc">查询可绑定当前API的插件信息</span></li>
+    <li><span class="api-name">DetachApiFromPlugin</span><br><span class="api-desc">解除绑定在插件上的API</span></li>
+    <li><span class="api-name">ListPluginAttachableApis</span><br><span class="api-desc">查询可绑定当前插件的API信息</span></li>
+    <li><span class="api-name">ShowPlugin</span><br><span class="api-desc">查询插件详情</span></li>
+    <li><span class="api-name">ListApiAttachedPlugins</span><br><span class="api-desc">查询指定API下绑定的插件信息</span></li>
+    <li><span class="api-name">DetachPluginFromApi</span><br><span class="api-desc">解除绑定在API上的插件</span></li>
+    <li><span class="api-name">AttachPluginToApi</span><br><span class="api-desc">绑定插件到API上</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>数据源管理</h3>
+  <ul>
+    <li><span class="api-name">ListDatasourceTables</span><br><span class="api-desc">获取数据源中所有的表</span></li>
+    <li><span class="api-name">CreateDatasourceInfo</span><br><span class="api-desc">创建数据源</span></li>
+    <li><span class="api-name">ShowDataourceDetail</span><br><span class="api-desc">根据数据源id查询数据源</span></li>
+    <li><span class="api-name">ListDatasourceColumns</span><br><span class="api-desc">获取数据源中某个表中所有字段</span></li>
+    <li><span class="api-name">UpdateDatasourceInfo</span><br><span class="api-desc">修改数据源</span></li>
+    <li><span class="api-name">DeleteDatasourceInfoById</span><br><span class="api-desc">通过数据源Id删除指定数据源信息</span></li>
+    <li><span class="api-name">ListDatasources</span><br><span class="api-desc">查询数据源</span></li>
+    <li><span class="api-name">StartTestDatasource</span><br><span class="api-desc">测试数据源连通性</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>服务作业管理</h3>
+  <ul>
+    <li><span class="api-name">ShowTask</span><br><span class="api-desc">该接口用于查询服务作业</span></li>
+    <li><span class="api-name">StopTask</span><br><span class="api-desc">该接口用于停止服务作业</span></li>
+  </ul>
+</div>
+
+<!-- 剩余分类按相同格式继续 -->
+<div class="api-category">
+  <h3>服务管理</h3>
+  <ul>
+    <li><span class="api-name">ListProperties</span><br><span class="api-desc">查询属性</span></li>
+    <li><span class="api-name">UpdateResponseProperty</span><br><span class="api-desc">修改响应属性</span></li>
+    <li><span class="api-name">CreateService</span><br><span class="api-desc">创建服务</span></li>
+    <li><span class="api-name">ShowCommand</span><br><span class="api-desc">查询命令详情</span></li>
+    <li><span class="api-name">ShowResponseProperty</span><br><span class="api-desc">查询响应属性详情</span></li>
+    <li><span class="api-name">ListResponseProperties</span><br><span class="api-desc">查询响应属性</span></li>
+    <li><span class="api-name">CreateRequestProperty</span><br><span class="api-desc">创建请求属性</span></li>
+    <li><span class="api-name">UpdateService</span><br><span class="api-desc">修改服务</span></li>
+    <li><span class="api-name">CreateProperty</span><br><span class="api-desc">创建属性</span></li>
+    <li><span class="api-name">UpdateCommand</span><br><span class="api-desc">修改命令</span></li>
+    <li><span class="api-name">DeleteService</span><br><span class="api-desc">删除服务</span></li>
+    <li><span class="api-name">CreateResponseProperty</span><br><span class="api-desc">创建响应属性</span></li>
+    <li><span class="api-name">DeleteCommand</span><br><span class="api-desc">删除命令</span></li>
+    <li><span class="api-name">UpdateRequestProperty</span><br><span class="api-desc">修改请求属性</span></li>
+    <li><span class="api-name">CreateCommand</span><br><span class="api-desc">创建命令</span></li>
+    <li><span class="api-name">DeleteRequestProperty</span><br><span class="api-desc">删除请求属性</span></li>
+    <li><span class="api-name">ListServices</span><br><span class="api-desc">查询服务</span></li>
+    <li><span class="api-name">ShowService</span><br><span class="api-desc">查询服务详情</span></li>
+    <li><span class="api-name">ListCommands</span><br><span class="api-desc">查询命令</span></li>
+    <li><span class="api-name">ListRequestProperties</span><br><span class="api-desc">查询请求属性</span></li>
+    <li><span class="api-name">DeleteResponseProperty</span><br><span class="api-desc">删除响应属性</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>查询版本操作</h3>
+  <ul>
+    <li><span class="api-name">ListVersion</span><br><span class="api-desc">查询SMN API V2版本信息</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>标签管理</h3>
+  <ul>
+    <li><span class="api-name">ListTagsV2</span><br><span class="api-desc">查询标签列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>流控策略管理</h3>
+  <ul>
+    <li><span class="api-name">UpdateRequestThrottlingPolicyV2</span><br><span class="api-desc">修改指定流控策略的详细信息。当该流控策略绑定了API时,需要先解除流控策略与API的所有绑定关系后再删除</span></li>
+    <li><span class="api-name">DeleteRequestThrottlingPolicyV2</span><br><span class="api-desc">删除指定的流控策略</span></li>
+    <li><span class="api-name">ShowDetailsOfRequestThrottlingPolicyV2</span><br><span class="api-desc">查看指定流控策略的详细信息</span></li>
+    <li><span class="api-name">CreateRequestThrottlingPolicyV2</span><br><span class="api-desc">当API上线后,系统会默认给每个API提供一个流控策略,API提供者可以根据自身API的服务能力及负载情况变更这个流控策略</span></li>
+    <li><span class="api-name">BatchDeleteThrottlingPolicyV2</span><br><span class="api-desc">批量删除流控策略</span></li>
+    <li><span class="api-name">ListRequestThrottlingPolicyV2</span><br><span class="api-desc">查询所有流控策略的信息</span></li>
+  </ul>
+</div>
+
+<!-- 其余分类继续补充 -->
+<div class="api-category">
+  <h3>消息管理</h3>
+  <ul>
+    <li><span class="api-name">ResetMessages</span><br><span class="api-desc">重发消息</span></li>
+    <li><span class="api-name">ShowMqsInstanceMessages</span><br><span class="api-desc">查询消息的偏移量和消息内容</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>环境变量管理</h3>
+  <ul>
+    <li><span class="api-name">CreateEnvironmentVariableV2</span><br><span class="api-desc">将API发布到不同的环境后,对于不同的环境,可能会有不同的环境变量,比如,API的服务部署地址,请求的版本号等</span></li>
+    <li><span class="api-name">DeleteEnvironmentVariableV2</span><br><span class="api-desc">删除指定的环境变量</span></li>
+    <li><span class="api-name">ShowDetailsOfEnvironmentVariableV2</span><br><span class="api-desc">查看指定的环境变量的详情</span></li>
+    <li><span class="api-name">UpdateEnvironmentVariableV2</span><br><span class="api-desc">修改环境变量。环境变量引用位置为api的后端服务地址时,修改对应环境变量会将使用该变量的所有api重新发布</span></li>
+    <li><span class="api-name">ListEnvironmentVariablesV2</span><br><span class="api-desc">查询分组下的所有环境变量的列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>环境管理</h3>
+  <ul>
+    <li><span class="api-name">DeleteEnvironmentV2</span><br><span class="api-desc">删除指定的环境</span></li>
+    <li><span class="api-name">ListEnvironmentsV2</span><br><span class="api-desc">查询符合条件的环境列表</span></li>
+    <li><span class="api-name">UpdateEnvironmentV2</span><br><span class="api-desc">修改指定环境的信息。其中可修改的属性为:name、remark,其它属性不可修改</span></li>
+    <li><span class="api-name">CreateEnvironmentV2</span><br><span class="api-desc">在实际的生产中,API提供者可能有多个环境,如开发环境、测试环境、生产环境等,用户可以自由将API发布到某个环境,供调用者调用</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>监控信息查询</h3>
+  <ul>
+    <li><span class="api-name">ListLatelyApiStatisticsV2</span><br><span class="api-desc">根据API的id和的一段时间查询API被调用的次数,统计周期为1分钟。查询范围一小时以内,一分钟一个样本,其样本值为一分钟内的累计值</span></li>
+    <li><span class="api-name">ListStatisticsApi</span><br><span class="api-desc">查询某个实例下的API统计信息</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>签名密钥管理</h3>
+  <ul>
+    <li><span class="api-name">ListSignatureKeysV2</span><br><span class="api-desc">查询所有签名密钥的信息</span></li>
+    <li><span class="api-name">UpdateSignatureKeyV2</span><br><span class="api-desc">修改指定签名密钥的详细信息</span></li>
+    <li><span class="api-name">DeleteSignatureKeyV2</span><br><span class="api-desc">删除指定的签名密钥。签名密钥绑定了API时无法删除,需要先解除与API的绑定关系后删除</span></li>
+    <li><span class="api-name">CreateSignatureKeyV2</span><br><span class="api-desc">为了保护API的安全性,建议租户为API的访问提供一套保护机制,即租户开放的API,需要对请求来源进行认证,不符合认证的请求直接拒绝访问</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>签名密钥绑定关系管理</h3>
+  <ul>
+    <li><span class="api-name">DisassociateSignatureKeyV2</span><br><span class="api-desc">解除API与签名密钥的绑定关系</span></li>
+    <li><span class="api-name">ListApisNotBoundWithSignatureKeyV2</span><br><span class="api-desc">查询所有未绑定到该签名密钥上的API列表。需要API已经发布,未发布的API不予展示</span></li>
+    <li><span class="api-name">ListApisBindedToSignatureKeyV2</span><br><span class="api-desc">查询某个签名密钥上已经绑定的API列表</span></li>
+    <li><span class="api-name">ListSignatureKeysBindedToApiV2</span><br><span class="api-desc">查询某个API绑定的签名密钥列表。每个API在每个环境上应该最多只会绑定一个签名密钥</span></li>
+    <li><span class="api-name">AssociateSignatureKeyV2</span><br><span class="api-desc">签名密钥创建后,需要绑定到API才能生效</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>自定义后端服务</h3>
+  <ul>
+    <li><span class="api-name">DebugLiveDataApiV2</span><br><span class="api-desc">测试后端API是否可用</span></li>
+    <li><span class="api-name">PublishLiveDataApiV2</span><br><span class="api-desc">在某个实例中部署后端API</span></li>
+    <li><span class="api-name">UpdateLiveDataApiV2</span><br><span class="api-desc">在某个实例中更新后端API的参数</span></li>
+    <li><span class="api-name">ListLiveDataDataSourcesV2</span><br><span class="api-desc">查询自定义后端服务数据源列表</span></li>
+    <li><span class="api-name">ListLiveDataApiDeploymentHistoryV2</span><br><span class="api-desc">在某个实例中查询后端API的部署记录</span></li>
+    <li><span class="api-name">DeleteLiveDataApiV2</span><br><span class="api-desc">在某个实例中删除后端API</span></li>
+    <li><span class="api-name">CheckLivedataApisV2</span><br><span class="api-desc">校验自定义后端API定义。校验自定义后端API的路径或名称是否已存在</span></li>
+    <li><span class="api-name">ListLiveDataQuotaV2</span><br><span class="api-desc">查询自定义后端服务配额</span></li>
+    <li><span class="api-name">UnpublishLiveDataApiV2</span><br><span class="api-desc">在某个实例中取消部署后端API</span></li>
+    <li><span class="api-name">CreateLiveDataApiScriptV2</span><br><span class="api-desc">在某个实例中创建后端API脚本</span></li>
+    <li><span class="api-name">CreateLiveDataApiV2</span><br><span class="api-desc">在某个实例中创建后端API</span></li>
+    <li><span class="api-name">ShowLiveDataApiV2</span><br><span class="api-desc">查询后端API的详细信息</span></li>
+    <li><span class="api-name">ListLiveDataApiTestHistoryV2</span><br><span class="api-desc">在某个实例中查询后端API的测试结果</span></li>
+    <li><span class="api-name">ListLiveDataApiV2</span><br><span class="api-desc">获取某个实例下的所有后端API</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>自定义认证管理</h3>
+  <ul>
+    <li><span class="api-name">ShowDetailsOfCustomAuthorizersV2</span><br><span class="api-desc">查看自定义认证详情</span></li>
+    <li><span class="api-name">ListCustomAuthorizersV2</span><br><span class="api-desc">查询自定义认证列表</span></li>
+    <li><span class="api-name">CreateCustomAuthorizerV2</span><br><span class="api-desc">创建自定义认证</span></li>
+    <li><span class="api-name">UpdateCustomAuthorizerV2</span><br><span class="api-desc">修改自定义认证</span></li>
+    <li><span class="api-name">DeleteCustomAuthorizerV2</span><br><span class="api-desc">删除自定义认证</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>规则引擎</h3>
+  <ul>
+    <li><span class="api-name">CreateRule</span><br><span class="api-desc">创建规则</span></li>
+    <li><span class="api-name">ShowRule</span><br><span class="api-desc">查询规则详情</span></li>
+    <li><span class="api-name">ListSources</span><br><span class="api-desc">查询源数据源列表</span></li>
+    <li><span class="api-name">DeleteSource</span><br><span class="api-desc">删除源数据源</span></li>
+    <li><span class="api-name">BatchDeleteRules</span><br><span class="api-desc">批量删除规则</span></li>
+    <li><span class="api-name">CreateSource</span><br><span class="api-desc">添加源数据源</span></li>
+    <li><span class="api-name">DeleteRule</span><br><span class="api-desc">删除规则</span></li>
+    <li><span class="api-name">DebugRule</span><br><span class="api-desc">规则调试</span></li>
+    <li><span class="api-name">DeleteDestination</span><br><span class="api-desc">删除目标数据源</span></li>
+    <li><span class="api-name">UpdateRule</span><br><span class="api-desc">修改规则</span></li>
+    <li><span class="api-name">ListDestinations</span><br><span class="api-desc">查询目标数据源列表</span></li>
+    <li><span class="api-name">CreateDestination</span><br><span class="api-desc">添加目标数据源</span></li>
+    <li><span class="api-name">ListRules</span><br><span class="api-desc">查询规则</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>订阅管理操作</h3>
+  <ul>
+    <li><span class="api-name">ListNotification</span><br><span class="api-desc">该接口用于查询指定应用订阅管理信息的数据</span></li>
+    <li><span class="api-name">UpdateNotification</span><br><span class="api-desc">该接口用于修改指定的订阅管理</span></li>
+    <li><span class="api-name">CreateNotification</span><br><span class="api-desc">该接口用于创建指定实例下对应的应用下的设备操作,订阅到指定的topic</span></li>
+    <li><span class="api-name">DeleteNotification</span><br><span class="api-desc">该接口用于删除指定订阅管理</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>设备分组管理</h3>
+  <ul>
+    <li><span class="api-name">ShowDeviceGroupTree</span><br><span class="api-desc">查询所有设备分组</span></li>
+    <li><span class="api-name">DeleteDeviceGroup</span><br><span class="api-desc">删除分组</span></li>
+    <li><span class="api-name">ShowDeviceGroup</span><br><span class="api-desc">获取设备分组及下一层分组信息</span></li>
+    <li><span class="api-name">BatchAddDeviceToGroup</span><br><span class="api-desc">批量添加设备到设备分组</span></li>
+    <li><span class="api-name">DeleteDeviceFromGroup</span><br><span class="api-desc">删除设备分组内的设备</span></li>
+    <li><span class="api-name">CreateDeviceGroup</span><br><span class="api-desc">创建设备分组</span></li>
+    <li><span class="api-name">UpdateDeviceGroup</span><br><span class="api-desc">修改设备分组</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>设备管理</h3>
+  <ul>
+    <li><span class="api-name">ShowAuthentication</span><br><span class="api-desc">查询设备鉴权信息</span></li>
+    <li><span class="api-name">UpdateDevice</span><br><span class="api-desc">修改设备信息</span></li>
+    <li><span class="api-name">ListDevices</span><br><span class="api-desc">此接口用于获取已经注册成功的GB/T28181设备列表</span></li>
+    <li><span class="api-name">SendCommand</span><br><span class="api-desc">发送命令</span></li>
+    <li><span class="api-name">ListSubsets</span><br><span class="api-desc">查询子设备</span></li>
+    <li><span class="api-name">ResetAuthentication</span><br><span class="api-desc">重置设备鉴权信息</span></li>
+    <li><span class="api-name">BatchFreezeDevices</span><br><span class="api-desc">设备批量下线</span></li>
+    <li><span class="api-name">AddSubsetsToGateway</span><br><span class="api-desc">添加子设备到网关</span></li>
+    <li><span class="api-name">CreateDevice</span><br><span class="api-desc">创建设备</span></li>
+    <li><span class="api-name">ListShadows</span><br><span class="api-desc">查询设备影子</span></li>
+    <li><span class="api-name">ShowDevice</span><br><span class="api-desc">查询设备详情</span></li>
+    <li><span class="api-name">DeleteDevice</span><br><span class="api-desc">此接口用于删除指定设备</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>设置特殊流控</h3>
+  <ul>
+    <li><span class="api-name">ListSpecialThrottlingConfigurationsV2</span><br><span class="api-desc">查看给流控策略设置的特殊配置</span></li>
+    <li><span class="api-name">CreateSpecialThrottlingConfigurationV2</span><br><span class="api-desc">流控策略可以限制一段时间内可以访问API的最大次数,也可以限制一段时间内单个租户和单个APP可以访问API的最大次数</span></li>
+    <li><span class="api-name">DeleteSpecialThrottlingConfigurationV2</span><br><span class="api-desc">删除某个流控策略的某个特殊配置</span></li>
+    <li><span class="api-name">UpdateSpecialThrottlingConfigurationV2</span><br><span class="api-desc">修改某个流控策略下的某个特殊设置</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>配置管理</h3>
+  <ul>
+    <li><span class="api-name">ListProjectCofigsV2</span><br><span class="api-desc">查询某个实例的租户配置列表,用户可以通过此接口查看各类型资源配置及使用情况</span></li>
+  </ul>
+</div>
+
+        <p>以及涵盖资源管理、网络配置、安全策略、任务监控及性能统计的API</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

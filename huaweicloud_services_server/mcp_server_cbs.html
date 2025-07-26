@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云CBS上的MCP服务</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      padding: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 40px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #f8f9fa;
+      border-left: 1px solid #eaeaea;
+      padding-left: 20px;
+    }
+
+    .content-sections {
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h1, h2, h3, h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px;
+    }
+
+    p, ul, ol {
+      margin-bottom: 15px;
+      font-size: 1.35rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 1.25rem;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.25rem;
+      background-color: #f8f9fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .api-category {
+      margin-bottom: 20px;
+    }
+
+    .api-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+
+    .api-desc {
+      font-size: 1.25rem;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>CBS MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务CBS交互的能力，支持基于自然语言对CBS资源进行全链路管理。</p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+          <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/cbs-mcp-server.git
+
+# 进入项目目录
+cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_cbs
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-cbs --transport stdio --port 8011
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-cbs --transport http  --port 8011
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-cbs --transport sse --port 8011
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>快速开始</h2>
+          <p>支持以下客户端与cbs服务交互：</p>
+          <ul>
+            <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+            <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+            <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+            <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a> + <a href="https://cline.bot/" target="_blank">Cline</a></li>
+          </ul>
+
+          <h3>客户端通信配置示例</h3>
+          <h4>1. stdio 模式</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "stdio-cbs": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run", 
+        "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_cbs/src/mcp_server_cbs/run.py"
+      ],
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+
+          <h4>2. http 模式</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "http-cbs": {
+      "type": "http",
+      "url": "http://127.0.0.1:8011/mcp",
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+
+          <h4>3. sse 模式 - SSE 传输已弃用，可能会在未来版本中移除</h4>
+          <pre><code class="language-json">{
+  "mcpServers": {
+    "sse-cbs": {
+      "type": "sse",
+      "url": "http://localhost:8011/sse",
+      "env": {
+        "HUAWEI_CLOUD_AK": "Your Access Key AK",
+        "HUAWEI_CLOUD_SK": "Your Access Key SK"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server 做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+        <div class="api-category">
+          <h3>其他问答</h3>
+          <ul>
+            <li><span class="api-name">ListSuggestions</span><br><span class="api-desc">获取用户输入问题的提示问题列表。</span></li>
+            <li><span class="api-name">TagLabor</span><br><span class="api-desc">智能问答返回的结果后,用户是否转人工。</span></li>
+            <li><span class="api-name">TagSatisfaction</span><br><span class="api-desc">用户提出问题后,对智能问答返回的结果是否满意。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>其他问答API</h3>
+          <ul>
+            <li><span class="api-name">PostRequests</span><br><span class="api-desc">问答服务的输入为用户提问,输出是与输入最匹配的Top N(默认为top5)个知识点,知识点按得分从高到低排序。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>形象管理</h3>
+          <ul>
+            <li><span class="api-name">ExecuteGetCharacters</span><br><span class="api-desc">获取可用的形象列表。</span></li>
+            <li><span class="api-name">ExecuteGetCharacterInfoById</span><br><span class="api-desc">根据ID获取形象详情。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>素材管理</h3>
+          <ul>
+            <li><span class="api-name">ExecuteUploadImage</span><br><span class="api-desc">上传图片并生成图片链接,图片需小于10m;</span></li>
+            <li><span class="api-name">ExecuteDeleteimageById</span><br><span class="api-desc">根据ID删除图片。</span></li>
+            <li><span class="api-name">ExecuteGetFramsListByImagesId</span><br><span class="api-desc">获取指定图片可用的播报框列表。</span></li>
+            <li><span class="api-name">ExecuteUploadPpt</span><br><span class="api-desc">当前仅支持上传PDF,如有PPT请将PPT转化为PDF再进行上传,文件需小于10m;</span></li>
+            <li><span class="api-name">ExecutePostCreateImages</span><br><span class="api-desc">创建图片素材。</span></li>
+            <li><span class="api-name">ExecuteGetImagesList</span><br><span class="api-desc">获取图片素材列表。</span></li>
+            <li><span class="api-name">ExecuteUpdateImageName</span><br><span class="api-desc">更新图片名称。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>视频管理</h3>
+          <ul>
+            <li><span class="api-name">ExecuteComposeVideoOndemand</span><br><span class="api-desc">按需合成视频。</span></li>
+            <li><span class="api-name">ExecuteUpdateVideoById</span><br><span class="api-desc">更新视频信息。</span></li>
+            <li><span class="api-name">ExecuteCreateVideo</span><br><span class="api-desc">创建视频。</span></li>
+            <li><span class="api-name">ExecuteDeleteVideoById</span><br><span class="api-desc">删除视频。</span></li>
+            <li><span class="api-name">ExecuteGetVideoInfoById</span><br><span class="api-desc">获取视频详情。</span></li>
+            <li><span class="api-name">ExecuteUpdateVideoInfoById</span><br><span class="api-desc">通过该接口配置视频。</span></li>
+            <li><span class="api-name">ExecuteGetVideosList</span><br><span class="api-desc">该接口用于获取视频列表。</span></li>
+            <li><span class="api-name">ExecuteComposeVideo</span><br><span class="api-desc">合成视频。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>连接管理</h3>
+          <ul>
+            <li><span class="api-name">DeleteSession</span><br><span class="api-desc">终结实例节点会话。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>问答会话</h3>
+          <ul>
+            <li><span class="api-name">CreateSession</span><br><span class="api-desc">问答会话API由开启会话、处理会话、关闭会话三个接口组成。用户可通过调用该接口创建会话。该接口仅支持老用户,新用户请优先使用问答机器人API接口进行调用。</span></li>
+            <li><span class="api-name">ExecuteSession</span><br><span class="api-desc">问答会话API由开启会话、处理会话、关闭会话三个接口组成。用户可通过调用该接口与机器人进行会话。该接口即将下线,请优先使用问答机器人API接口进行调用。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>问答机器人</h3>
+          <ul>
+            <li><span class="api-name">ExecuteQaChat</span><br><span class="api-desc">用户调用该接口和机器人进行聊天。</span></li>
+          </ul>
+        </div>
+
+        <div class="api-category">
+          <h3>问答统计</h3>
+          <ul>
+            <li><span class="api-name">CollectReplyRates</span><br><span class="api-desc">指定领域获取指定时间范围内的问题答复率,支持按周期统计。</span></li>
+            <li><span class="api-name">CollectHotQuestions</span><br><span class="api-desc">获取完全匹配的热点标准问题列表。</span></li>
+            <li><span class="api-name">CollectSessionStats</span><br><span class="api-desc">获取用户会话统计信息。</span></li>
+            <li><span class="api-name">CollectKeyWords</span><br><span class="api-desc">用户问关键词统计。</span></li>
+          </ul>
+        </div>
+
+        <p>以及更多用于元数据、可用区、磁盘管理和监控的API。</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

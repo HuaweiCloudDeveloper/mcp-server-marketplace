@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>华为云ECS上的MCP服务</title>
+    <style>
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 40px;
+            display: flex;
+            flex-direction: row;
+            gap: 40px;
+        }
+
+        .sidebar {
+            width: auto;
+            max-width: 320px;
+            background-color: #f8f9fa;
+            border-left: 1px solid #eaeaea;
+            padding-left: 20px;
+        }
+
+        .content-sections {
+            flex: 1;
+        }
+
+        section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 25px 0 15px;
+        }
+
+        p, ul, ol {
+            margin-bottom: 15px;
+            font-size: 1.35rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        pre {
+			width:800px;
+            background-color: #f8f9fa;
+            border: 1px solid #eaeaea;
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-size: 1.25rem;
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 1.25rem;
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .api-category {
+            margin-bottom: 20px;
+        }
+
+        .api-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.25rem;
+        }
+
+        .api-desc {
+            font-size: 1.25rem;
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+		
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <div class="container">
+        <!-- 主内容区在左 -->
+        <div class="content-sections">
+            <section>
+                <h2>简介</h2>
+                <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+            </section>
+
+            <section>
+                <h2>前提条件</h2>
+                <ul>
+                    <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+                    <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+                    <li><strong>Python环境</strong>：Python 3.12+</li>
+                    <li><strong>UV工具</strong>：跨平台安装工具</li>
+                </ul>
+
+                <h3>安装UV</h3>
+                <p><strong>Linux/macOS</strong>：</p>
+                <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+                <p><strong>Windows</strong>：</p>
+                <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+            </section>
+
+            <section>
+                <h2>使用方法</h2>
+                <h3>启动服务</h3>
+                <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd /your-path/mcp-server-main
+
+# 核心依赖FastMCP 2.0
+uv pip install fastmcp
+
+#STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-aom --transport stdio --port 8001
+
+#可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-aom --transport http  --port 8001
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-aom --transport sse --port 8001
+          </code></pre>
+
+            </section>
+            <section>
+                <h2>快速开始</h2>
+                <p>支持以下客户端与MCP服务交互：</p>
+                <ul>
+                    <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                    <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                    <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                    <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+                </ul>
+                <h3>客户端通信配置示例</h3>
+
+                <h4>1. stdio 模式</h4>
+                <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-aom": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_aom/src/mcp_server_aom/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+                <h4>2. http 模式</h4>
+                <pre><code class="language-json">{
+          "mcpServers": {
+            "http-aom": {
+              "type": "http",
+              "url": "http://127.0.0.1:8001/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+                <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+                <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-aom": {
+              "type": "sse",
+              "url": "http://localhost:8001/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+
+
+
+            </section>
+            <section>
+                <h2>贡献</h2>
+                <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+                <ul>
+                    <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+                    <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+                </ul>
+
+                <h3>许可证</h3>
+                <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+            </section>
+        </div>
+
+        <!-- 右侧工具栏 -->
+        <div class="sidebar">
+            <h2 style="margin-top:0;">API工具列表</h2>
+            <div class="api-category"><h3>Prometheus实例</h3><ul><li><span class="api-name">DeletePromInstance</span><br><span class="api-desc">该接口用于卸载托管Prometheus实例。</span></li><li><span class="api-name">CreateRecordingRule</span><br><span class="api-desc">该接口用于给Prometheus实例创建预聚合规则。</span></li><li><span class="api-name">CreatePromInstance</span><br><span class="api-desc">该接口用于新增Prometheus实例。</span></li><li><span class="api-name">ListAccessCode</span><br><span class="api-desc">该接口用于获取Prometheus实例调用凭证。</span></li><li><span class="api-name">ListPromInstance</span><br><span class="api-desc">该接口用于查询Prometheus实例。</span></li></ul> </div>
+            <div class="api-category"><h3>UniAgent管理</h3><ul><li><span class="api-name">BatchImportAgent</span><br><span class="api-desc">该接口用于下发批量安装UniAgent任务。</span></li><li><span class="api-name">ShowAgentInfos</span><br><span class="api-desc">该接口用于查询执行过安装UniAgent任务的主机列表信息。</span></li><li><span class="api-name">BatchUpdateAgent</span><br><span class="api-desc">该接口用于下发批量升级UniAgent任务。</span></li></ul> </div>
+            <div class="api-category"><h3>prometheus监控</h3><ul><li><span class="api-name">ListRangeQueryAomPromPost</span><br><span class="api-desc">该接口使用POST方法查询PromQL(Prometheus Query Language)在一段时间返回内的计算结果。</span></li><li><span class="api-name">ListInstantQueryAomPromPost</span><br><span class="api-desc">该接口使用POST方法查询PromQL(Prometheus Query Language) 在特定时间点下的计算结果。</span></li><li><span class="api-name">ListMetadataAomPromGet</span><br><span class="api-desc">该接口用于查询序列及序列标签的元数据。</span></li><li><span class="api-name">ListLabelsAomPromGet</span><br><span class="api-desc">该接口使用GET方法获取标签名列表。</span></li><li><span class="api-name">ListInstantQueryAomPromGet</span><br><span class="api-desc">该接口使用GET方法查询PromQL(Prometheus Query Language)在特定时间点下的计算结果。</span></li><li><span class="api-name">ListLabelsAomPromPost</span><br><span class="api-desc">该接口使用POST方法获取标签名列表。</span></li><li><span class="api-name">ListRangeQueryAomPromGet</span><br><span class="api-desc">该接口使用GET方法查询PromQL(Prometheus Query Language)在一段时间返回内的计算结果。</span></li><li><span class="api-name">ListLabelValuesAomPromGet</span><br><span class="api-desc">该接口用于查询带有指定标签的时间序列列表。</span></li></ul> </div>
+            <div class="api-category"><h3>告警</h3><ul><li><span class="api-name">PushEvents</span><br><span class="api-desc">该接口用于上报对应用户的事件、告警。</span></li><li><span class="api-name">ListNotifiedHistories</span><br><span class="api-desc">获取告警发送结果。</span></li><li><span class="api-name">UpdateEventRule</span><br><span class="api-desc">更新事件类告警规则。</span></li><li><span class="api-name">ListMetricOrEventAlarmRule</span><br><span class="api-desc">查询AOM2.0指标类或者事件类告警规则列表。(注:接口目前开放的region为:华东-上海一)</span></li><li><span class="api-name">DeleteEvent2alarmRule</span><br><span class="api-desc">删除一条事件类告警规则。</span></li><li><span class="api-name">ListEvent2alarmRule</span><br><span class="api-desc">查询事件类告警规则列表。</span></li><li><span class="api-name">AddEvent2alarmRule</span><br><span class="api-desc">新增一条事件类告警规则。</span></li><li><span class="api-name">DeleteMetricOrEventAlarmRule</span><br><span class="api-desc">删除AOM2.0指标类或事件类告警规则。(注:接口目前开放的region为:华东-上海一)</span></li><li><span class="api-name">ListEvents</span><br><span class="api-desc">该接口用于查询对应用户的事件、告警。</span></li><li><span class="api-name">ListActionRule</span><br><span class="api-desc">获取告警行动规则列表。</span></li><li><span class="api-name">DeleteMuteRules</span><br><span class="api-desc">删除静默规则。</span></li><li><span class="api-name">AddMuteRules</span><br><span class="api-desc">新增静默规则。</span></li><li><span class="api-name">UpdateActionRule</span><br><span class="api-desc">修改告警行动规则。</span></li><li><span class="api-name">AddActionRule</span><br><span class="api-desc">新增告警行动规则。</span></li><li><span class="api-name">DeleteActionRule</span><br><span class="api-desc">删除告警行动规则。</span></li><li><span class="api-name">ListMuteRule</span><br><span class="api-desc">获取静默规则列表。</span></li><li><span class="api-name">ShowActionRule</span><br><span class="api-desc">通过规则名称获取告警行动规则。</span></li><li><span class="api-name">UpdateMuteRule</span><br><span class="api-desc">修改静默规则。</span></li><li><span class="api-name">CountEvents</span><br><span class="api-desc">该接口用于分段统计指定条件下的事件、告警。</span></li><li><span class="api-name">AddOrUpdateMetricOrEventAlarmRule</span><br><span class="api-desc">添加或修改AOM2.0指标类或事件类告警规则。(注:接口目前开放的region为:华东-上海一)</span></li></ul> </div>
+            <div class="api-category"><h3>应用资源管理(aom2.0接口)</h3><ul><li><span class="api-name">ListResourceUnderNode</span><br><span class="api-desc">该接口用于查询绑定在节点上的资源列表。</span></li><li><span class="api-name">CreateApp</span><br><span class="api-desc">该接口用于新增应用。</span></li><li><span class="api-name">DeleteEnv</span><br><span class="api-desc">该接口用于删除环境。</span></li><li><span class="api-name">ShowEnvByName</span><br><span class="api-desc">该接口用于查询环境详情。</span></li><li><span class="api-name">CreateEnv</span><br><span class="api-desc">该接口用于创建环境。</span></li><li><span class="api-name">UpdateEnv</span><br><span class="api-desc">该接口用于修改环境。</span></li><li><span class="api-name">DeleteApp</span><br><span class="api-desc">该接口用于删除应用。</span></li><li><span class="api-name">CreateComponent</span><br><span class="api-desc">该接口用于新增组件。</span></li><li><span class="api-name">UpdateApp</span><br><span class="api-desc">该接口用于修改应用。</span></li><li><span class="api-name">ShowComponent</span><br><span class="api-desc">该接口用于查询组件详情。</span></li><li><span class="api-name">ShowAppByName</span><br><span class="api-desc">该接口用于查询应用详情。</span></li><li><span class="api-name">UpdateSubApp</span><br><span class="api-desc">该接口用于修改子应用。</span></li><li><span class="api-name">CreateSubApp</span><br><span class="api-desc">该接口用于新增子应用。</span></li><li><span class="api-name">UpdateComponent</span><br><span class="api-desc">该接口用于修改组件。</span></li><li><span class="api-name">DeleteSubApp</span><br><span class="api-desc">该接口用于删除子应用。</span></li><li><span class="api-name">DeleteComponent</span><br><span class="api-desc">该接口用于删除组件。</span></li><li><span class="api-name">ShowComponentByName</span><br><span class="api-desc">该接口用于查询组件详情。</span></li><li><span class="api-name">ShowApp</span><br><span class="api-desc">该接口用于查询应用详情。</span></li><li><span class="api-name">ShowEnv</span><br><span class="api-desc">该接口用于查询环境详情。</span></li></ul> </div>
+            <div class="api-category"><h3>日志</h3><ul><li><span class="api-name">ListLogItems</span><br><span class="api-desc">该接口用于查询不同维度(例如集群、IP、应用等)下的日志内容,支持分页查询。</span></li></ul> </div>
+            <div class="api-category"><h3>监控</h3><ul><li><span class="api-name">DeleteserviceDiscoveryRules</span><br><span class="api-desc">该接口用于删除服务发现规则。</span></li><li><span class="api-name">ShowAlarmRule</span><br><span class="api-desc">该接口用于查询单条阈值规则。</span></li><li><span class="api-name">ListServiceDiscoveryRules</span><br><span class="api-desc">该接口用于查询系统当前已存在的服务发现规则。</span></li><li><span class="api-name">AddMetricData</span><br><span class="api-desc">该接口用于向服务端添加一条或多条监控数据。</span></li><li><span class="api-name">DeleteAlarmRule</span><br><span class="api-desc">该接口用于删除阈值规则。</span></li><li><span class="api-name">ListAlarmRule</span><br><span class="api-desc">该接口用于查询阈值规则列表。</span></li><li><span class="api-name">AddOrUpdateServiceDiscoveryRules</span><br><span class="api-desc">该接口用于添加或修改一条或多条服务发现规则。同一projectid下可添加的规则上限为100条。</span></li><li><span class="api-name">ListSeries</span><br><span class="api-desc">该接口用于查询系统当前可监控的时间序列列表,可以指定时间序列命名空间、名称、维度、所属资源的编号(格式为:resType_resId),分页查询的起始位置和返回的最大记录条数。</span></li><li><span class="api-name">DeleteAlarmRules</span><br><span class="api-desc">该接口用于批量删除阈值规则</span></li><li><span class="api-name">ListMetricItems</span><br><span class="api-desc">该接口用于查询系统当前可监控的指标列表,可以指定指标命名空间、指标名称、维度、所属资源的编号(格式为:resType_resId),分页查询的起始位置和返回的最大记录条数。</span></li><li><span class="api-name">ShowMetricsData</span><br><span class="api-desc">该接口用于查询指定时间范围内指标的监控数据,可以通过参数指定需要查询的数据维度,数据周期等。</span></li><li><span class="api-name">UpdateAlarmRule</span><br><span class="api-desc">该接口用于修改一条阈值规则。</span></li><li><span class="api-name">AddAlarmRule</span><br><span class="api-desc">该接口用于添加一条阈值规则。</span></li><li><span class="api-name">ListSample</span><br><span class="api-desc">该接口用于查询指定时间范围内的监控时序数据,可以通过参数指定需要查询的数据维度,数据周期等。</span></li></ul> </div>
+            <div class="api-category"><h3>自动化运维</h3><ul><li><span class="api-name">SearchTemplateById</span><br><span class="api-desc">该接口可根据执行方案id查询执行方案详情。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">ListTemplateByJobId</span><br><span class="api-desc">该接口可根据作业ID查询执行方案,分页返回执行方案列表。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">StartPausingWorkflowExecutions</span><br><span class="api-desc">该接口可对任务进行失败重试、失败跳过、暂停继续操作,返回操作结果。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">CreateFastExecuteScript</span><br><span class="api-desc">该接口用于创建快速执行脚本的任务,可以指定脚本类型,执行用户,脚本参数,执行机器,脚本内容,在用户指定的机器上执行脚本。(注:接口目前开放的region为:华东-苏州二零一)。</span></li><li><span class="api-name">ListWorkflowExecutions</span><br><span class="api-desc">该接口可获取执行任务的执行历史。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">ExecuteWorkflow</span><br><span class="api-desc">该接口可下发执行指定的任务。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">ListAllJobByName</span><br><span class="api-desc">该接口可查询已创建的作业,可指定作业名称和作业创建人去精确查询,返回作业列表信息。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">CreateWorkflow</span><br><span class="api-desc">该接口用于创建工作流(任务),返回工作流详情。任务类型取决于模板名称和'input'参数。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">ListAllVersionByVersionId</span><br><span class="api-desc">该接口可查询指定脚本ID下的所有版本,返回该名称的脚本版本列表信息。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">UpdateWorkflowTriggerStatus</span><br><span class="api-desc">更新定时任务的启停状态,可启动定时任务或停止定时任务,返回操作任务结果。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">ListWorkflow</span><br><span class="api-desc">该接口可返回已经创建的任务列表,可按任务名称,任务状态,任务类型,执行人,更新时间为查询条件分页查询任务。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">SearchWorkflowExecutionDetail</span><br><span class="api-desc">该接口可获取任务的执行详情,可指定工作流ID和执行ID去查询对应的任务,返回任务执行详情。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">ListAllScriptByName</span><br><span class="api-desc">该接口是脚本主页查询,可指定脚本名称和脚本创建人进行精确查询,返回包含脚本基本信息的列表数据。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li><li><span class="api-name">StopExecution</span><br><span class="api-desc">该接口可终止正在执行的任务,指定工作流ID和执行ID去终止对应的任务,返回终止操作状态。(注:接口目前开放的region为:华北-北京四,华东-上海一,华东-上海二,华南-广州)。</span></li></ul> </div>
+            <div class="api-category"><h3>配置管理</h3><ul><li><span class="api-name">ListPermissions</span><br><span class="api-desc">该接口用于查询aom2.0相关云服务授权信息。</span></li><li><span class="api-name">ListAgents</span><br><span class="api-desc">该接口用于查询集群主机或用户自定义主机安装的ICAgent信息。</span></li></ul> </div>
+<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
