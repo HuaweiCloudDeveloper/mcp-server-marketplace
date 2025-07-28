@@ -13,9 +13,9 @@
     }
 
     .main-content {
-      max-width: 1200px;
+      max-width: 1800px;
       margin: 0 auto;
-      padding: 40px 20px
+      padding: 40px 20px;
     }
 
     .container {
@@ -29,10 +29,11 @@
     }
 
     .sidebar {
-      width: 260px;
+      width: auto;
+      max-width: 600px;
       background-color: #f8f9fa;
       border-left: 1px solid #eaeaea;
-      padding-left: 20px
+      padding-left: 20px;
     }
 
     .content-sections {
@@ -159,9 +160,6 @@ git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
 
 # 进入项目目录
 cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_elb
-
-# 核心依赖FastMCP 2.0
-uv pip install fastmcp
 
 #STDIO（默认）：最适合本地工具和命令行脚本
 uv run mcp_server_elb --transport stdio --port 8856
@@ -460,12 +458,12 @@ uv run mcp_server_elb --transport sse --port 8856
 				<li><span class="api-name">UpdateLoadbalancer</span><br><span class="api-desc">更新负载均衡器。</span></li>
 				<li><span class="api-name">CloneLoadbalancer</span><br><span class="api-desc">复制已有的负载均衡器实例。</span></li>
 				<li><span class="api-name">BatchRemoveAvailableZones</span><br><span class="api-desc">移除负载均衡器的可用区。</span></li>
-				<li><span class="api-name">DeleteLoadBalancerCascade</span><br><span class="api-desc">删除负载均衡器且级联删除其下子资源(删除负载均衡器及其绑定的监听器、后端服务器组、后端服务器等一系列资源)。以及根据需要删除或解绑后端服务器组和LB关联的EIP。</span></li>
+				<li><span class="api-name">DeleteLoadBalancerCascade</span><br><span class="api-desc">删除负载均衡器且级联删除其下子资源(删除负载均衡器及其绑定的监听器、后端服务器组、后端服务器的一系列资源)。以及根据需要删除或解绑后端服务器组和LB关联的EIP。</span></li>
 				<li><span class="api-name">UpgradeLoadbalancer</span><br><span class="api-desc">升级负载均衡器类型。支持将共享型ELB升级为独享型ELB,但不支持独享型降级为共享型。</span></li>
 				<li><span class="api-name">DeleteLoadBalancer</span><br><span class="api-desc">删除负载均衡器。</span></li>
 				<li><span class="api-name">BatchCreateLoadBalancers</span><br><span class="api-desc">批量创建独享型或者共享型负载均衡器,包括按需及包周期计费负载均衡器。</span></li>
 				<li><span class="api-name">ShowLoadBalancerStatus</span><br><span class="api-desc">查询负载均衡器状态树,包括负载均衡器及其关联的子资源的状态信息。</span></li>
-				<li><span class="api-name">DeleteLoadBalancerForce</span><br><span class="api-desc">删除负载均衡器且级联删除其下子资源(删除负载均衡器及其绑定的监听器、后端服务器组、后端服务器等一系列资源)。</span></li>
+				<li><span class="api-name">DeleteLoadBalancerForce</span><br><span class="api-desc">删除负载均衡器且级联删除其下子资源(删除负载均衡器及其绑定的监听器、后端服务器组、后端服务器的一系列资源)。</span></li>
 				<li><span class="api-name">ShowLoadBalancer</span><br><span class="api-desc">查询负载均衡器详情。</span></li>
 				<li><span class="api-name">ChangeLoadbalancerChargeMode</span><br><span class="api-desc">负载均衡器计费模式变更,当前支持的计费模式变更为:</span></li>
 			</ul>

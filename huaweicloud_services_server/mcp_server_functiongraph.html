@@ -13,7 +13,7 @@
     }
 
     .main-content {
-      max-width: 1200px;
+      max-width: 1800px;
       margin: 0 auto;
       padding: 40px 20px;
     }
@@ -29,7 +29,8 @@
     }
 
     .sidebar {
-      width: 260px;
+      width: auto;
+      max-width: 600px;
       background-color: #f8f9fa;
       border-left: 1px solid #eaeaea;
       padding-left: 20px;
@@ -163,10 +164,7 @@
 git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
 
 # 进入项目目录
-cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_functiongraph
-
-# 核心依赖FastMCP 2.0
-uv pip install fastmcp
+cd /your-path/mcp-server-main
 
 #STDIO（默认）：最适合本地工具和命令行脚本
 uv run mcp_server_functiongraph --transport stdio --port 8863
@@ -215,7 +213,7 @@ uv run mcp_server_functiongraph --transport sse --port 8863
           "mcpServers": {
             "http-vpc-example": {
               "type": "http",
-              "url": "http://127.0.0.1:8863/mcp",
+              "url": "http://localhost:8863/mcp",
                "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
                 "HUAWEI_CLOUD_SK": "Your Access Key SK"

@@ -13,7 +13,7 @@
     }
 
     .main-content {
-      max-width: 1200px;
+      max-width: 1800px;
       margin: 0 auto;
       padding: 40px 20px;
     }
@@ -29,7 +29,8 @@
     }
 
     .sidebar {
-      width: 260px;
+      width: auto;
+      max-width: 600px;
       background-color: #f8f9fa;
       border-left: 1px solid #eaeaea;
       padding-left: 20px;
@@ -165,9 +166,6 @@ git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
 # 进入项目目录
 cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_ddm
 
-# 核心依赖FastMCP 2.0
-uv pip install fastmcp
-
 #STDIO（默认）：最适合本地工具和命令行脚本
 uv run mcp_server_ddm --transport stdio --port 8838
 
@@ -215,7 +213,7 @@ uv run mcp_server_ddm --transport sse --port 8838
           "mcpServers": {
             "http-vpc-example": {
               "type": "http",
-              "url": "http://127.0.0.1:8838/mcp",
+              "url": "http://localhost:8838/mcp",
                "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
                 "HUAWEI_CLOUD_SK": "Your Access Key SK"
@@ -465,7 +463,7 @@ uv run mcp_server_ddm --transport sse --port 8838
         <div class="api-category">
           <h3>版本升级</h3>
           <ul>
-            <li><span class="api-name">UpgradeInstanceVersion</span><br><span class="api-desc">GaussDB(for openGauss)实例版本升级。包括灰度升级,就地升级,热补丁升级等三种升级方式。</span></li>
+            <li><span class="api-name">UpgradeInstanceVersion</span><br><span class="api-desc">GaussDB(for openGauss)实例版本升级。包括灰度升级,就地升级,热补丁升级三种升级方式。</span></li>
             <li><span class="api-name">ShowBatchUpgradeCandidateVersions</span><br><span class="api-desc">查询批量实例可升级的版本和升级类型。</span></li>
             <li><span class="api-name">ShowUpgradeCandidateVersions</span><br><span class="api-desc">查询实例可升级版本。</span></li>
             <li><span class="api-name">BatchShowUpgradeCandidateVersions</span><br><span class="api-desc">查询批量实例可升级的版本和升级类型。</span></li>
