@@ -190,7 +190,7 @@ uv run mcp_server_eip --transport sse --port 8855
           <h4>1. stdio 模式</h4>
          <pre><code class="language-json">{
           "mcpServers": {
-            "stdio-ecs-example": {
+            "stdio-ecs": {
               "type": "stdio",
               "command": "uv",
               "args": [
@@ -207,7 +207,7 @@ uv run mcp_server_eip --transport sse --port 8855
             <h4>2. http 模式</h4>
          <pre><code class="language-json">{
           "mcpServers": {
-            "http-ecs-example": {
+            "http-ecs": {
               "type": "http",
               "url": "http://localhost:8855/mcp",
                "env": {
@@ -220,7 +220,7 @@ uv run mcp_server_eip --transport sse --port 8855
           <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
          <pre><code class="language-json">{
           "mcpServers": {
-            "sse-ecs-example": {
+            "sse-ecs": {
               "type": "sse",
               "url": "http://localhost:8855/sse",
               "env": {

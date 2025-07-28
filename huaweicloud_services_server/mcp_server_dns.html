@@ -195,10 +195,7 @@ uv run mcp-server-ecs --transport sse --port 8846
               "type": "stdio",
               "command": "uv",
               "args": [
-                "--directory",
-                "/path/to/yours/mcp-server/src",
-                "run",
-                "server.py"
+              "run", "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_dns/src/mcp_server_dns/run.py"
               ],
               "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
@@ -213,7 +210,7 @@ uv run mcp-server-ecs --transport sse --port 8846
           "mcpServers": {
             "http-ecs-example": {
               "type": "http",
-              "url": "http://localhost:8000/mcp",
+              "url": "http://localhost:8846/mcp",
                "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
                 "HUAWEI_CLOUD_SK": "Your Access Key SK"
@@ -226,7 +223,7 @@ uv run mcp-server-ecs --transport sse --port 8846
           "mcpServers": {
             "sse-ecs-example": {
               "type": "sse",
-              "url": "http://localhost:8000/sse",
+              "url": "http://localhost:8846/sse",
               "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
                 "HUAWEI_CLOUD_SK": "Your Access Key SK"

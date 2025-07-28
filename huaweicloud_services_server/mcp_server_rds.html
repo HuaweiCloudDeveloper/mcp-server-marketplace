@@ -164,7 +164,7 @@
 git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
 
 # 进入项目目录
-cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_rds
+cd /your-path/mcp-server-main
 
 #STDIO（默认）：最适合本地工具和命令行脚本
 uv run mcp_server_rds --transport stdio --port 8889
@@ -191,14 +191,12 @@ uv run mcp_server_rds --transport sse --port 8889
           <h4>1. stdio 模式</h4>
          <pre><code class="language-json">{
           "mcpServers": {
-            "stdio-vpc-example": {
+            "stdio-vpc": {
               "type": "stdio",
               "command": "uv",
               "args": [
-                "--directory",
-                "/path/to/yours/mcp-server/src",
-                "run",
-                "server.py"
+                "run", "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_rds/src/mcp_server_rds/run.py"
+            
               ],
               "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
@@ -211,7 +209,7 @@ uv run mcp_server_rds --transport sse --port 8889
             <h4>2. http 模式</h4>
          <pre><code class="language-json">{
           "mcpServers": {
-            "http-vpc-example": {
+            "http-vpc": {
               "type": "http",
               "url": "http://localhost:8889/mcp",
                "env": {
@@ -224,7 +222,7 @@ uv run mcp_server_rds --transport sse --port 8889
           <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
          <pre><code class="language-json">{
           "mcpServers": {
-            "sse-vpc-example": {
+            "sse-vpc": {
               "type": "sse",
               "url": "http://localhost:8889/sse",
               "env": {
