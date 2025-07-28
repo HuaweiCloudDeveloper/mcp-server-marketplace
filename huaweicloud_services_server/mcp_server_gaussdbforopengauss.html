@@ -191,14 +191,12 @@ uv run mcp_server_gaussdbforopengauss --transport sse --port 8865
           <h4>1. stdio 模式</h4>
          <pre><code class="language-json">{
           "mcpServers": {
-            "stdio-vpc-example": {
+            "stdio-vpc": {
               "type": "stdio",
               "command": "uv",
               "args": [
-                "--directory",
-                "/path/to/yours/mcp-server/src",
-                "run",
-                "server.py"
+                "run", "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_gaussdbforopengauss/src/mcp_server_gaussdbforopengauss/run.py"
+            
               ],
               "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
@@ -211,9 +209,9 @@ uv run mcp_server_gaussdbforopengauss --transport sse --port 8865
             <h4>2. http 模式</h4>
          <pre><code class="language-json">{
           "mcpServers": {
-            "http-vpc-example": {
+            "http-vpc": {
               "type": "http",
-              "url": "http://127.0.0.1:8865/mcp",
+              "url": "http://localhost:8865/mcp",
                "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
                 "HUAWEI_CLOUD_SK": "Your Access Key SK"
@@ -224,7 +222,7 @@ uv run mcp_server_gaussdbforopengauss --transport sse --port 8865
           <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
          <pre><code class="language-json">{
           "mcpServers": {
-            "sse-vpc-example": {
+            "sse-vpc": {
               "type": "sse",
               "url": "http://localhost:8865/sse",
               "env": {

@@ -159,7 +159,7 @@
 git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
 
 # 进入项目目录
-cd mcp-server/tree/master-dev/huaweicloud_services_server/mcp_server_elb
+cd /your-path/mcp-server-main
 
 #STDIO（默认）：最适合本地工具和命令行脚本
 uv run mcp_server_elb --transport stdio --port 8856
@@ -184,14 +184,11 @@ uv run mcp_server_elb --transport sse --port 8856
           <h4>1. stdio 模式</h4>
           <pre><code class="language-json">{
           "mcpServers": {
-            "stdio-ecs-example": {
+            "stdio-ecs": {
               "type": "stdio",
               "command": "uv",
               "args": [
-                "--directory",
-                "/path/to/yours/mcp-server/src",
-                "run",
-                "server.py"
+                "run", "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_elb/src/mcp_server_elb/run.py"
               ],
               "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
@@ -203,9 +200,9 @@ uv run mcp_server_elb --transport sse --port 8856
           2. http 模式
           <pre><code class="language-json">{
           "mcpServers": {
-            "http-ecs-example": {
+            "http-ecs": {
               "type": "http",
-              "url": "http://127.0.0.1:8856/mcp",
+              "url": "http://localhost:8856/mcp",
                "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
                 "HUAWEI_CLOUD_SK": "Your Access Key SK"
@@ -216,7 +213,7 @@ uv run mcp_server_elb --transport sse --port 8856
           <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
           <pre><code class="language-json">{
           "mcpServers": {
-            "sse-ecs-example": {
+            "sse-ecs": {
               "type": "sse",
               "url": "http://localhost:8856/sse",
               "env": {

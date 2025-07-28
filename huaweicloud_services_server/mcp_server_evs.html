@@ -191,14 +191,11 @@ uv run mcp_server_evs --transport sse --port 8859
           <h4>1. stdio 模式</h4>
        <pre><code class="language-json">{
           "mcpServers": {
-            "stdio-evs-example": {
+            "stdio-evs": {
               "type": "stdio",
               "command": "uv",
               "args": [
-                "--directory",
-                "/path/to/yours/mcp_server_evs/src",
-                "run",
-                "server.py"
+               "run", "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_evs/src/mcp_server_evs/run.py"
               ],
               "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
@@ -211,7 +208,7 @@ uv run mcp_server_evs --transport sse --port 8859
             <h4>2. http 模式</h4>
        <pre><code class="language-json">{
           "mcpServers": {
-            "http-evs-example": {
+            "http-evs": {
               "type": "http",
               "url": "http://localhost:8859/mcp",
                "env": {
@@ -224,7 +221,7 @@ uv run mcp_server_evs --transport sse --port 8859
           <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
        <pre><code class="language-json">{
           "mcpServers": {
-            "sse-evs-example": {
+            "sse-evs": {
               "type": "sse",
               "url": "http://localhost:8859/sse",
               "env": {
