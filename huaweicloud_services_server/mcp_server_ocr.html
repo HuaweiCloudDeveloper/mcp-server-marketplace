@@ -166,6 +166,10 @@ git clone git@github.com:HuaweiCloudDeveloper/ocr-mcp-server.git
 # 进入项目目录
 cd /your-path/mcp-server-main
 
+# 设置环境变量 
+export HUAWEI_ACCESS_KEY="xxxx"
+export HUAWEI_SECRET_KEY="xxxx"
+
 #STDIO（默认）：最适合本地工具和命令行脚本
 uv run mcp-server-ocr --transport stdio --port 8902
 
@@ -197,11 +201,7 @@ uv run mcp-server-ocr --transport sse --port 8902
       "args": [
         "run", 
         "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_ocr/src/mcp_server_ocr/run.py"
-      ],
-      "env": {
-        "HUAWEI_CLOUD_AK": "Your Access Key AK",
-        "HUAWEI_CLOUD_SK": "Your Access Key SK"
-      }
+      ]
     }
   }
 }</code></pre>
@@ -211,11 +211,7 @@ uv run mcp-server-ocr --transport sse --port 8902
   "mcpServers": {
     "http-ocr": {
       "type": "http",
-      "url": "http://localhost:8902/mcp",
-      "env": {
-        "HUAWEI_CLOUD_AK": "Your Access Key AK",
-        "HUAWEI_CLOUD_SK": "Your Access Key SK"
-      }
+      "url": "http://localhost:8902/mcp"
     }
   }
 }</code></pre>
@@ -225,11 +221,7 @@ uv run mcp-server-ocr --transport sse --port 8902
   "mcpServers": {
     "sse-ocr": {
       "type": "sse",
-      "url": "http://localhost:8902/sse",
-      "env": {
-        "HUAWEI_CLOUD_AK": "Your Access Key AK",
-        "HUAWEI_CLOUD_SK": "Your Access Key SK"
-      }
+      "url": "http://localhost:8902/sse"
     }
   }
 }</code></pre>

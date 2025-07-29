@@ -196,11 +196,7 @@ uv run mcp_server_obs --transport sse --port 8901
               "command": "uv",
               "args": [
                "run", "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_obs/src/mcp_server_obs/run.py"
-              ],
-              "env": {
-                "HUAWEI_CLOUD_AK": "Your Access Key AK",
-                "HUAWEI_CLOUD_SK": "Your Access Key SK"
-              }
+              ]
             }
           }
         }</code></pre>
@@ -210,11 +206,7 @@ uv run mcp_server_obs --transport sse --port 8901
           "mcpServers": {
             "http-vpc": {
               "type": "http",
-              "url": "http://localhost:8901/mcp",
-               "env": {
-                "HUAWEI_CLOUD_AK": "Your Access Key AK",
-                "HUAWEI_CLOUD_SK": "Your Access Key SK"
-              }
+              "url": "http://localhost:8901/mcp"
             }
           }
         }</code></pre>
@@ -223,11 +215,7 @@ uv run mcp_server_obs --transport sse --port 8901
           "mcpServers": {
             "sse-vpc": {
               "type": "sse",
-              "url": "http://localhost:8901/sse",
-              "env": {
-                "HUAWEI_CLOUD_AK": "Your Access Key AK",
-                "HUAWEI_CLOUD_SK": "Your Access Key SK"
-              }
+              "url": "http://localhost:8901/sse"
             }
           }
         }</code></pre>
