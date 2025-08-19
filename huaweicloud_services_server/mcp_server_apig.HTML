@@ -4,42 +4,41 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>华为云ECS上的MCP服务</title>
-  <style>
+   <style>
     /* 基础设置 */
-    /* 基础设置 */
-body {
-    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #fff;
-    margin: 0;
-    padding: 20px;
-    display: flex;
+    body {
+        font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+        line-height: 1.6;
+        background-color: #fff;
+        margin: 0;
+       padding: 20px 20px 0 0; /* 顶部内边距20px */
+       display: flex;
     justify-content: center;
-    gap: 32px; /* 主内容和工具栏间距 */
-}
+    }
 
-/* 左侧内容区 - 无边框 */
-.left-content {
-    flex: 3;
-    padding-right: 20px; /* 与右侧工具栏间距 */
-    border: none;
-    background: none;
-}
+    /* 左侧内容区 - 无边框 */
+    .left-content {
+        flex: 3;
+        padding-right: 20px; /* 与右侧侧边栏之间的间距 */
+        border: none;
+        background: none;
+    }
 
-/* 主内容区 - 无边框，自适应换行 */
-.main-content {
-    flex: 5; /* 可根据需要调整比例 */
-    max-width: 1000px;
-    background: none;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
+    /* 主内容区 */
+    .main-content {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: left; /* 文字左对齐 */
+        background: none;       /* 去掉背景 */
+        border: none;           /* 去掉边框 */
+        border-radius: 0;       /* 去掉圆角 */
+        box-shadow: none;
+        word-wrap: break-word;   /* 内容长单词自动换行 */
+        word-break: break-word;  /* 兼容更多浏览器 */
+        overflow-wrap: break-word;
+        padding-right: 440px; /* 工具栏宽度 400px + 额外间距 40px */
+    }
 
-    word-wrap: break-word;
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
 
     /* 标题设置 */
     h1, h2, h3, h4 {
@@ -51,24 +50,24 @@ body {
 
     h1 {
         font-size: 24px;
-        color: #2c3e50;
+        color:#191919;
     }
 
     h2 {
         font-size: 18px;
-        color: #2c3e50;
+        color:#191919;
     }
 
     h3 {
         font-size: 16px;
-        color: #2c3e50;
+        color: #191919;
     }
 
     /* 正文设置 */
     p, ul, ol {
         margin-bottom: 40px; /* 段落之间的间距：40px */
         font-size: 14px;
-        color: #555;
+        color: #191919;
         line-height: 1.7;
         text-align: left;
     }
@@ -98,7 +97,7 @@ body {
     /* 代码区块 */
     code {
         font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-        font-size: 13px;
+        font-size: 14px;
         background-color: #f8f9fa;
         padding: 2px 6px;
         border-radius: 4px;
@@ -110,22 +109,27 @@ body {
         padding: 16px;
         overflow-x: auto;
         margin: 20px 0;
-        font-size: 13px;
+        font-size: 14px;
     }
 
-    /* 侧边栏外观（保持卡片风格） */
-    * 右侧工具栏 */
-.sidebar {
-    flex: 0 0 400px; /* 固定宽度 */
-    max-height: 100vh;
-    background: #fff;
-    border: 1px solid #eaeaea;
-    border-radius: 12px;
-    padding: 32px 32px 20px 32px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-}
+    /* 工具栏外观（保持卡片风格） */
+    .sidebar {
+        position: fixed;
+        right: 32px;
+        top: 20px;
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 12px;
+        padding: 32px;
+        padding-bottom: 20px; /* 增加底部内边距 */
+        width: 400px;
+        max-height: 100vh;
+        box-sizing: border-box;
+        overflow-y: auto;
+        text-align: left;
+        z-index: 999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
 
     /* 主标题 */
     .sidebar h2 {
@@ -139,7 +143,7 @@ body {
     .sidebar h3 {
         font-size: 16px;
         font-weight: 600;
-        color: #2c3e50;
+        color: #191919;
         margin: 24px 0 12px 0;
         border-left: 4px solid #1476FF; /* 左侧蓝条 */
         padding-left: 8px;
@@ -171,6 +175,7 @@ body {
         background: #f8faff;
         border-radius: 4px;
     }
+
 </style>
 </head>
 <body>
