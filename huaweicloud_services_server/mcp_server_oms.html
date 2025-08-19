@@ -4,131 +4,179 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>华为云OMS上的MCP服务</title>
-  <style>
+   <style>
+    /* 基础设置 */
     body {
-      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background-color: #f8f9fa;
+        font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+        line-height: 1.6;
+        background-color: #fff;
+        margin: 0;
+       padding: 20px 20px 0 0; /* 顶部内边距20px */
+       display: flex;
+    justify-content: center;
     }
 
+    /* 左侧内容区 - 无边框 */
+    .left-content {
+        flex: 3;
+        padding-right: 20px; /* 与右侧侧边栏之间的间距 */
+        border: none;
+        background: none;
+    }
+
+    /* 主内容区 */
     .main-content {
-      max-width: 1800px;
-      margin: 0 auto;
-      padding: 40px 20px;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: left; /* 文字左对齐 */
+        background: none;       /* 去掉背景 */
+        border: none;           /* 去掉边框 */
+        border-radius: 0;       /* 去掉圆角 */
+        box-shadow: none;
+        word-wrap: break-word;   /* 内容长单词自动换行 */
+        word-break: break-word;  /* 兼容更多浏览器 */
+        overflow-wrap: break-word;
+        padding-right: 440px; /* 工具栏宽度 400px + 额外间距 40px */
     }
 
-    .container {
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-      padding: 40px;
-      display: flex;
-      flex-direction: row;
-      gap: 40px;
-    }
 
-    .sidebar {
-      width: auto;
-      max-width: 600px;
-      background-color: #f8f9fa;
-      border-left: 1px solid #eaeaea;
-      padding-left: 20px;
-    }
-
-    .content-sections {
-      flex: 1;
-    }
-
-    section {
-      margin-bottom: 40px;
-      padding-bottom: 30px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-
-    section:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-
+    /* 标题设置 */
     h1, h2, h3, h4 {
-      color: #2c3e50;
-      font-weight: 600;
-      margin-top: 0;
-      margin-bottom: 20px;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 12px; /* 标题和正文之间 */
+        text-align: left;
+    }
+
+    h1 {
+        font-size: 24px;
+        color:#191919;
     }
 
     h2 {
-      font-size: 1.8rem;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #f0f0f0;
+        font-size: 18px;
+        color:#191919;
     }
 
     h3 {
-      font-size: 1.4rem;
-      margin: 25px 0 15px;
+        font-size: 16px;
+        color: #191919;
     }
 
+    /* 正文设置 */
     p, ul, ol {
-      margin-bottom: 15px;
-      font-size: 1.35rem;
-      color: #555;
-      line-height: 1.7;
+        margin-bottom: 40px; /* 段落之间的间距：40px */
+        font-size: 14px;
+        color: #191919;
+        line-height: 1.7;
+        text-align: left;
     }
 
+    /* 列表设置 */
     ul, ol {
-      padding-left: 25px;
+        padding-left: 25px;
     }
 
     li {
-      margin-bottom: 10px;
+        margin-bottom: 10px;
+        font-size: 14px;
     }
 
-    pre {
-      background-color: #f8f9fa;
-      border: 1px solid #eaeaea;
-      border-radius: 6px;
-      padding: 16px;
-      overflow-x: auto;
-      margin: 20px 0;
-      font-size: 1.25rem;
-    }
-
-    code {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      font-size: 1.25rem;
-      background-color: #f8f9fa;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    .api-category {
-      margin-bottom: 20px;
-    }
-
-    .api-name {
-      font-weight: 600;
-      color: #2c3e50;
-      font-size: 1.25rem;
-    }
-
-    .api-desc {
-      font-size: 1.25rem;
-      color: #7f8c8d;
-      line-height: 1.5;
-    }
-
+    /* 可跳转文字高亮 */
     a {
-      color: #1a73e8;
-      text-decoration: none;
-      font-weight: 500;
+        color: #1476FF; /* 使用指定的蓝色 */
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
     }
 
     a:hover {
-      text-decoration: underline;
+        text-decoration: underline;
     }
-  </style>
+
+    /* 代码区块 */
+    code {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 14px;
+        background-color: #f8f9fa;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    pre {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+        font-size: 14px;
+    }
+
+    /* 工具栏外观（保持卡片风格） */
+    .sidebar {
+        position: fixed;
+        right: 32px;
+        top: 20px;
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 12px;
+        padding: 32px;
+        padding-bottom: 20px; /* 增加底部内边距 */
+        width: 400px;
+        max-height: 100vh;
+        box-sizing: border-box;
+        overflow-y: auto;
+        text-align: left;
+        z-index: 999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    /* 主标题 */
+    .sidebar h2 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #191919;
+        margin: 0 0 24px 0;
+    }
+
+    /* 分组标题 */
+    .sidebar h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #191919;
+        margin: 24px 0 12px 0;
+        border-left: 4px solid #1476FF; /* 左侧蓝条 */
+        padding-left: 8px;
+    }
+
+    /* 列表整体 */
+    .sidebar ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    /* 每个条目 */
+    .sidebar li {
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #595959;
+        line-height: 1.6;
+        border-left: 2px solid transparent;
+        padding-left: 8px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    /* hover 效果 */
+    .sidebar li:hover {
+        border-left: 2px solid #1476FF;
+        color: #1476FF;
+        background: #f8faff;
+        border-radius: 4px;
+    }
+
+</style>
 </head>
 <body>
   <div class="main-content">
@@ -137,7 +185,7 @@
       <div class="content-sections">
         <section>
           <h2>简介</h2>
-          <p>OMS MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端，可为MCP客户端（如Claude Desktop、Cline、Cursor等）提供与华为云服务OMS交互的能力，支持基于自然语言对OMS资源进行全链路管理。</p>
+          <p>OMS MCP Server 通过自然语言指令，实现跨云对象存储数据迁移的智能管控。支持用户便捷管理迁移任务、源端配置与进度监控，自动化完成从主流云平台到华为云OBS的数据迁移。适用于云迁移、容灾备份与数据恢复场景，助力企业高效构建安全、灵活、可扩展的全球数据架构。</p>
         </section>
 
         <section>
