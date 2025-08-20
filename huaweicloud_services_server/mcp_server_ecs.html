@@ -16,28 +16,28 @@
     justify-content: center;
     }
 
-    /* 左侧内容区 - 无边框 */
-    .left-content {
-        flex: 3;
-        padding-right: 20px; /* 与右侧侧边栏之间的间距 */
-        border: none;
-        background: none;
+    /* 整体容器 */
+    .container {
+        display: flex;
+        max-width: 1300px;
+        width: 100%;
+        gap: 40px;
+        position: relative;
     }
 
-    /* 主内容区 */
-    .main-content {
-        max-width: 800px;
-        margin: 0 auto;
-        text-align: left; /* 文字左对齐 */
-        background: none;       /* 去掉背景 */
-        border: none;           /* 去掉边框 */
-        border-radius: 0;       /* 去掉圆角 */
-        box-shadow: none;
-        word-wrap: break-word;   /* 内容长单词自动换行 */
-        word-break: break-word;  /* 兼容更多浏览器 */
-        overflow-wrap: break-word;
-        padding-right: 440px; /* 工具栏宽度 400px + 额外间距 40px */
-    }
+
+/* 主内容区 */
+        .main-content {
+            flex: 1;
+            min-width: 0; /* 防止flex项目溢出 */
+            background: none;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
 
 
     /* 标题设置 */
@@ -112,24 +112,21 @@
         font-size: 14px;
     }
 
-    /* 工具栏外观（保持卡片风格） */
-    .sidebar {
-        position: fixed;
-        right: 32px;
-        top: 20px;
-        background: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 12px;
-        padding: 32px;
-        padding-bottom: 20px; /* 增加底部内边距 */
-        width: 400px;
-        max-height: 100vh;
-        box-sizing: border-box;
-        overflow-y: auto;
-        text-align: left;
-        z-index: 999;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
+  /* 工具栏外观 */
+        .sidebar {
+            flex: 0 0 400px;
+            background: #fff;
+            border: 1px solid #eaeaea;
+            border-radius: 12px;
+            padding: 32px;
+            max-height: calc(100vh - 40px);
+            box-sizing: border-box;
+            overflow-y: auto;
+            text-align: left;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
 
     /* 主标题 */
     .sidebar h2 {
