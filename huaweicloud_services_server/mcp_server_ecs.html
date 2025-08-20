@@ -11,6 +11,12 @@
       line-height: 1.6;
       color: #333;
       background-color: #f8f9fa;
+      margin: 0;                /* 去掉默认外边距，避免页面出现空白边 */
+      padding: 0;
+      display: flex;            /* 让 body 成为 flex 容器 */
+      justify-content: center;  /* 水平居中 .container */
+      padding: 40px;            /* 页面整体留白 */
+      box-sizing: border-box;   /* 让 padding 不撑大整体 */
     }
 
     /* 整体容器 */
@@ -19,23 +25,19 @@
       border-radius: 8px;
       padding: 40px;
       display: flex;
-      flex-direction: row;
-      gap: 40px;
+      flex-direction: row;      /* 主轴水平 */
+      gap: 40px;                /* 子项间距 */
+      width: 100%;              /* 宽度自适应 */
+      max-width: 1600px;        /* 大屏时不至于过宽，保证可读性 */
     }
 
 
-/* 主内容区 */
-        .main-content {
-            flex: 1;
-            min-width: 0; /* 防止flex项目溢出 */
-            background: none;
-            border: none;
-            border-radius: 0;
-            box-shadow: none;
-            word-wrap: break-word;
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
+    /* 主内容区 */
+    .main-content {
+      flex: 1;                  /* 自动占据剩余空间 */
+      margin: 0 20px;           /* 两侧保留 20px 间距 */
+      min-width: 0;             /* 避免 flex 子项内容溢出 */
+    }
 
 
     /* 标题设置 */
