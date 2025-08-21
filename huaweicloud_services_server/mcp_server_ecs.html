@@ -13,10 +13,6 @@
       background-color: #f8f9fa;
       margin: 0;                /* 去掉默认外边距，避免页面出现空白边 */
       padding: 0;
-      display: flex;            /* 让 body 成为 flex 容器 */
-      justify-content: center;  /* 水平居中 .container */
-      padding: 40px;            /* 页面整体留白 */
-      box-sizing: border-box;   /* 让 padding 不撑大整体 *
     }
 
     /* 整体容器 */
@@ -28,7 +24,7 @@
       flex-direction: row;      /* 主轴水平 */
       gap: 40px;                /* 子项间距 */
       width: 100%;              /* 宽度自适应 */
-      max-width: 1600px;        /* 大屏时不至于过宽，保证可读性 */
+      max-width: 1300px;        /* 大屏时不至于过宽，保证可读性 */
     }
 
 
@@ -66,10 +62,10 @@
     /* 正文设置 */
     p, ul, ol {
         margin-bottom: 40px; /* 段落之间的间距：40px */
-        font-size: 14px;
-        color: #191919;
-        line-height: 1.7;
-        text-align: left;
+        font-size: 14px; /* 正文字体大小 */
+        color: #191919; /* 正文颜色 */
+        line-height: 1.7; / * 行高 */
+        text-align: left; /* 段落文本居左 */
     }
 
     /* 列表设置 */
@@ -114,18 +110,20 @@
 
   /* 工具栏外观 */
       .sidebar {
-          flex: 0 0 400px;
-          background: #fff;
-          border: 1px solid #eaeaea;
-          border-radius: 12px;
-          padding: 32px;
-          max-height: calc(100vh - 40px);
-          box-sizing: border-box;
-          overflow-y: auto;
-          text-align: left;
-          position: sticky;
-          top: 20px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+          flex: 0 0 300px; /* 固定宽度 */
+          background: #fff; /* 背景色 */
+          white-space: normal;  /* 允许换行 */
+          word-break: break-word; /* 单词过长自动断行 */
+          overflow-wrap: break-word; /* 支持更多浏览器 */
+          border: 1px solid #eaeaea; /*边框 */
+          border-radius: 12px; /* 圆角 */
+          padding: 32px; /* 内部填充 */
+          max-height: calc(100vh - 40px); / * 窗口高度减去工具栏外边距 */
+          box-sizing: border-box; /* 宽度包含内边距 */
+          overflow-y: auto; /* 滚动条 */
+          text-align: left; /* 文本居左 */
+          position: sticky;/* 粘性定位 */
+          top: 20px; /* 顶部外边距 */
       }
 
     /* 主标题 */
@@ -182,7 +180,7 @@
       <div class="content-sections">
         <section>
           <h2>简介</h2>
-          <p>华为MCP服务器是基于华为云服务构建的模型上下文协议（MCP）服务器，为大型AI模型提供安全可控的云访问能力</p>
+          <p> 华为云弹性云服务器(ECS)是一种基础计算组件，提供灵活、可靠的云服务器资源。本页面将ECS服务转换为MCP接口，使模型能够直接调用和管理ECS实例，支持查询操作历史、创建/删除服务器、组管理及安全配置等操作，实现高效云资源集成和自动化，简化模型对云服务的访问与控制。</p>
         </section>
 
         <section>
@@ -313,7 +311,7 @@ uv run mcp-server-ecs --transport sse --port 8888
         <div class="api-category">
           <h3>安全管理</h3>
           <ul>
-            <li><span class="api-name">NovaAssociateSecurityGroup</span><br><span class="api-desc">添加安全组</span></li>
+            <li><span class="api-name">NovaAssociateSecurityGroupNovaAssociateSecurityGroupNovaAssociateSecurityGroup</span><br><span class="api-desc">添加安全组</span></li>
             <li><span class="api-name">NovaListServerSecurityGroups</span><br><span class="api-desc">查询安全组</span></li>
             <li><span class="api-name">NovaCreateKeypair</span><br><span class="api-desc">创建SSH密钥对</span></li>
             <li><span class="api-name">ResetServerPassword</span><br><span class="api-desc">重置ECS密码</span></li>
