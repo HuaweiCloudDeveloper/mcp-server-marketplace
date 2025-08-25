@@ -24,7 +24,7 @@
       flex-direction: row;      /* 主轴水平 */
       gap: 40px;                /* 子项间距 */
       width: 100%;              /* 宽度自适应 */
-      max-width: 1300px;        /* 大屏时不至于过宽，保证可读性 */
+      max-width: none;      /* 去掉最大宽度限制 */
     }
 
 
@@ -140,7 +140,6 @@
         font-weight: 600;
         color: #191919;
         margin: 24px 0 12px 0;
-        border-left: 4px solid #1476FF; /* 左侧蓝条 */
         padding-left: 8px;
     }
 
@@ -152,24 +151,22 @@
     }
 
     /* 每个条目 */
-    .sidebar li {
-        margin-bottom: 12px;
-        font-size: 14px;
-        color: #595959;
-        line-height: 1.6;
-        border-left: 2px solid transparent;
-        padding-left: 8px;
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
+.sidebar li {
+    margin-bottom: 5px; /* 减小间距 */
+    font-size: 14px;
+    color: #595959;
+    line-height: 1.5; /* 行高稍微紧凑 */
+    padding: 6px 8px; /* 内边距小一点，避免过于稀疏 */
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
 
-    /* hover 效果 */
-    .sidebar li:hover {
-        border-left: 2px solid #1476FF;
-        color: #1476FF;
-        background: #f8faff;
-        border-radius: 4px;
-    }
+/* hover 效果 */
+.sidebar li:hover {
+    background-color: #F7F8FA; /* 图片中的浅灰色 */
+    color: #000000; /* 字体黑色 */
+}
 
 </style>
 </head>
