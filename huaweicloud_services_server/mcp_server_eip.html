@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>华为云ECS上的MCP服务</title>
+  <title>华为云EIP上的MCP服务</title>
   <style>
     /* 基础设置 */
     body {
@@ -170,7 +170,7 @@
 }
 
 </style>
-</style>
+
 </head>
 <body>
   <div class="main-content">
@@ -179,7 +179,11 @@
       <div class="content-sections">
         <section>
           <h2>简介</h2>
-          <p>EIP MCP服务器是一款基于模型上下文协议（Model Context Protocol）的服务端程序，可为MCP客户端（如Claude Desktop、Cline、Cursor等工具）提供与华为云弹性公网IP（EIP）服务交互的能力。用户可通过自然语言实现对EIP资源的全流程管理。</p>
+          <p>
+弹性公网IP（Elastic IP，简称EIP）提供独立的公网IP资源，包括公网IP地址与公网出口带宽服务。为资源配置弹性公网IP后，可以直接访问公网，如果资源只配置了私网IP，就无法直接访问公网。弹性公网IP和与它要绑定的云资源必须在同一个区域，不支持跨区域使用弹性公网IP。
+           MCP（Model Context Protocol）为智能体（Agentic）应用提供底层支撑，通过标准化接口与服务集成架构，
+              显著扩展Agent的能力边界与协作效率。该协议支持企业快速接入多类服务并实现统一调 用，降低系统复杂度和开发成本，助力构建高性能、可扩展的企业级智能体解决方案。
+          </p>
         </section>
 
         <section>
