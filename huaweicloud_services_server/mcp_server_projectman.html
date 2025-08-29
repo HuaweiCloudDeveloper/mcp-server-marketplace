@@ -212,13 +212,13 @@ export HUAWEI_ACCESS_KEY="xxxx"
 export HUAWEI_SECRET_KEY="xxxx"
 
 # STDIO（默认）：最适合本地工具和命令行脚本
-uv run mcp-server-ecs --transport stdio --port 8888
+uv run mcp-server-ecs --transport stdio --port 8905
 
 # 可流式传输的 HTTP：推荐用于 Web 部署
-uv run mcp-server-ecs --transport http  --port 8888
+uv run mcp-server-ecs --transport http  --port 8905
 
 # SSE：为了与现有的 SSE 客户端兼容。
-uv run mcp-server-ecs --transport sse --port 8888
+uv run mcp-server-ecs --transport sse --port 8905
           </code></pre>
 
         </section>
