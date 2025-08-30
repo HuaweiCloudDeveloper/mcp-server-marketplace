@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>华为云云专线DC上的MCP服务</title>
+  <title>华为云专属主机DEH上的MCP服务</title>
    <style>
     /* 基础设置 */
     body {
@@ -179,7 +179,8 @@
         <section>
           <h2>简介</h2>
           <p>
-         云专线（Direct Connect）用于搭建企业自有计算环境到华为云用户计算环境的高速、稳定、安全的专属通道。您可使用专线接入服务将本地数据中心的计算机与华为云上的云服务器或托管主机实现私网相连，实现安全可靠的混合云部署。
+         专属主机（Dedicated Host，DeH），是指用户可独享的专属物理主机资源。您可以将云服务器创建在您的专属主机上，满足您对隔离性、安全性、性能的更高要求。
+              同时，您还可以在迁移业务至专属主机时，继续使用迁移前的服务器端软件许可，即支持自带许可（BYOL），达到节省开支、提高对云服务器的自治等目的。
 MCP（Model Context Protocol）为智能体（Agentic）应用提供底层支撑，通过标准化接口与服务集成架构，显著扩展Agent的能力边界与协作效率。
             该协议支持企业快速接入多类服务并实现统一调 用，降低系统复杂度和开发成本，助力构建高性能、可扩展的企业级智能体解决方案
           </p>
@@ -216,13 +217,13 @@ export HUAWEI_ACCESS_KEY="xxxx"
 export HUAWEI_SECRET_KEY="xxxx"
 
 # STDIO（默认）：最适合本地工具和命令行脚本
-uv run mcp_server_das --transport stdio --port 8835
+uv run mcp_server_das --transport stdio --port 7016
 
 # 可流式传输的 HTTP：推荐用于 Web 部署
-uv run mcp_server_das --transport http  --port 8835
+uv run mcp_server_das --transport http  --port 7016
 
 # SSE：为了与现有的 SSE 客户端兼容。
-uv run mcp_server_das --transport sse --port 8835
+uv run mcp_server_das --transport sse --port 7016
           </code></pre>
 
         </section>
@@ -259,7 +260,7 @@ uv run mcp_server_das --transport sse --port 8835
           "mcpServers": {
             "http-vpc": {
               "type": "http",
-              "url": "http://localhost:8835/mcp",
+              "url": "http://localhost:7016/mcp",
                "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
                 "HUAWEI_CLOUD_SK": "Your Access Key SK"
@@ -272,7 +273,7 @@ uv run mcp_server_das --transport sse --port 8835
           "mcpServers": {
             "sse-vpc": {
               "type": "sse",
-              "url": "http://localhost:8835/sse",
+              "url": "http://localhost:7016/sse",
               "env": {
                 "HUAWEI_CLOUD_AK": "Your Access Key AK",
                 "HUAWEI_CLOUD_SK": "Your Access Key SK"
@@ -297,123 +298,39 @@ uv run mcp_server_das --transport sse --port 8835
       <!-- 右侧工具栏 -->
       <div class="sidebar">
         <h2 style="margin-top:0;">API工具列表</h2>
-
 <div class="api-category">
-  <h3>绑定全局Eip</h3>
+  <h3>查询API版本信息</h3>
   <ul>
-    <li><span class="api-name">UnbindGlobalEips</span><br><span class="api-desc">解绑GEIP</span></li>
-    <li><span class="api-name">BindGlobalEips</span><br><span class="api-desc">绑定GEIP操作</span></li>
-    <li><span class="api-name">ListGlobalEips</span><br><span class="api-desc">查询已经绑定的GEIP列表</span></li>
-  </ul>
-</div>
-
-<div class="api-category">
-  <h3>连接网关</h3>
-  <ul>
-    <li><span class="api-name">DeleteConnectGateway</span><br><span class="api-desc">删除互联网关</span></li>
-    <li><span class="api-name">UpdateConnectGateway</span><br><span class="api-desc">更新互联网关</span></li>
-    <li><span class="api-name">CreateConnectGateway</span><br><span class="api-desc">创建互联网关</span></li>
-    <li><span class="api-name">ListConnectGateways</span><br><span class="api-desc">查询互联网关列表信息</span></li>
-    <li><span class="api-name">ShowConnectGateway</span><br><span class="api-desc">查询互联网关详细信息</span></li>
-  </ul>
-</div>
-
-<div class="api-category">
-  <h3>直接连接</h3>
-  <ul>
-    <li><span class="api-name">UpdateDirectConnect</span><br><span class="api-desc">更新物理连接信息，包括名字、描述等</span></li>
-    <li><span class="api-name">UpdateHostedDirectConnect</span><br><span class="api-desc">合作伙伴更新托管专线</span></li>
-    <li><span class="api-name">ListHostedDirectConnects</span><br><span class="api-desc">查询合作伙伴创建的托管专线连接列表</span></li>
-    <li><span class="api-name">ShowDirectConnect</span><br><span class="api-desc">查询物理连接详细信息</span></li>
-    <li><span class="api-name">ShowHostedDirectConnect</span><br><span class="api-desc">查询合作伙伴的Hosted专线类型</span></li>
-    <li><span class="api-name">DeleteDirectConnect</span><br><span class="api-desc">删除物理连接，仅适用于按需计费</span></li>
-    <li><span class="api-name">CreateHostedDirectConnect</span><br><span class="api-desc">用于租户创建托管专线</span></li>
-    <li><span class="api-name">DeleteHostedDirectConnect</span><br><span class="api-desc">合作伙伴删除托管专线</span></li>
-    <li><span class="api-name">ListDirectConnects</span><br><span class="api-desc">查询租户创建的Direct Connect对象</span></li>
-  </ul>
-</div>
-
-<div class="api-category">
-  <h3>直接连接位置</h3>
-  <ul>
-    <li><span class="api-name">ShowDirectConnectLocation</span><br><span class="api-desc">查询指定的专线接入点详情</span></li>
-    <li><span class="api-name">ListDirectConnectLocations</span><br><span class="api-desc">查询区域下所有专线接入点信息</span></li>
-  </ul>
-</div>
-
-<div class="api-category">
-  <h3>GdgwRoutetable</h3>
-  <ul>
-    <li><span class="api-name">UpdateGdgwRouteTable</span><br><span class="api-desc">支持新增、删除、修改操作</span></li>
-    <li><span class="api-name">ListGdgwRouteTables</span><br><span class="api-desc">查询全域接入网关路由表</span></li>
-  </ul>
-</div>
-
-<div class="api-category">
-  <h3>全球数据中心网关</h3>
-  <ul>
-    <li><span class="api-name">ShowGlobalDcGateway</span><br><span class="api-desc">查询专线全域接入网关实例详情</span></li>
-    <li><span class="api-name">UpdateGlobalDcGateway</span><br><span class="api-desc">更新全域接入网关名字、描述</span></li>
-    <li><span class="api-name">DeleteGlobalDcGateway</span><br><span class="api-desc">删除全域接入网关实例</span></li>
-    <li><span class="api-name">CreateGlobalDcGateway</span><br><span class="api-desc">创建全域接入网关实例</span></li>
-    <li><span class="api-name">ListGlobalDcGateways</span><br><span class="api-desc">查询全域接入网关列表</span></li>
-  </ul>
-</div>
-
-<div class="api-category">
-  <h3>PeerLink</h3>
-  <ul>
-    <li><span class="api-name">DeletePeerLink</span><br><span class="api-desc">删除接入网关与ER的关联连接</span></li>
-    <li><span class="api-name">ShowPeerLink</span><br><span class="api-desc">查询指定关联连接详情</span></li>
-    <li><span class="api-name">CreatePeerLink</span><br><span class="api-desc">创建关联连接peer-link</span></li>
-    <li><span class="api-name">UpdatePeerLink</span><br><span class="api-desc">更新关联连接peer-link</span></li>
-    <li><span class="api-name">ListPeerLinks</span><br><span class="api-desc">查询关联连接列表</span></li>
-  </ul>
-</div>
-
-<div class="api-category">
-  <h3>配额管理器</h3>
-  <ul>
-    <li><span class="api-name">ShowQuotas</span><br><span class="api-desc">查询租户各类资源的使用情况</span></li>
+    <li><span class="api-name">ShowDehVersion</span><br><span class="api-desc">返回专属主机指定版本的信息</span></li>
+    <li><span class="api-name">ListDehVersions</span><br><span class="api-desc">返回专属主机当前所有可用的版本信息列表</span></li>
   </ul>
 </div>
 
 <div class="api-category">
   <h3>标签管理</h3>
   <ul>
-    <li><span class="api-name">CreateResourceTag</span><br><span class="api-desc">一个资源最多10个标签</span></li>
-    <li><span class="api-name">ShowResourceTag</span><br><span class="api-desc">查询资源标签</span></li>
-    <li><span class="api-name">DeleteResourceTag</span><br><span class="api-desc">删除资源标签，Key不能为空</span></li>
-    <li><span class="api-name">ListProjectTags</span><br><span class="api-desc">查询指定Project的资源标签集合</span></li>
-    <li><span class="api-name">BatchCreateResourceTags</span><br><span class="api-desc">批量添加或删除标签</span></li>
-    <li><span class="api-name">ListTagResourceInstances</span><br><span class="api-desc">通过标签查询资源实例</span></li>
+    <li><span class="api-name">BatchCreateDedicatedHostTags</span><br><span class="api-desc">为指定专属主机批量添加标签</span></li>
+    <li><span class="api-name">BatchDeleteDedicatedHostTags</span><br><span class="api-desc">批量删除指定专属主机标签</span></li>
+    <li><span class="api-name">ShowDedicatedHostTags</span><br><span class="api-desc">查询指定专属主机的标签信息</span></li>
+    <li><span class="api-name">ListDedicatedHostsByTags</span><br><span class="api-desc">使用标签过滤专属主机列表，并返回专属主机使用的所有标签</span></li>
   </ul>
 </div>
 
 <div class="api-category">
-  <h3>虚拟网关</h3>
+  <h3>生命周期管理</h3>
   <ul>
-    <li><span class="api-name">DeleteVirtualGateway</span><br><span class="api-desc">删除指定的虚拟网关</span></li>
-    <li><span class="api-name">ListVirtualGateways</span><br><span class="api-desc">查询虚拟网关列表</span></li>
-    <li><span class="api-name">UpdateVirtualGateway</span><br><span class="api-desc">更新虚拟网关信息</span></li>
-    <li><span class="api-name">CreateVirtualGateway</span><br><span class="api-desc">创建虚拟网关</span></li>
-    <li><span class="api-name">ShowVirtualGateway</span><br><span class="api-desc">查询指定虚拟网关详细信息</span></li>
+    <li><span class="api-name">ShowDedicatedHost</span><br><span class="api-desc">查询某一台专属主机的详情</span></li>
+    <li><span class="api-name">ListServersDedicatedHost</span><br><span class="api-desc">查询专属主机上已部署的云服务器信息</span></li>
+    <li><span class="api-name">UpdateDedicatedHost</span><br><span class="api-desc">变更专属主机的“auto_placement”和“name”属性</span></li>
+    <li><span class="api-name">ListDedicatedHostTypes</span><br><span class="api-desc">查询某一AZ内可用的专属主机类型</span></li>
+    <li><span class="api-name">ListDedicatedHosts</span><br><span class="api-desc">查询专属主机列表</span></li>
   </ul>
 </div>
 
 <div class="api-category">
-  <h3>虚拟接口</h3>
+  <h3>配额设置</h3>
   <ul>
-    <li><span class="api-name">UpdateVirtualInterface</span><br><span class="api-desc">更新虚拟接口详细信息</span></li>
-    <li><span class="api-name">SwitchoverTest</span><br><span class="api-desc">双专线倒换测试（关闭/开启接口）</span></li>
-    <li><span class="api-name">CreateVifPeer</span><br><span class="api-desc">创建虚拟接口对等体（IPv6对等体）</span></li>
-    <li><span class="api-name">DeleteVirtualInterface</span><br><span class="api-desc">删除虚拟接口</span></li>
-    <li><span class="api-name">ListSwitchoverTestRecords</span><br><span class="api-desc">查询倒换测试记录列表</span></li>
-    <li><span class="api-name">ShowVirtualInterface</span><br><span class="api-desc">查询虚拟接口详细信息</span></li>
-    <li><span class="api-name">DeleteVifPeer</span><br><span class="api-desc">删除虚拟接口对等体信息</span></li>
-    <li><span class="api-name">CreateVirtualInterface</span><br><span class="api-desc">虚拟接口配置IP和路由等信息</span></li>
-    <li><span class="api-name">ListVirtualInterfaces</span><br><span class="api-desc">查询租户所有虚拟接口列表</span></li>
-    <li><span class="api-name">UpdateVifPeer</span><br><span class="api-desc">更新虚拟接口对等体信息</span></li>
+    <li><span class="api-name">ShowQuotaSets</span><br><span class="api-desc">查询租户的专属主机配额</span></li>
   </ul>
 </div>
 
