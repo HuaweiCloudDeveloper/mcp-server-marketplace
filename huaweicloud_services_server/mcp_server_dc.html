@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>华为云DC上的MCP服务</title>
+   <style>
+    /* 基础设置 */
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+      margin: 0;                /* 去掉默认外边距，避免页面出现空白边 */
+      padding: 0;
+    }
+
+    /* 整体容器 */
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      margin-top: 20px;     /* 距离顶部 20px */
+      padding: 40px;
+      display: flex;
+      flex-direction: row;      /* 主轴水平 */
+      gap: 40px;                /* 子项间距 */
+      width: 100%;              /* 宽度自适应 */
+      max-width: none;      /* 去掉最大宽度限制 */
+    }
+
+
+    /* 主内容区 */
+    .main-content {
+      flex: 1;                  /* 自动占据剩余空间 */
+      margin: 0 20px;           /* 两侧保留 20px 间距 */
+      min-width: 0;             /* 避免 flex 子项内容溢出 */
+    }
+
+
+    /* 标题设置 */
+    h1, h2, h3, h4 {
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 12px; /* 标题和正文之间 */
+        text-align: left;
+    }
+
+    h1 {
+        font-size: 24px;
+        color:#191919;
+    }
+
+    h2 {
+        font-size: 18px;
+        color:#191919;
+    }
+
+    h3 {
+        font-size: 16px;
+        color: #191919;
+    }
+
+    /* 正文设置 */
+    p, ul, ol {
+        margin-bottom: 40px; /* 段落之间的间距：40px */
+        font-size: 14px; /* 正文字体大小 */
+        color: #191919; /* 正文颜色 */
+        line-height: 1.7; / * 行高 */
+        text-align: left; /* 段落文本居左 */
+    }
+
+    /* 列表设置 */
+    ul, ol {
+        padding-left: 25px;
+    }
+
+    li {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    /* 可跳转文字高亮 */
+    a {
+        color: #1476FF; /* 使用指定的蓝色 */
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    /* 代码区块 */
+    code {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 14px;
+        background-color: #f8f9fa;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    pre {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+        font-size: 14px;
+    }
+
+  /* 工具栏外观 */
+      .sidebar {
+          flex: 0 0 450px; /* 固定宽度 */
+          background: #fff; /* 背景色 */
+          white-space: normal;  /* 允许换行 */
+          word-break: break-word; /* 单词过长自动断行 */
+          overflow-wrap: break-word; /* 支持更多浏览器 */
+          border: 1px solid #eaeaea; /*边框 */
+          border-radius: 12px; /* 圆角 */
+          padding: 32px; /* 内部填充 */
+          max-height: calc(100vh - 40px); / * 窗口高度减去工具栏外边距 */
+          box-sizing: border-box; /* 宽度包含内边距 */
+          overflow-y: auto; /* 滚动条 */
+          text-align: left; /* 文本居左 */
+          position: sticky;/* 粘性定位 */
+          top: 20px; /* 顶部外边距 */
+      }
+
+    /* 主标题 */
+    .sidebar h2 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #191919;
+        margin: 0 0 24px 0;
+    }
+
+    /* 分组标题 */
+    .sidebar h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #191919;
+        margin: 24px 0 12px 0;
+        padding-left: 8px;
+    }
+
+    /* 列表整体 */
+    .sidebar ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    /* 每个条目 */
+.sidebar li {
+    margin-bottom: 5px; /* 减小间距 */
+    font-size: 14px;
+    color: #595959;
+    line-height: 1.5; /* 行高稍微紧凑 */
+    padding: 6px 8px; /* 内边距小一点，避免过于稀疏 */
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* hover 效果 */
+.sidebar li:hover {
+    background-color: #F7F8FA; /* 图片中的浅灰色 */
+    color: #000000; /* 字体黑色 */
+}
+
+</style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="container">
+      <!-- 主内容区在左 -->
+      <div class="content-sections">
+        <section>
+          <h2>简介</h2>
+          <p>
+          数据管理服务（Data Admin Service，简称DAS）是用来登录和操作华为云上数据库的Web服务：
+
+提供数据库开发、运维、智能诊断的一站式云上数据库管理平台，方便用户使用和运维数据库。
+提供数据库可视化操作的服务，包括基础SQL操作、高级数据库管理、智能化运维等功能，旨在帮助用户易用、安全、智能地进行数据库管理。
+MCP（Model Context Protocol）为智能体（Agentic）应用提供底层支撑，通过标准化接口与服务集成架构，显著扩展Agent的能力边界与协作效率。
+            该协议支持企业快速接入多类服务并实现统一调 用，降低系统复杂度和开发成本，助力构建高性能、可扩展的企业级智能体解决方案
+          </p>
+        </section>
+
+        <section>
+          <h2>前提条件</h2>
+          <ul>
+            <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+            <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+            <li><strong>Python环境</strong>：Python 3.12+</li>
+            <li><strong>UV工具</strong>：跨平台安装工具</li>
+          </ul>
+
+          <h3>安装UV</h3>
+          <p><strong>Linux/macOS</strong>：</p>
+         <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+          <p><strong>Windows</strong>：</p>
+         <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+        </section>
+
+        <section>
+          <h2>使用方法</h2>
+          <h3>启动服务</h3>
+         <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd /your-path/mcp-server-main
+
+# 设置环境变量 
+export HUAWEI_ACCESS_KEY="xxxx"
+export HUAWEI_SECRET_KEY="xxxx"
+
+# STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp_server_das --transport stdio --port 8835
+
+# 可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp_server_das --transport http  --port 8835
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp_server_das --transport sse --port 8835
+          </code></pre>
+
+        </section>
+        <section>
+          <h2>快速开始</h2>
+            <p>支持以下客户端与MCP服务交互：</p>
+              <ul>
+                  <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                  <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                  <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                  <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+              </ul>
+          <h3>客户端通信配置示例</h3>
+
+          <h4>1. stdio 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-vpc": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                 "run", "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_das/src/mcp_server_das/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+
+            <h4>2. http 模式</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "http-vpc": {
+              "type": "http",
+              "url": "http://localhost:8835/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+          <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+         <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-vpc": {
+              "type": "sse",
+              "url": "http://localhost:8835/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
+            }
+          }
+        }</code></pre>
+        </section>
+        <section>
+          <h2>贡献</h2>
+          <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+          <ul>
+            <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+            <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+          </ul>
+
+          <h3>许可证</h3>
+          <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+        </section>
+      </div>
+
+      <!-- 右侧工具栏 -->
+      <div class="sidebar">
+        <h2 style="margin-top:0;">API工具列表</h2>
+
+<div class="api-category">
+  <h3>绑定全局Eip</h3>
+  <ul>
+    <li><span class="api-name">UnbindGlobalEips</span><br><span class="api-desc">解绑GEIP</span></li>
+    <li><span class="api-name">BindGlobalEips</span><br><span class="api-desc">绑定GEIP操作</span></li>
+    <li><span class="api-name">ListGlobalEips</span><br><span class="api-desc">查询已经绑定的GEIP列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>连接网关</h3>
+  <ul>
+    <li><span class="api-name">DeleteConnectGateway</span><br><span class="api-desc">删除互联网关</span></li>
+    <li><span class="api-name">UpdateConnectGateway</span><br><span class="api-desc">更新互联网关</span></li>
+    <li><span class="api-name">CreateConnectGateway</span><br><span class="api-desc">创建互联网关</span></li>
+    <li><span class="api-name">ListConnectGateways</span><br><span class="api-desc">查询互联网关列表信息</span></li>
+    <li><span class="api-name">ShowConnectGateway</span><br><span class="api-desc">查询互联网关详细信息</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>直接连接</h3>
+  <ul>
+    <li><span class="api-name">UpdateDirectConnect</span><br><span class="api-desc">更新物理连接信息，包括名字、描述等</span></li>
+    <li><span class="api-name">UpdateHostedDirectConnect</span><br><span class="api-desc">合作伙伴更新托管专线</span></li>
+    <li><span class="api-name">ListHostedDirectConnects</span><br><span class="api-desc">查询合作伙伴创建的托管专线连接列表</span></li>
+    <li><span class="api-name">ShowDirectConnect</span><br><span class="api-desc">查询物理连接详细信息</span></li>
+    <li><span class="api-name">ShowHostedDirectConnect</span><br><span class="api-desc">查询合作伙伴的Hosted专线类型</span></li>
+    <li><span class="api-name">DeleteDirectConnect</span><br><span class="api-desc">删除物理连接，仅适用于按需计费</span></li>
+    <li><span class="api-name">CreateHostedDirectConnect</span><br><span class="api-desc">用于租户创建托管专线</span></li>
+    <li><span class="api-name">DeleteHostedDirectConnect</span><br><span class="api-desc">合作伙伴删除托管专线</span></li>
+    <li><span class="api-name">ListDirectConnects</span><br><span class="api-desc">查询租户创建的Direct Connect对象</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>直接连接位置</h3>
+  <ul>
+    <li><span class="api-name">ShowDirectConnectLocation</span><br><span class="api-desc">查询指定的专线接入点详情</span></li>
+    <li><span class="api-name">ListDirectConnectLocations</span><br><span class="api-desc">查询区域下所有专线接入点信息</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>GdgwRoutetable</h3>
+  <ul>
+    <li><span class="api-name">UpdateGdgwRouteTable</span><br><span class="api-desc">支持新增、删除、修改操作</span></li>
+    <li><span class="api-name">ListGdgwRouteTables</span><br><span class="api-desc">查询全域接入网关路由表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>全球数据中心网关</h3>
+  <ul>
+    <li><span class="api-name">ShowGlobalDcGateway</span><br><span class="api-desc">查询专线全域接入网关实例详情</span></li>
+    <li><span class="api-name">UpdateGlobalDcGateway</span><br><span class="api-desc">更新全域接入网关名字、描述</span></li>
+    <li><span class="api-name">DeleteGlobalDcGateway</span><br><span class="api-desc">删除全域接入网关实例</span></li>
+    <li><span class="api-name">CreateGlobalDcGateway</span><br><span class="api-desc">创建全域接入网关实例</span></li>
+    <li><span class="api-name">ListGlobalDcGateways</span><br><span class="api-desc">查询全域接入网关列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>PeerLink</h3>
+  <ul>
+    <li><span class="api-name">DeletePeerLink</span><br><span class="api-desc">删除接入网关与ER的关联连接</span></li>
+    <li><span class="api-name">ShowPeerLink</span><br><span class="api-desc">查询指定关联连接详情</span></li>
+    <li><span class="api-name">CreatePeerLink</span><br><span class="api-desc">创建关联连接peer-link</span></li>
+    <li><span class="api-name">UpdatePeerLink</span><br><span class="api-desc">更新关联连接peer-link</span></li>
+    <li><span class="api-name">ListPeerLinks</span><br><span class="api-desc">查询关联连接列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>配额管理器</h3>
+  <ul>
+    <li><span class="api-name">ShowQuotas</span><br><span class="api-desc">查询租户各类资源的使用情况</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>标签管理</h3>
+  <ul>
+    <li><span class="api-name">CreateResourceTag</span><br><span class="api-desc">一个资源最多10个标签</span></li>
+    <li><span class="api-name">ShowResourceTag</span><br><span class="api-desc">查询资源标签</span></li>
+    <li><span class="api-name">DeleteResourceTag</span><br><span class="api-desc">删除资源标签，Key不能为空</span></li>
+    <li><span class="api-name">ListProjectTags</span><br><span class="api-desc">查询指定Project的资源标签集合</span></li>
+    <li><span class="api-name">BatchCreateResourceTags</span><br><span class="api-desc">批量添加或删除标签</span></li>
+    <li><span class="api-name">ListTagResourceInstances</span><br><span class="api-desc">通过标签查询资源实例</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>虚拟网关</h3>
+  <ul>
+    <li><span class="api-name">DeleteVirtualGateway</span><br><span class="api-desc">删除指定的虚拟网关</span></li>
+    <li><span class="api-name">ListVirtualGateways</span><br><span class="api-desc">查询虚拟网关列表</span></li>
+    <li><span class="api-name">UpdateVirtualGateway</span><br><span class="api-desc">更新虚拟网关信息</span></li>
+    <li><span class="api-name">CreateVirtualGateway</span><br><span class="api-desc">创建虚拟网关</span></li>
+    <li><span class="api-name">ShowVirtualGateway</span><br><span class="api-desc">查询指定虚拟网关详细信息</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>虚拟接口</h3>
+  <ul>
+    <li><span class="api-name">UpdateVirtualInterface</span><br><span class="api-desc">更新虚拟接口详细信息</span></li>
+    <li><span class="api-name">SwitchoverTest</span><br><span class="api-desc">双专线倒换测试（关闭/开启接口）</span></li>
+    <li><span class="api-name">CreateVifPeer</span><br><span class="api-desc">创建虚拟接口对等体（IPv6对等体）</span></li>
+    <li><span class="api-name">DeleteVirtualInterface</span><br><span class="api-desc">删除虚拟接口</span></li>
+    <li><span class="api-name">ListSwitchoverTestRecords</span><br><span class="api-desc">查询倒换测试记录列表</span></li>
+    <li><span class="api-name">ShowVirtualInterface</span><br><span class="api-desc">查询虚拟接口详细信息</span></li>
+    <li><span class="api-name">DeleteVifPeer</span><br><span class="api-desc">删除虚拟接口对等体信息</span></li>
+    <li><span class="api-name">CreateVirtualInterface</span><br><span class="api-desc">虚拟接口配置IP和路由等信息</span></li>
+    <li><span class="api-name">ListVirtualInterfaces</span><br><span class="api-desc">查询租户所有虚拟接口列表</span></li>
+    <li><span class="api-name">UpdateVifPeer</span><br><span class="api-desc">更新虚拟接口对等体信息</span></li>
+  </ul>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
