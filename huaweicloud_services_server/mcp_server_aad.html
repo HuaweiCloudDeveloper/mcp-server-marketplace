@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>华为云A上AAD-ddos攻击MCP服务</title>
+   <style>
+    /* 基础设置 */
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+      margin: 0;                /* 去掉默认外边距，避免页面出现空白边 */
+      padding: 0;
+    }
+
+    /* 整体容器 */
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      margin-top: 20px;     /* 距离顶部 20px */
+      padding: 40px;
+      display: flex;
+      flex-direction: row;      /* 主轴水平 */
+      gap: 40px;                /* 子项间距 */
+      width: 100%;              /* 宽度自适应 */
+      max-width: none;      /* 去掉最大宽度限制 */
+    }
+
+
+    /* 主内容区 */
+    .main-content {
+      flex: 1;                  /* 自动占据剩余空间 */
+      margin: 0 20px;           /* 两侧保留 20px 间距 */
+      min-width: 0;             /* 避免 flex 子项内容溢出 */
+    }
+
+
+    /* 标题设置 */
+    h1, h2, h3, h4 {
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 12px; /* 标题和正文之间 */
+        text-align: left;
+    }
+
+    h1 {
+        font-size: 24px;
+        color:#191919;
+    }
+
+    h2 {
+        font-size: 18px;
+        color:#191919;
+    }
+
+    h3 {
+        font-size: 16px;
+        color: #191919;
+    }
+
+    /* 正文设置 */
+    p, ul, ol {
+        margin-bottom: 40px; /* 段落之间的间距：40px */
+        font-size: 14px; /* 正文字体大小 */
+        color: #191919; /* 正文颜色 */
+        line-height: 1.7; / * 行高 */
+        text-align: left; /* 段落文本居左 */
+    }
+
+    /* 列表设置 */
+    ul, ol {
+        padding-left: 25px;
+    }
+
+    li {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    /* 可跳转文字高亮 */
+    a {
+        color: #1476FF; /* 使用指定的蓝色 */
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    /* 代码区块 */
+    code {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 14px;
+        background-color: #f8f9fa;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    pre {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 20px 0;
+        font-size: 14px;
+    }
+
+  /* 工具栏外观 */
+      .sidebar {
+          flex: 0 0 450px; /* 固定宽度 */
+          background: #fff; /* 背景色 */
+          white-space: normal;  /* 允许换行 */
+          word-break: break-word; /* 单词过长自动断行 */
+          overflow-wrap: break-word; /* 支持更多浏览器 */
+          border: 1px solid #eaeaea; /*边框 */
+          border-radius: 12px; /* 圆角 */
+          padding: 32px; /* 内部填充 */
+          max-height: calc(100vh - 40px); / * 窗口高度减去工具栏外边距 */
+          box-sizing: border-box; /* 宽度包含内边距 */
+          overflow-y: auto; /* 滚动条 */
+          text-align: left; /* 文本居左 */
+          position: sticky;/* 粘性定位 */
+          top: 20px; /* 顶部外边距 */
+      }
+
+    /* 主标题 */
+    .sidebar h2 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #191919;
+        margin: 0 0 24px 0;
+    }
+
+    /* 分组标题 */
+    .sidebar h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #191919;
+        margin: 24px 0 12px 0;
+        padding-left: 8px;
+    }
+
+    /* 列表整体 */
+    .sidebar ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    /* 每个条目 */
+.sidebar li {
+    margin-bottom: 5px; /* 减小间距 */
+    font-size: 14px;
+    color: #595959;
+    line-height: 1.5; /* 行高稍微紧凑 */
+    padding: 6px 8px; /* 内边距小一点，避免过于稀疏 */
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* hover 效果 */
+.sidebar li:hover {
+    background-color: #F7F8FA; /* 图片中的浅灰色 */
+    color: #000000; /* 字体黑色 */
+}
+
+</style>
+		
+
+</head>
+<body>
+<div class="main-content">
+    <div class="container">
+        <!-- 主内容区在左 -->
+        <div class="content-sections">
+            <section>
+                <h2>简介</h2>
+                <p> 拒绝服务（Denial of Service，简称DoS）攻击也称洪水攻击，是一种网络攻击手法，其目的在于使目标电脑的网络或系统资源耗尽，服务暂时中断或停止，导致合法用户不能够访问正常网络服务的行为。
+                    当攻击者使用网络上多个被攻陷的电脑作为攻击机器向特定的目标发动DoS攻击时，称为分布式拒绝服务攻击（Distributed Denial of Service Attack，简称DDoS）。
+                MCP（Model Context Protocol）为智能体（Agentic）应用提供底层支撑，通过标准化接口与服务集成架构，显著扩展Agent的能力边界与协作效率。该协议支持企业快速接入多类服务并实现统一调用，降低系统复杂度和开发成本，助力构建高性能、可扩展的企业级智能体解决方案。
+                </p>
+
+            </section>
+
+            <section>
+                <h2>前提条件</h2>
+                <ul>
+                    <li><strong>云服务账号</strong>：准备华为云提供商的访问凭证</li>
+                    <li><strong>AK/SK准备</strong>：获取华为云提供商的Access Key和Secret Key</li>
+                    <li><strong>Python环境</strong>：Python 3.12+</li>
+                    <li><strong>UV工具</strong>：跨平台安装工具</li>
+                </ul>
+
+                <h3>安装UV</h3>
+                <p><strong>Linux/macOS</strong>：</p>
+                <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+                <p><strong>Windows</strong>：</p>
+                <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+            </section>
+
+            <section>
+                <h2>使用方法</h2>
+                <h3>启动服务</h3>
+                <pre><code class="language-bash"># 克隆仓库
+git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
+
+# 进入项目目录
+cd /your-path/mcp-server-main
+
+# 设置环境变量
+export HUAWEI_ACCESS_KEY="xxxx"
+export HUAWEI_SECRET_KEY="xxxx"
+
+# STDIO（默认）：最适合本地工具和命令行脚本
+uv run mcp-server-aom --transport stdio --port 8000
+
+# 可流式传输的 HTTP：推荐用于 Web 部署
+uv run mcp-server-aom --transport http  --port 8000
+
+# SSE：为了与现有的 SSE 客户端兼容。
+uv run mcp-server-aom --transport sse --port 8000
+          </code></pre>
+
+            </section>
+            <section>
+                <h2>快速开始</h2>
+                <p>支持以下客户端与MCP服务交互：</p>
+                <ul>
+                    <li><a href="https://www.cherry-ai.com/" target="_blank">Cherry Studio</a>（官方客户端）</li>
+                    <li><a href="https://cursor.com/en/downloads" target="_blank">Cursor</a>（官方客户端）</li>
+                    <li><a href="https://windsurf.com/" target="_blank">Windsurf</a>（官方客户端）</li>
+                    <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a>+ <a href="https://cline.bot/" target="_blank">Cline</a></li>
+                </ul>
+                <h3>客户端通信配置示例</h3>
+
+                <h4>1. stdio 模式</h4>
+                <pre><code class="language-json">{
+          "mcpServers": {
+            "stdio-aom": {
+              "type": "stdio",
+              "command": "uv",
+              "args": [
+                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_aom/src/mcp_server_aom/run.py"
+              ]
+            }
+          }
+        }</code></pre>
+
+                <h4>2. http 模式</h4>
+                <pre><code class="language-json">{
+          "mcpServers": {
+            "http-aom": {
+              "type": "http",
+              "url": "http://localhost:8000/mcp"
+            }
+          }
+        }</code></pre>
+                <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
+                <pre><code class="language-json">{
+          "mcpServers": {
+            "sse-aom": {
+              "type": "sse",
+              "url": "http://localhost:8000/sse"
+            }
+          }
+        }</code></pre>
+
+
+
+
+            </section>
+            <section>
+                <h2>贡献</h2>
+                <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
+                <ul>
+                    <li>GitHub仓库：<a href="https://github.com/HuaweiCloudDeveloper/mcp-server" target="_blank">huawei-cloud-mcp-server</a></li>
+                    <li>欢迎提交Issue和Pull Request! 欢迎贡献新想法、错误修复或改进，让 mcp-server-time 更加强大实用。</li>
+                </ul>
+
+                <h3>许可证</h3>
+                <p>mcp-server采用MIT许可证。这意味着您可以自由使用、修改和分发该软件，但需遵守MIT许可证的条款和条件。更多详细信息，请参阅项目仓库中的LICENSE文件。</p>
+            </section>
+        </div>
+
+        <!-- 右侧工具栏 -->
+        <div class="sidebar">
+            <h2 style="margin-top:0;">API工具列表</h2>
+<div class="api-category">
+  <h3>DDoS原生高级防护-告警配置管理</h3>
+  <ul>
+    <li><span class="api-name">DeleteAlarmConfig</span><br><span class="api-desc">删除告警配置</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>DDoS原生高级防护-实例管理</h3>
+  <ul>
+    <li><span class="api-name">UpdatePackageName</span><br><span class="api-desc">更新实例名字</span></li>
+    <li><span class="api-name">ListUnboundProtectedIp</span><br><span class="api-desc">查询可绑定的防护对象列表</span></li>
+    <li><span class="api-name">ListPackage</span><br><span class="api-desc">查询实例列表</span></li>
+    <li><span class="api-name">UpdatePackageIp</span><br><span class="api-desc">更新实例绑定的全量防护对象</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>DDoS原生高级防护-策略管理</h3>
+  <ul>
+    <li><span class="api-name">DisassociateIpFromPolicyAndPackage</span><br><span class="api-desc">策略和实例解绑防护对象</span></li>
+    <li><span class="api-name">AssociateIpToPolicyAndPackage</span><br><span class="api-desc">策略和实例绑定防护对象</span></li>
+    <li><span class="api-name">AssociateIpToPolicy</span><br><span class="api-desc">策略绑定防护对象</span></li>
+    <li><span class="api-name">AddPolicyBlackAndWhiteIpList</span><br><span class="api-desc">策略添加黑白名单</span></li>
+    <li><span class="api-name">DeletePolicyBlackAndWhiteIpList</span><br><span class="api-desc">策略删除黑白名单</span></li>
+    <li><span class="api-name">DisassociateIpFromPolicy</span><br><span class="api-desc">策略解绑防护对象</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>DDoS原生高级防护-防护对象管理</h3>
+  <ul>
+    <li><span class="api-name">ListProtectedIp</span><br><span class="api-desc">查询防护对象列表</span></li>
+    <li><span class="api-name">UpdateTagForProtectedIp</span><br><span class="api-desc">防护对象设置标签</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>DDoS高防-域名管理</h3>
+  <ul>
+    <li><span class="api-name">ModifyDomainWebSwitch</span><br><span class="api-desc">修改域名WEB基础防护开关/CC防护开关</span></li>
+    <li><span class="api-name">ListDomain</span><br><span class="api-desc">查询域名列表</span></li>
+    <li><span class="api-name">ShowDomainCertificate</span><br><span class="api-desc">查询域名关联的证书信息</span></li>
+    <li><span class="api-name">ListInstanceId</span><br><span class="api-desc">查询域名关联的实例ID</span></li>
+    <li><span class="api-name">SetCertForDomain</span><br><span class="api-desc">上传/修改域名对应证书</span></li>
+    <li><span class="api-name">CreateAadDomain</span><br><span class="api-desc">创建防护域名</span></li>
+    <li><span class="api-name">UpdateDomain</span><br><span class="api-desc">更新域名源站配置信息</span></li>
+    <li><span class="api-name">ListSourceIps</span><br><span class="api-desc">查询高防回源IP段列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>DDoS高防-实例列表</h3>
+  <ul>
+    <li><span class="api-name">ListInstanceDomains</span><br><span class="api-desc">查询实例关联的域名信息</span></li>
+    <li><span class="api-name">UpgradeInstanceSpec</span><br><span class="api-desc">修改实例规格</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>DDoS高防-概览</h3>
+  <ul>
+    <li><span class="api-name">ListPeak</span><br><span class="api-desc">查询流量峰值、攻击计数</span></li>
+    <li><span class="api-name">ListDDoSAttackEvent</span><br><span class="api-desc">查询DDoS攻击事件列表</span></li>
+    <li><span class="api-name">ListWafAttackEvent</span><br><span class="api-desc">查询攻击事件列表</span></li>
+    <li><span class="api-name">ListDDoSFlow</span><br><span class="api-desc">查询DDoS攻击防护BPS/PPS流量</span></li>
+    <li><span class="api-name">ShowWafQps</span><br><span class="api-desc">查询CC攻击防护请求QPS</span></li>
+    <li><span class="api-name">ListWafBandwidth</span><br><span class="api-desc">带宽曲线</span></li>
+    <li><span class="api-name">ListWafQps</span><br><span class="api-desc">查询请求QPS</span></li>
+    <li><span class="api-name">ListDDoSConnectionNumber</span><br><span class="api-desc">查询新建连接数和并发连接数</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>DDoS高防-转发规则管理</h3>
+  <ul>
+    <li><span class="api-name">BatchDeleteInstanceIpRule</span><br><span class="api-desc">批量删除高防实例IP的转发规则</span></li>
+    <li><span class="api-name">BatchCreateInstanceIpRule</span><br><span class="api-desc">批量创建高防实例IP的转发规则</span></li>
+    <li><span class="api-name">UpdateInstanceIpRule</span><br><span class="api-desc">修改高防实例转发配置的源站IP</span></li>
+    <li><span class="api-name">ListInstanceIpRule</span><br><span class="api-desc">查询高防实例IP的转发规则列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>DDoS高防-防护策略</h3>
+  <ul>
+    <li><span class="api-name">AddBlackWhiteIpList</span><br><span class="api-desc">高防实例添加黑白名单</span></li>
+    <li><span class="api-name">ListFrequencyControlRule</span><br><span class="api-desc">查询频率控制规则列表</span></li>
+    <li><span class="api-name">DeleteWafWhiteIpRule</span><br><span class="api-desc">防护策略web-cc黑白名单-删除黑白名单规则</span></li>
+    <li><span class="api-name">ShowWafPolicy</span><br><span class="api-desc">查询WEB防护策略配置</span></li>
+    <li><span class="api-name">ShowFlowBlock</span><br><span class="api-desc">查询流量封禁信息</span></li>
+    <li><span class="api-name">ListWhiteBlackIpRule</span><br><span class="api-desc">查询DDoS攻击防护的黑白名单列表</span></li>
+    <li><span class="api-name">AddWafWhiteIpRule</span><br><span class="api-desc">防护策略web-cc黑白名单-创建黑白名单规则</span></li>
+    <li><span class="api-name">DeleteBlackWhiteIpList</span><br><span class="api-desc">高防实例删除黑白名单</span></li>
+    <li><span class="api-name">ListWafGeoIpRule</span><br><span class="api-desc">查询区域封禁规则</span></li>
+    <li><span class="api-name">ListWafCustomRule</span><br><span class="api-desc">查询精准防护规则</span></li>
+    <li><span class="api-name">ListWafWhiteIpRule</span><br><span class="api-desc">防护策略web-cc黑白名单-查询黑白名单规则</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>Domain</h3>
+  <ul>
+    <li><span class="api-name">CreateDomain</span><br><span class="api-desc">创建域名</span></li>
+    <li><span class="api-name">DeleteDomain</span><br><span class="api-desc">删除域名</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>告警配置管理</h3>
+  <ul>
+    <li><span class="api-name">UpdateAlarmConfig</span><br><span class="api-desc">修改告警配置接口</span></li>
+    <li><span class="api-name">ShowAlarmConfig</span><br><span class="api-desc">获取告警配置信息</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>独享实例管理</h3>
+  <ul>
+    <li><span class="api-name">ListInstance</span><br><span class="api-desc">查询WAF独享引擎列表。独享模式只在部分局点支持。</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>解封中心-解封管理</h3>
+  <ul>
+    <li><span class="api-name">ShowBlockStatistics</span><br><span class="api-desc">查询封堵统计数据</span></li>
+    <li><span class="api-name">ListBlockIps</span><br><span class="api-desc">查询租户封堵列表</span></li>
+    <li><span class="api-name">ListUnblockQuotaStatistics</span><br><span class="api-desc">查询解封配额</span></li>
+    <li><span class="api-name">ShowUnblockRecord</span><br><span class="api-desc">查询租户解封记录</span></li>
+    <li><span class="api-name">ExecuteUnblockIp</span><br><span class="api-desc">解封IP</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>防护策略管理</h3>
+  <ul>
+    <li><span class="api-name">DeletePolicy</span><br><span class="api-desc">删除防护策略，若策略正在使用需先解除绑定关系</span></li>
+    <li><span class="api-name">ShowPolicy</span><br><span class="api-desc">根据Id查询防护策略</span></li>
+    <li><span class="api-name">ListPolicy</span><br><span class="api-desc">查询防护策略列表</span></li>
+    <li><span class="api-name">UpdatePolicy</span><br><span class="api-desc">更新防护策略，请求体可只传需要更新的部分</span></li>
+    <li><span class="api-name">CreatePolicy</span><br><span class="api-desc">创建防护策略，系统会配置默认项</span></li>
+  </ul>
+</div>
+
+
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

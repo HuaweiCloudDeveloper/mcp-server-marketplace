@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>华为云ECS上的MCP服务</title>
+  <title>华为云专属主机DEH上的MCP服务</title>
    <style>
     /* 基础设置 */
     body {
@@ -179,9 +179,10 @@
         <section>
           <h2>简介</h2>
           <p>
-资源治理中心（Resource Governance Center，简称RGC）服务为用户提供搭建安全、可扩展的多账号环境并持续治理的能力。
-               MCP（Model Context Protocol）为智能体（Agentic）应用提供底层支撑，通过标准化接口与服务集成架构，
-             显著扩展Agent的能力边界与协作效率。该协议支持企业快速接入多类服务并实现统一调用，降低系统复杂度和开发成本，助力构建高性能、可扩展的企业级智能体解决方案。
+         专属主机（Dedicated Host，DeH），是指用户可独享的专属物理主机资源。您可以将云服务器创建在您的专属主机上，满足您对隔离性、安全性、性能的更高要求。
+              同时，您还可以在迁移业务至专属主机时，继续使用迁移前的服务器端软件许可，即支持自带许可（BYOL），达到节省开支、提高对云服务器的自治等目的。
+MCP（Model Context Protocol）为智能体（Agentic）应用提供底层支撑，通过标准化接口与服务集成架构，显著扩展Agent的能力边界与协作效率。
+            该协议支持企业快速接入多类服务并实现统一调 用，降低系统复杂度和开发成本，助力构建高性能、可扩展的企业级智能体解决方案
           </p>
         </section>
 
@@ -196,16 +197,16 @@
 
           <h3>安装UV</h3>
           <p><strong>Linux/macOS</strong>：</p>
-          <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+         <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
 
           <p><strong>Windows</strong>：</p>
-          <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+         <pre><code class="language-powershell">powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
         </section>
 
         <section>
           <h2>使用方法</h2>
           <h3>启动服务</h3>
-          <pre><code class="language-bash"># 克隆仓库
+         <pre><code class="language-bash"># 克隆仓库
 git clone git@github.com:HuaweiCloudDeveloper/mcp-server.git
 
 # 进入项目目录
@@ -216,13 +217,13 @@ export HUAWEI_ACCESS_KEY="xxxx"
 export HUAWEI_SECRET_KEY="xxxx"
 
 # STDIO（默认）：最适合本地工具和命令行脚本
-uv run mcp-server-rgc --transport stdio --port 8909
+uv run mcp_server_das --transport stdio --port 7016
 
 # 可流式传输的 HTTP：推荐用于 Web 部署
-uv run mcp-server-rgc --transport http  --port 8909
+uv run mcp_server_das --transport http  --port 7016
 
 # SSE：为了与现有的 SSE 客户端兼容。
-uv run mcp-server-rgc --transport sse --port 8909
+uv run mcp_server_das --transport sse --port 7016
           </code></pre>
 
         </section>
@@ -238,41 +239,49 @@ uv run mcp-server-rgc --transport sse --port 8909
           <h3>客户端通信配置示例</h3>
 
           <h4>1. stdio 模式</h4>
-          <pre><code class="language-json">{
+         <pre><code class="language-json">{
           "mcpServers": {
-            "stdio-rgc": {
+            "stdio-vpc": {
               "type": "stdio",
               "command": "uv",
               "args": [
-                "run","/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_rgc/src/mcp_server_rgc/run.py"
-              ]
+                 "run", "/your-path/mcp-server-main/huaweicloud_services_server/mcp_server_das/src/mcp_server_das/run.py"
+              ],
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
             }
           }
         }</code></pre>
 
             <h4>2. http 模式</h4>
-          <pre><code class="language-json">{
+         <pre><code class="language-json">{
           "mcpServers": {
-            "http-rgc": {
+            "http-vpc": {
               "type": "http",
-              "url": "http://localhost:8909/mcp"
+              "url": "http://localhost:7016/mcp",
+               "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
             }
           }
         }</code></pre>
           <h4>3. sse 模式-SSE 传输已弃用，可能会在未来版本中移除</h4>
-          <pre><code class="language-json">{
+         <pre><code class="language-json">{
           "mcpServers": {
-            "sse-rgc": {
+            "sse-vpc": {
               "type": "sse",
-              "url": "http://localhost:8909/sse"
+              "url": "http://localhost:7016/sse",
+              "env": {
+                "HUAWEI_CLOUD_AK": "Your Access Key AK",
+                "HUAWEI_CLOUD_SK": "Your Access Key SK"
+              }
             }
           }
         }</code></pre>
-
-
-
-
-</section>
+        </section>
         <section>
           <h2>贡献</h2>
           <p>我们鼓励大家为扩展和改进 mcp-server做出贡献。无论您是想添加新的工具、增强现有功能，还是改进文档，您的贡献都弥足珍贵。</p>
@@ -289,10 +298,46 @@ uv run mcp-server-rgc --transport sse --port 8909
       <!-- 右侧工具栏 -->
       <div class="sidebar">
         <h2 style="margin-top:0;">API工具列表</h2>
-          <div class="api-category"><h3>Governance</h3><ul><li><span class="api-name">DisableControl</span><br><span class="api-desc">关闭组织下的某个单元的某个控制策略。</span></li><li><span class="api-name">ListControlsForOrganizationalUnit</span><br><span class="api-desc">列出组织里某个注册OU开启的所有控制策略信息。</span></li><li><span class="api-name">ShowControlOperate</span><br><span class="api-desc">根据操作ID查询返回指定ID的操作状态。</span></li><li><span class="api-name">EnableControl</span><br><span class="api-desc">给组织下的某个单元开启某个控制策略。</span></li><li><span class="api-name">ListEnabledControls</span><br><span class="api-desc">列出组织里开启的所有控制策略信息。</span></li></ul> </div>
-<div class="api-category"><h3>ManagedOrganization</h3><ul><li><span class="api-name">RegisterOrganizationalUnit</span><br><span class="api-desc">将组织里的某个OU注册到RGC服务。</span></li><li><span class="api-name">ShowOperation</span><br><span class="api-desc">查询在RGC服务里注册/取消注册的过程信息。</span></li><li><span class="api-name">ShowManagedAccount</span><br><span class="api-desc">查询组织里某个纳管账号信息。</span></li><li><span class="api-name">CreateAccount</span><br><span class="api-desc">在组织里的某个注册OU下创建账号。</span></li></ul> </div>
-<p>以及更多用于元数据、可用区、磁盘管理和监控的API.</p>
+<div class="api-category">
+  <h3>查询API版本信息</h3>
+  <ul>
+    <li><span class="api-name">ShowDehVersion</span><br><span class="api-desc">返回专属主机指定版本的信息</span></li>
+    <li><span class="api-name">ListDehVersions</span><br><span class="api-desc">返回专属主机当前所有可用的版本信息列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>标签管理</h3>
+  <ul>
+    <li><span class="api-name">BatchCreateDedicatedHostTags</span><br><span class="api-desc">为指定专属主机批量添加标签</span></li>
+    <li><span class="api-name">BatchDeleteDedicatedHostTags</span><br><span class="api-desc">批量删除指定专属主机标签</span></li>
+    <li><span class="api-name">ShowDedicatedHostTags</span><br><span class="api-desc">查询指定专属主机的标签信息</span></li>
+    <li><span class="api-name">ListDedicatedHostsByTags</span><br><span class="api-desc">使用标签过滤专属主机列表，并返回专属主机使用的所有标签</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>生命周期管理</h3>
+  <ul>
+    <li><span class="api-name">ShowDedicatedHost</span><br><span class="api-desc">查询某一台专属主机的详情</span></li>
+    <li><span class="api-name">ListServersDedicatedHost</span><br><span class="api-desc">查询专属主机上已部署的云服务器信息</span></li>
+    <li><span class="api-name">UpdateDedicatedHost</span><br><span class="api-desc">变更专属主机的“auto_placement”和“name”属性</span></li>
+    <li><span class="api-name">ListDedicatedHostTypes</span><br><span class="api-desc">查询某一AZ内可用的专属主机类型</span></li>
+    <li><span class="api-name">ListDedicatedHosts</span><br><span class="api-desc">查询专属主机列表</span></li>
+  </ul>
+</div>
+
+<div class="api-category">
+  <h3>配额设置</h3>
+  <ul>
+    <li><span class="api-name">ShowQuotaSets</span><br><span class="api-desc">查询租户的专属主机配额</span></li>
+  </ul>
+</div>
+
+
+
       </div>
+
     </div>
   </div>
 </body>
